@@ -1,4 +1,5 @@
 import cv2
+from visualModule import patternRecognizer
 
 class Stream():
     def __init__(self):
@@ -17,7 +18,7 @@ class Stream():
 
             img = self.take_photo(cap)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if patternRecognizer(img) or cv2.waitKey(1) & 0xFF == ord('q'):
                 self.stop_stream(cap)
                 break
 
@@ -47,6 +48,3 @@ class Stream():
 if __name__ == "__main__":
     stream = Stream()
     img = stream.start_stream()
-    stream.show_photo(img)
-    # stream.take_photo()
-    # stream.stop_stream()
