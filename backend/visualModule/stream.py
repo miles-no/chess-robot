@@ -1,50 +1,52 @@
 import cv2
 
-# Capturing video from webcam:
-cap = cv2.VideoCapture(0)
+class Stream():
+    def __init__(self):
+        pass
 
-def takePIC():
-    for i in range(5):
-        cap.grab()
-        _ , img  = cap.read()
-    return img
+    def start_stream(self):
+        cap = cv2.VideoCapture(0)
+        currentFrame = 0
+        while(True):
+            # Capture frame-by-frame
+            _, frame = cap.read()
+            
+            # Display the video in gray scale
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            cv2.imshow('frame',gray)
 
-currentFrame = 0
-while(True):
-    # Capture frame-by-frame
-    ret, frame = cap.read()
+            img = self.take_photo(cap)
 
-    # Handles the mirroring of the current frame
-    frame = cv2.flip(frame,1)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                self.stop_stream(cap)
+                break
 
-    # Our operations on the frame come here
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    # Display the resulting frame
-    cv2.imshow('frame',gray)
-
-    img = takePIC()
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-    # To stop duplicate images
-    currentFrame += 1
+            # To stop duplicate images
+            currentFrame += 1
+        return img
 
 
+    def take_photo(self, cap):
+        for i in range(5):
+            cap.grab()
+            _ , img  = cap.read()
+        return img
 
-# When everything done, release the capture
-cap.release()
-cv2.destroyAllWindows()
+    def show_photo(self, img):
+        # Display the image and wait for the user to press a key
+        cv2.imshow("Image", img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
-# Display the image
-cv2.imshow("Image", img)
- 
-# Wait for the user to press a key
-cv2.waitKey(0)
- 
-# Close all windows
-cv2.destroyAllWindows()
+    def stop_stream(self, cap):
+        # When everything done, release the capture
+        cap.release()
+        cv2.destroyAllWindows()
 
-def returnImg():
-    return img
+
+if __name__ == "__main__":
+    stream = Stream()
+    img = stream.start_stream()
+    stream.show_photo(img)
+    # stream.take_photo()
+    # stream.stop_stream()

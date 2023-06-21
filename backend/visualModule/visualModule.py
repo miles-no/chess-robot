@@ -4,6 +4,9 @@ import numpy as np
 import string
 import time
 import os
+from stream import Stream
+
+stream = Stream()
 
 #Import for camera to use for calibration
 
@@ -133,6 +136,9 @@ def patternRecognizer(img):
         print("No pattern found")
     
 
-patternRecognizer(cbPattern)    
+test_image = stream.start_stream()
+stream.show_photo(test_image)
+
+patternRecognizer(test_image)    
 
  
