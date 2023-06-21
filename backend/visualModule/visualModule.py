@@ -9,7 +9,7 @@ import os
 #Import for camera to use for calibration
 
 #Reference_Image
-cbPattern = cv2.imread('chessBoardImages/chess-board.png')
+cbPattern = cv2.imread('/Users/espensele/Desktop/Miles-Chess-Robot/chess-robot/backend/visualModule/chessBoardImages/chess-board.png')
 
 #cbPattern is essentially an input of a default chessboard image
 #img is captured frame from camera
@@ -50,15 +50,30 @@ def applyHomography(img,H):
 #Draws quadrants to assist users in calibration(Essentially helps the program to determine which quadrant
 # white is located)
 def drawQuadrants(img):
+    #Defining reference image sizes to properly draw quadrants
+    cbPatternWidth = cbPattern.shape[0]
+    cbPatternHeight = cbPattern.shape[1]
+    halfWidth = cbPatternWidth/2
+    halfHeight = cbPatternHeight/2
+    pt1 = (int(halfWidth), 0)
+    pt2 = (int(halfWidth), int(cbPatternHeight))
+    pt3 = (0, int(halfHeight))
+    pt4 = (int(cbPatternWidth), int(halfHeight))
 
     # Draw quadrants and numbers on image
     imgquad = img.copy()
-    cv2.line(imgquad, (200, 0), (200, 400), (0,255,0), 3)
-    cv2.line(imgquad, (0, 200), (400, 200), (0,255,0), 3)
-    imgquad = cv2.putText(imgquad, '1', (80, 120) , cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 3, cv2.LINE_AA)
-    imgquad = cv2.putText(imgquad, '2', (280, 120) , cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 3, cv2.LINE_AA) 
-    imgquad = cv2.putText(imgquad, '3', (280, 320) , cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 3, cv2.LINE_AA) 
-    imgquad = cv2.putText(imgquad, '4', (80, 320) , cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 3, cv2.LINE_AA) 
+    cv2.line(imgquad, (pt1), (pt2), (0,255,0), 3)
+    cv2.line(imgquad, (pt3), (pt4), (0,255,0), 3)
+
+    x = cbPatternWidth
+    y= cbPatternHeight
+    quad1 = int(x/4), int(y/4)
+    quad2 = int((3*x)/4), int(y/4)
+    quad3 = int(x/4), int((3*y)/4)
+    quad4 = int((3*x)/4), int((3*y)/4)
+    quads=[quad1,quad2,quad3,quad4]
+    for i in range(4):
+        imgquad = cv2.putText(imgquad, str(i+1), (quads[i]), cv2.FONT_HERSHEY_SIMPLEX, 6, (0,255,0), 6, cv2.LINE_AA) 
 
     return(imgquad)
 
