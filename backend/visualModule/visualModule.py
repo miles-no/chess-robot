@@ -51,31 +51,29 @@ def applyHomography(img,H):
 # white is located)
 def drawQuadrants(img):
     #Defining reference image sizes to properly draw quadrants
-    cbPatternWidth = cbPattern.shape[0]
-    cbPatternHeight = cbPattern.shape[1]
-    halfWidth = cbPatternWidth/2
-    halfHeight = cbPatternHeight/2
-    pt1 = (int(halfWidth), 0)
-    pt2 = (int(halfWidth), int(cbPatternHeight))
-    pt3 = (0, int(halfHeight))
-    pt4 = (int(cbPatternWidth), int(halfHeight))
+    cbPatternWidth, cbPatternHeight = cbPattern.shape[0], cbPattern.shape[1]
+    halfWidth, halfHeight = cbPatternWidth // 2, cbPatternHeight // 2
+    pt1 = (halfWidth, 0)
+    pt2 = (halfWidth, cbPatternHeight)
+    pt3 = (0, halfHeight)
+    pt4 = (cbPatternWidth, halfHeight)
 
     # Draw quadrants and numbers on image
     imgquad = img.copy()
-    cv2.line(imgquad, (pt1), (pt2), (0,255,0), 3)
-    cv2.line(imgquad, (pt3), (pt4), (0,255,0), 3)
+    cv2.line(imgquad, pt1, pt2, (0, 255, 0), 3)
+    cv2.line(imgquad, pt3, pt4, (0, 255, 0), 3)
 
-    x = cbPatternWidth
-    y= cbPatternHeight
-    quad1 = int(x/4), int(y/4)
-    quad2 = int((3*x)/4), int(y/4)
-    quad3 = int(x/4), int((3*y)/4)
-    quad4 = int((3*x)/4), int((3*y)/4)
+    x, y = cbPatternWidth, cbPatternHeight
+    quad1 = x//4, y//4
+    quad2 = (3*x)//4, int(y/4)
+    quad3 = (x//4), (3*y)//4
+    quad4 = (3*x)//4, (3*y)//4
     quads=[quad1,quad2,quad3,quad4]
     for i in range(4):
         imgquad = cv2.putText(imgquad, str(i+1), (quads[i]), cv2.FONT_HERSHEY_SIMPLEX, 6, (0,255,0), 6, cv2.LINE_AA) 
 
     return(imgquad)
+
 
 #Finds the rotation matrix to properly rotate the chessboard pattern
 def findRotation(theta):
@@ -141,5 +139,7 @@ def patternRecognizer(img):
     
 
 if __name__ == "__main__":
-    patternRecognizer(cbPattern)    
+    cv2.imshow("test", drawQuadrants(cbPattern))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
  
