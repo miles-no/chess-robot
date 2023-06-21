@@ -133,6 +133,6 @@ def patternRecognizer(img):
         print("No pattern found")
     
 
-patternRecognizer(closeUpMainProj)    
+patternRecognizer(cbPattern)    
 
  
