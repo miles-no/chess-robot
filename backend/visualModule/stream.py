@@ -1,5 +1,5 @@
 import cv2
-from visualModule import patternRecognizer
+from visualModule import patternRecognizer, findTransformation, applyHomography
 
 class Stream():
     def __init__(self):
@@ -48,3 +48,11 @@ class Stream():
 if __name__ == "__main__":
     stream = Stream()
     img = stream.start_stream()
+    chess_board = cv2.imread("chessBoardImages/chess-board.png")
+    ret, H = findTransformation(img, chess_board)
+    img = applyHomography(img, H)
+    cv2.imshow("Image", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
