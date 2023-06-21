@@ -8,19 +8,8 @@ import os
 
 #Import for camera to use for calibration
 
-#Test images of chessboards
+#Reference_Image
 cbPattern = cv2.imread('chessBoardImages/chess-board.png')
-simulatedBoard = cv2.imread('chessBoardImages/bettercb.png')
-blackandwhitecb = cv2.imread('chessBoardImages/blackandwhitecb.png')
-screenshot = cv2.imread('chessBoardImages/screenshot.png')
-greenframe = cv2.imread('chessBoardImages/greenframe.png')
-obstacle = cv2.imread('chessBoardImages/obstacle.png')
-bildechess = cv2.imread('chessBoardImages/bildechess.png')
-croppedchess = cv2.imread('chessBoardImages/chess-cropped.png')
-mainProj = cv2.imread('chessBoardImages/mainProj.png')
-rotatedCBPattern = cv2.imread('chessBoardImages/rotatedcbpattern.png')
-CBPatternGray = cv2.imread('chessBoardImages/CBPatternGray.png')
-closeUpMainProj = cv2.imread('chessBoardImages/closeUpMainProj.png')
 
 #cbPattern is essentially an input of a default chessboard image
 #img is captured frame from camera
@@ -52,8 +41,9 @@ def applyRotation(img,R):
 
 #Applies homography matrix for calibration
 def applyHomography(img,H):
-
-    imgNEW = cv2.warpPerspective(img, H, (400, 400))
+    cbPatternWidth = cbPattern.shape[0]
+    cbPatternHeight = cbPattern.shape[1]
+    imgNEW = cv2.warpPerspective(img, H, (cbPatternWidth, cbPatternHeight))
     
     return(imgNEW)
 
@@ -124,9 +114,8 @@ def patternRecognizer(img):
         # Refine the corners to subpixel accuracy (Might be used for higher accuracy, but not necessarily needed)
         # criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
         # cv2.cornerSubPix(makeGray, cornersCB, (11, 11), (-1, -1), criteria)
-        # Draw the corners on the image
-        cv2.drawChessboardCorners(img, patternSize, cornersCB, retCB)
-            # Display the image
+
+        # Display the image
         cv2.imshow(imagePreviewName, img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
@@ -138,5 +127,4 @@ def patternRecognizer(img):
 
 if __name__ == "__main__":
     patternRecognizer(cbPattern)    
-
  
