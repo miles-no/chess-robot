@@ -77,9 +77,9 @@ def drawQuadrants(img):
 
 #Finds the rotation matrix to properly rotate the chessboard pattern
 def findRotation(theta):
-
+    cbPatternWidth, cbPatternHeight = cbPattern.shape[0], cbPattern.shape[1]
     if theta != 0:
-        rotMAT = cv2.getRotationMatrix2D(tuple(np.array((400,400)[1::-1])/2), theta, 1.0)
+        rotMAT = cv2.getRotationMatrix2D(tuple(np.array((cbPatternWidth,cbPatternHeight)[1::-1])/2), theta, 1.0)
     else:
         rotMAT = np.zeros((2,2))
 

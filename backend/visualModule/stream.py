@@ -1,5 +1,6 @@
 import cv2
-from visualModule import patternRecognizer, findTransformation, applyHomography
+from visualModule import patternRecognizer, findTransformation, applyHomography, drawQuadrants, findRotation, applyRotation
+from coordinate_definer import CoordinateDefiner
 
 class Stream():
     def __init__(self):
@@ -52,8 +53,15 @@ if __name__ == "__main__":
     ret, H = findTransformation(img, chess_board)
     if ret:
         img = applyHomography(img, H)
-        cv2.imshow("Image", img)
+        img = drawQuadrants(img)
+        cv2.imshow("Before rotation", img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-
+        cd = CoordinateDefiner()
+        theta = cd.define_places(3, 4)
+        rotMat = findRotation(theta)
+        img = applyRotation(img, rotMat)
+        cv2.imshow("After rotation", img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
