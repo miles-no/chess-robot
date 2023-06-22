@@ -9,7 +9,7 @@ import os
 #Import for camera to use for calibration
 
 #Reference_Image
-cbPattern = cv2.imread('/Users/espensele/Desktop/Miles-Chess-Robot/chess-robot/backend/visualModule/chessBoardImages/chess-board.png')
+cbPattern = cv2.imread('chessBoardImages/chess-board.png')
 
 #cbPattern is essentially an input of a default chessboard image
 #img is captured frame from camera
