@@ -1,6 +1,11 @@
 class CoordinateDefiner():
     def __init__(self):
-        pass
+        self.rotation = {
+            (1,2): 0,
+            (2,4): 90,
+            (3,4): 180,
+            (1,3): 270,
+        }
     
     # Define the piece color to play with
     def define_piece_choice(self, choice):
@@ -11,7 +16,11 @@ class CoordinateDefiner():
     
     # Define the places of the pieces where the user start
     def define_places(self, x, y):
-        return f"Chosen corners: {x}, {y}"
+        if (x, y) in self.rotation:
+            return self.rotation[(x, y)]
+        elif (y, x) in self.rotation:
+            return self.rotation[(y, x)]
+        return -1
 
 
 if __name__ == "__main__":
