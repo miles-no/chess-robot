@@ -107,18 +107,9 @@ class VisualModule:
     def patternRecognizer(self, img):
         patternSize = (7,7)
         makeGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        retCB, cornersCB = cv2.findChessboardCorners(makeGray, patternSize, cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_FAST_CHECK + cv2.CALIB_CB_NORMALIZE_IMAGE)
-        imagePreviewName = "Original image"
+        retCB, _ = cv2.findChessboardCorners(makeGray, patternSize, cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_FAST_CHECK + cv2.CALIB_CB_NORMALIZE_IMAGE)
         if retCB:
             print("Pattern found...")
-            # Refine the corners to subpixel accuracy (Might be used for higher accuracy, but not necessarily needed)
-            # criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-            # cv2.cornerSubPix(makeGray, cornersCB, (11, 11), (-1, -1), criteria)
-
-            # Display the image
-            cv2.imshow(imagePreviewName, img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
             return True
         else: 
             print("No pattern found")

@@ -7,24 +7,32 @@ def start_game():
     # Start calibration
     stream = Stream()
     vm = VisualModule()
-    img = stream.start_stream()
-    ret, H = vm.findTransformation(img)
+    board = stream.start_stream()
+    ret, H = vm.findTransformation(board)
     if not ret:
         return
-    img = vm.applyHomography(img, H)
-    img = vm.drawQuadrants(img)
-    cv2.imshow("Before rotation", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    empty_board = vm.applyHomography(board, H)
+    stream.show_photo(empty_board, "Empty board")
+
+    # Add the pieces
+
+    # Take a photo
+    cap = cv2.VideoCapture(0)
+    start_state = stream.take_photo(cap)
+    stream.stop_stream(cap)
+    stream.show_photo(start_state, "Start state")
+    clean_start_state = vm.applyHomography(start_state, H)
+
+    Qstart_state = vm.drawQuadrants(clean_start_state)
+    stream.show_photo(Qstart_state, "Before rotation")
 
     # Rotate the image
     cd = CoordinateDefiner()
-    theta = cd.define_places(3, 4)
+    theta = cd.define_places(3, 4) # TODO: Change this to the user input
     rotMat = vm.findRotation(theta)
-    img = vm.applyRotation(img, rotMat)
-    cv2.imshow("After rotation", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    preState = vm.applyRotation(Qstart_state, rotMat)
+    cv2.imshow("After rotation", preState)
+    stream.close_window() 
 
 
 if __name__ == "__main__":

@@ -1,6 +1,5 @@
 import cv2
 from visualModule.visual_module import VisualModule
-from visualModule.coordinate_definer import CoordinateDefiner
 
 class Stream():
     def __init__(self):
@@ -13,9 +12,7 @@ class Stream():
             # Capture frame-by-frame
             _, frame = cap.read()
             
-            # Display the video in gray scale
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            cv2.imshow('frame',gray)
+            cv2.imshow('frame',frame)
 
             img = self.take_photo(cap)
 
@@ -27,16 +24,17 @@ class Stream():
             currentFrame += 1
         return img
 
-
+    
     def take_photo(self, cap):
         for i in range(5):
             cap.grab()
-            _ , img  = cap.read()
+            _, img = cap.read()
         return img
-
-    def show_photo(self, img):
+    
+    
+    def show_photo(self, img, text="Image"):
         # Display the image and wait for the user to press a key
-        cv2.imshow("Image", img)
+        cv2.imshow(text, img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
@@ -45,8 +43,15 @@ class Stream():
         cap.release()
         cv2.destroyAllWindows()
 
+    def close_window(self):
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
     stream = Stream()
-
+    cap = cv2.VideoCapture(0)
+    img = stream.take_photo(cap)
+    stream.stop_stream(cap)
+    stream.show_photo(img)
 
