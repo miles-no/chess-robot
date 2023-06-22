@@ -1,10 +1,10 @@
 import cv2
-from visualModule import patternRecognizer, findTransformation, applyHomography, drawQuadrants, findRotation, applyRotation
-from coordinate_definer import CoordinateDefiner
+from visualModule.visual_module import VisualModule
+from visualModule.coordinate_definer import CoordinateDefiner
 
 class Stream():
     def __init__(self):
-        pass
+        self.vm = VisualModule()
 
     def start_stream(self):
         cap = cv2.VideoCapture(0)
@@ -19,7 +19,7 @@ class Stream():
 
             img = self.take_photo(cap)
 
-            if patternRecognizer(img) or cv2.waitKey(1) & 0xFF == ord('q'):
+            if self.vm.patternRecognizer(img) or cv2.waitKey(1) & 0xFF == ord('q'):
                 self.stop_stream(cap)
                 break
 
@@ -48,20 +48,5 @@ class Stream():
 
 if __name__ == "__main__":
     stream = Stream()
-    img = stream.start_stream()
-    chess_board = cv2.imread("chessBoardImages/chess-board.png")
-    ret, H = findTransformation(img, chess_board)
-    if ret:
-        img = applyHomography(img, H)
-        img = drawQuadrants(img)
-        cv2.imshow("Before rotation", img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-        cd = CoordinateDefiner()
-        theta = cd.define_places(3, 4)
-        rotMat = findRotation(theta)
-        img = applyRotation(img, rotMat)
-        cv2.imshow("After rotation", img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+
 
