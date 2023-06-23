@@ -3,10 +3,11 @@ from visualModule.stream import Stream
 from visualModule.coordinate_definer import CoordinateDefiner
 import cv2
 
+stream = Stream()
+vm = VisualModule()
+
 def start_game():
     # Start calibration
-    stream = Stream()
-    vm = VisualModule()
     board = stream.start_stream()
     ret, H = vm.findTransformation(board)
     if not ret:
@@ -16,6 +17,22 @@ def start_game():
 
     # Add the pieces
 
+    # Take a photo and rotate it
+    preState = rotated_image(3, 4, H)
+    cv2.imshow("PreState", preState)
+    cv2.imwrite("PreState.jpg", preState)
+    stream.close_window() 
+
+    # Player moves a piece
+
+    # Take a photo
+    currState = rotated_image(3, 4, H)
+    cv2.imshow("CurrState", currState)
+    cv2.imwrite("CurrState.jpg", currState)
+    stream.close_window() 
+
+
+def rotated_image(ro1, ro2, H):
     # Take a photo
     cap = cv2.VideoCapture(0)
     start_state = stream.take_photo(cap)
@@ -28,11 +45,10 @@ def start_game():
 
     # Rotate the image
     cd = CoordinateDefiner()
-    theta = cd.define_places(3, 4) # TODO: Change this to the user input
+    theta = cd.define_places(ro1, ro2) # TODO: Change this to the user input
     rotMat = vm.findRotation(theta)
-    preState = vm.applyRotation(Qstart_state, rotMat)
-    cv2.imshow("After rotation", preState)
-    stream.close_window() 
+    preState = vm.applyRotation(clean_start_state, rotMat)
+    return preState
 
 
 if __name__ == "__main__":
