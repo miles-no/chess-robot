@@ -6,12 +6,12 @@
 }
 
 .black-tile {
-  background-color: black;
+  background-color: #987554;
 }
 .white-tile {
-  background-color: white;
+  background-color: #e5d3b3;
 }
 
 .tile img {
-  width: 45px;
+  width: 80px;
 }
