@@ -7,11 +7,11 @@ export default function Chessboard() {
   const pieces = [];
 
   for (let i = 0; i < 8; i++) {
-    pieces.push({ image: "assets/images/black-pawn.png", x: i, y: 6 });
+    pieces.push({ image: "assets/images/pawn_b.png", x: i, y: 6 });
   }
 
   for (let i = 0; i < 8; i++) {
-    pieces.push({ image: "assets/images/white-pawn.png", x: i, y: 1 });
+    pieces.push({ image: "assets/images/pawn_w.png", x: i, y: 1 });
   }
 
   let board = [];
