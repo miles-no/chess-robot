@@ -1,34 +1,16 @@
-import React, { useEffect, useState } from "react";
-export default function Home(){
-const [data, setdata] = useState([
-    {
-      name: "",
-      age: "",
-      date: "",
-      programming: "",
-    },
-  ]);
-
-  useEffect(() => {
-    fetch("/data")
-      .then((res) => res.json())
-      .then((data) => {
-        setdata({
-          name: data.Name,
-          age: data.Age,
-          date: data.Date,
-          programming: data.Programming,
-        });
-        console.log(data);
-      });
-  }, []);
-
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
+export default function Home() {
+  const navigate = useNavigate();
+  function startGame() {
+    navigate("/game");
+  }
   return (
     <div>
-      <p>{data.name}</p>
-      <p>{data.age}</p>
-      <p>{data.date}</p>
-      <p>{data.programming}</p>
+      <h1>Welcome!</h1>
+      <Button variant="outlined" onClick={startGame}>
+        Start Game
+      </Button>
     </div>
   );
 }
