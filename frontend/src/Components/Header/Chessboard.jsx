@@ -47,7 +47,14 @@ export default function Chessboard() {
   return (
     <div>
       <h1>Chessboard</h1>
+    <div className="Chessboardcontainer">
       <div id="chessboard">{board}</div>
+      <div className="coordinates">
+          {verticalAxis.map((coordinate, index) => (
+            <h1 key={index}>{coordinate}</h1>
+          ))}
+        </div>
+    </div>
     </div>
   );
 }

@@ -1,8 +1,19 @@
+.Chessboardcontainer {
+  display: flex;
+}
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 100px);
   grid-template-rows: repeat(8, 100px);
   width: 800px;
   height: 800px;
-  border: solid 10px black;
+  border: solid 2px black;
+}
+.coordinates {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  font-weight: bold;
 }
