@@ -31,7 +31,7 @@ export default function Chessboard() {
   let board = [];
 
   for (let i = verticalAxis.length - 1; i >= 0; i--) {
-    coordinates.push({x:horizontalAxis[i], y:i+1});
+    coordinates.push({ x: horizontalAxis[i], y: i + 1 });
     for (let j = 0; j < horizontalAxis.length; j++) {
       const number = i + j + 2;
       let image = undefined;
@@ -40,7 +40,14 @@ export default function Chessboard() {
         if (p.x === j && p.y === i) image = p.image;
       });
       const coordinateX = `${horizontalAxis[j]}`;
-      board.push(<Tile number={number} image={image} coordinatesX={coordinateX}/>);
+      board.push(
+        <Tile
+          key={`${i},${j}`}
+          number={number}
+          image={image}
+          coordinatesX={coordinateX}
+        />
+      );
     }
   }
 

@@ -5,6 +5,14 @@
   height: 100px;
 }
 
+.tile .chess-piece {
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 80px;
+}
+
 .black-tile {
   background-color: #987554;
 }
