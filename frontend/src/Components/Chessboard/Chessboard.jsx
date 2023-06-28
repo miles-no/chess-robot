@@ -1,67 +1,80 @@
+import Button from "@mui/material/Button";
+import React, { useState } from "react";
 import "./Chessboard.css";
 import Tile from "./Tile";
-export default function Chessboard() {
-  const verticalAxis = ["1", "2", "3", "4", "5", "6", "7", "8"];
-  const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
+export default function Chessboard({ size = 8, initialPieces = [] }) {
+  const verticalAxis = Array.from({ length: size }, (_, index) =>
+    String(index + 1)
+  );
+  const horizontalAxis = Array.from({ length: size }, (_, index) =>
+    String.fromCharCode(97 + index)
+  );
 
-  const pieces = [];
-  const coordinates = [];
-  for (let p = 0; p < 2; p++) {
-    const type = p === 0 ? "b" : "w";
-    const y = p === 0 ? 7 : 0;
+  const [pieces, setPieces] = useState(initialPieces);
 
-    pieces.push({ image: `assets/images/rook_${type}.png`, x: 0, y });
-    pieces.push({ image: `assets/images/rook_${type}.png`, x: 7, y });
-    pieces.push({ image: `assets/images/knight_${type}.png`, x: 1, y });
-    pieces.push({ image: `assets/images/knight_${type}.png`, x: 6, y });
-    pieces.push({ image: `assets/images/bishop_${type}.png`, x: 2, y });
-    pieces.push({ image: `assets/images/bishop_${type}.png`, x: 5, y });
-    pieces.push({ image: `assets/images/queen_${type}.png`, x: 3, y });
-    pieces.push({ image: `assets/images/king_${type}.png`, x: 4, y });
-  }
-
-  for (let i = 0; i < 8; i++) {
-    pieces.push({ image: "assets/images/pawn_b.png", x: i, y: 6 });
-  }
-
-  for (let i = 0; i < 8; i++) {
-    pieces.push({ image: "assets/images/pawn_w.png", x: i, y: 1 });
-  }
+  const handlePieceMove = (pieceIndex, newX, newY) => {
+    setPieces((prevPieces) => {
+      const updatedPieces = [...prevPieces];
+      updatedPieces[pieceIndex] = {
+        ...updatedPieces[pieceIndex],
+        x: newX,
+        y: newY,
+      };
+      return updatedPieces;
+    });
+  };
 
   let board = [];
 
   for (let i = verticalAxis.length - 1; i >= 0; i--) {
-    coordinates.push({ x: horizontalAxis[i], y: i + 1 });
     for (let j = 0; j < horizontalAxis.length; j++) {
       const number = i + j + 2;
       let image = undefined;
 
-      pieces.forEach((p) => {
+      pieces.forEach((p, index) => {
         if (p.x === j && p.y === i) image = p.image;
       });
+
       const coordinateX = `${horizontalAxis[j]}`;
+      const coordinateY = `${verticalAxis[i]}`;
+
       board.push(
         <Tile
           key={`${i},${j}`}
           number={number}
           image={image}
           coordinatesX={coordinateX}
+          coordinatesY={coordinateY}
+          onPieceMove={(index, newX, newY) =>
+            handlePieceMove(index, newX, newY)
+          }
         />
       );
     }
   }
 
+  function moveButton(prevX = 0, prevY = 7) {
+    let index;
+    for (let i = 0; i < pieces.length; i++) {
+      if (pieces[i].x === prevX && pieces[i].y === prevY) {
+        index = i;
+      }
+    }
+    handlePieceMove(index, 3, 3);
+  }
+
   return (
     <div>
       <h1>Chessboard</h1>
-    <div className="Chessboardcontainer">
-      <div id="chessboard">{board}</div>
-      <div className="coordinates">
+      <div className="Chessboardcontainer">
+        <div id="chessboard">{board}</div>
+        <div className="coordinates">
           {verticalAxis.reverse().map((coordinate, index) => (
             <h1 key={index}>{coordinate}</h1>
           ))}
         </div>
-    </div>
+        <Button onClick={() => moveButton()}> Move</Button>
+      </div>
     </div>
   );
 }
