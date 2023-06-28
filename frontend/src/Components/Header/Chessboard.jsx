@@ -57,7 +57,7 @@ export default function Chessboard() {
     <div className="Chessboardcontainer">
       <div id="chessboard">{board}</div>
       <div className="coordinates">
-          {verticalAxis.map((coordinate, index) => (
+          {verticalAxis.reverse().map((coordinate, index) => (
             <h1 key={index}>{coordinate}</h1>
           ))}
         </div>
