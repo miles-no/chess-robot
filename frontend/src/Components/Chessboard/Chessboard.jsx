@@ -3,6 +3,32 @@ import React, { useState } from "react";
 import "./Chessboard.css";
 import Tile from "./Tile";
 export default function Chessboard({ size = 8, initialPieces = [] }) {
+  const [moves, setMoves] = useState([
+    [
+      {
+        prevX: -1,
+        prevY: -1,
+        currX: -1,
+        currY: -1,
+      },
+    ],
+  ]);
+
+  function getMoves() {
+    fetch("/moves")
+      .then((res) => res.json())
+      .then((data) =>
+        setMoves({
+          prevX: data.prevX,
+          prevY: data.prevY,
+          currX: data.nextX,
+          currY: data.nextY,
+        })
+      );
+    console.log(moves);
+  }
+  React.useEffect(() => {}, []);
+
   const verticalAxis = Array.from({ length: size }, (_, index) =>
     String(index + 1)
   );
@@ -73,7 +99,7 @@ export default function Chessboard({ size = 8, initialPieces = [] }) {
             <h1 key={index}>{coordinate}</h1>
           ))}
         </div>
-        <Button onClick={() => moveButton()}> Move</Button>
+        <Button onClick={() => getMoves()}>Move</Button>
       </div>
     </div>
   );
