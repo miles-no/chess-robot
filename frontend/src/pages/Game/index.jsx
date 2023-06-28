@@ -1,7 +1,7 @@
 import React from "react";
-import Chessboard from "/Users/espensele/Desktop/Miles-Chess-Robot/chess-robot/frontend/src/Components/Chessboard/Chessboard.jsx";
+import Chessboard from "../../Components/Chessboard/Chessboard";
 export default function Game() {
-  const [pieces, setPieces] = React.useState([]);
+  const [pieces] = React.useState([]);
 
   for (let p = 0; p < 2; p++) {
     const type = p === 0 ? "b" : "w";
