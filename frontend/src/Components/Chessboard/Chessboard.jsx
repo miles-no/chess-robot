@@ -3,29 +3,21 @@ import React, { useState } from "react";
 import "./Chessboard.css";
 import Tile from "./Tile";
 export default function Chessboard({ size = 8, initialPieces = [] }) {
-  const [moves, setMoves] = useState([
-    [
-      {
-        prevX: -1,
-        prevY: -1,
-        currX: -1,
-        currY: -1,
-      },
-    ],
-  ]);
+  const [moves, setMoves] = useState([[]]);
 
   function getMoves() {
     fetch("/moves")
       .then((res) => res.json())
-      .then((data) =>
+      .then((data) => {
         setMoves({
           prevX: data.prevX,
           prevY: data.prevY,
           currX: data.nextX,
           currY: data.nextY,
-        })
-      );
+        });
+      });
     console.log(moves);
+    moveButton();
   }
   React.useEffect(() => {}, []);
 
@@ -79,14 +71,14 @@ export default function Chessboard({ size = 8, initialPieces = [] }) {
     }
   }
 
-  function moveButton(prevX = 0, prevY = 7) {
+  function moveButton() {
     let index;
     for (let i = 0; i < pieces.length; i++) {
-      if (pieces[i].x === prevX && pieces[i].y === prevY) {
+      if (pieces[i].x === moves.prevX && pieces[i].y === moves.prevY) {
         index = i;
       }
     }
-    handlePieceMove(index, 3, 3);
+    handlePieceMove(index, moves.currX, moves.currY);
   }
 
   return (
