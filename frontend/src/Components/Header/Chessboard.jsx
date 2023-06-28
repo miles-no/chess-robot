@@ -5,7 +5,7 @@ export default function Chessboard() {
   const horizontalAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
   const pieces = [];
-
+  const coordinates = [];
   for (let p = 0; p < 2; p++) {
     const type = p === 0 ? "b" : "w";
     const y = p === 0 ? 7 : 0;
@@ -31,6 +31,7 @@ export default function Chessboard() {
   let board = [];
 
   for (let i = verticalAxis.length - 1; i >= 0; i--) {
+    coordinates.push({x:horizontalAxis[i], y:i+1});
     for (let j = 0; j < horizontalAxis.length; j++) {
       const number = i + j + 2;
       let image = undefined;
@@ -38,8 +39,8 @@ export default function Chessboard() {
       pieces.forEach((p) => {
         if (p.x === j && p.y === i) image = p.image;
       });
-
-      board.push(<Tile number={number} image={image} />);
+      const coordinateX = `${horizontalAxis[j]}`;
+      board.push(<Tile number={number} image={image} coordinatesX={coordinateX}/>);
     }
   }
 
