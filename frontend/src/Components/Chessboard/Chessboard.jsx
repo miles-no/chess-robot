@@ -1,6 +1,5 @@
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
 import "./Chessboard.css";
 import Tile from "./Tile";
 
@@ -32,6 +31,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
 
       if (pieceIndex !== -1) {
         handlePieceMove(pieceIndex, moves.currX, moves.currY);
+        check_positions();
       }
     }
   }, [moves]);
@@ -46,6 +46,19 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       };
       return updatedPieces;
     });
+  };
+
+  function check_positions() {
+    console.log(moves);
+    for (let i = 0; i < pieces.length; i++) {
+      if (moves.currX === pieces[i].x && moves.currY === pieces[i].y) {
+        deleteItem(i);
+      }
+    }
+  }
+
+  const deleteItem = (index) => {
+    setPieces((todos) => todos.filter((item, i) => i !== index));
   };
 
   let board = [];
