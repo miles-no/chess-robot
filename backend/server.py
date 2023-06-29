@@ -1,5 +1,6 @@
 from flask import Flask
 import datetime
+from translator import translate_notation
 
 x = datetime.datetime.now()
 
@@ -15,11 +16,9 @@ def data():
     }
 
 def getUserInput():
-    prevX = int(input('Previous X: '))
-    prevY = int(input('Previous Y: '))
-    nextX = int(input('Next X: '))
-    nextY = int(input('Next Y: '))
-    return prevX, prevY, nextX, nextY
+    previous = input("Enter previous position: ")
+    current = input("Enter next position: ")
+    return translate_notation(previous, current)
 
 @app.route('/moves', methods=['GET'])
 def moves():
