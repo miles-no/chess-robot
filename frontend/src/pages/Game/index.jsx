@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
+import { Socket } from "socket.io-client";
 import Chessboard from "../../Components/Chessboard/Chessboard";
-export default function Game() {
+export default function Game({ socket }) {
   const [pieces] = React.useState([]);
-
   for (let p = 0; p < 2; p++) {
     const type = p === 0 ? "b" : "w";
     const y = p === 0 ? 7 : 0;
-
     pieces.push({ image: `assets/images/rook_${type}.png`, x: 0, y });
     pieces.push({ image: `assets/images/rook_${type}.png`, x: 7, y });
     pieces.push({ image: `assets/images/knight_${type}.png`, x: 1, y });
@@ -26,7 +25,7 @@ export default function Game() {
   }
   return (
     <div>
-      <Chessboard size={8} initialPieces={pieces} />
+      <Chessboard size={8} initialPieces={pieces} socket={socket} />
     </div>
   );
 }
