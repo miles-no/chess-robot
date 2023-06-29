@@ -1,9 +1,26 @@
 import Button from "@mui/material/Button";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Chessboard.css";
 import Tile from "./Tile";
+import { WebSocketContext } from "../../context/websocket";
 export default function Chessboard({ size = 8, initialPieces = [] }) {
   const [moves, setMoves] = useState([[]]);
+  const [serverMessage, setServerMessage] = useState(null);
+  const socket = useContext(WebSocketContext);
+  console.log(socket);
+
+  if (socket) {
+    //Listen for messages from the server
+    socket.on("from-server", (msg) => {
+      setServerMessage(msg);
+    });
+    console.log("socket is not null");
+  }
+
+  // Send message to the server
+  const sendToServer = () => {
+    socket.emit("to-server", "hello");
+  };
 
   function getMoves() {
     fetch("/moves")
@@ -91,7 +108,10 @@ export default function Chessboard({ size = 8, initialPieces = [] }) {
             <h1 key={index}>{coordinate}</h1>
           ))}
         </div>
-        <Button onClick={() => getMoves()}>Move</Button>
+        <Button onClick={() => sendToServer()}>Move</Button>
+        <p>
+          Server: <span>{serverMessage}</span>
+        </p>
       </div>
     </div>
   );

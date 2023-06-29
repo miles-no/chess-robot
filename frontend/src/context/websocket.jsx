@@ -1,16 +1,18 @@
 import React, { createContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 const WebSocketContext = createContext();
 
 const WebSocketProvider = ({ children }) => {
-  const [websocket, setWebsocket] = useState(null);
+  const [websocket, setWebsocket] = useState(io("ws://127.0.0.1:5000"));
 
   useEffect(() => {
-    const newWebsocket = new WebSocket("ws://localhost:8000");
-    setWebsocket(newWebsocket);
-
+    if (!websocket) {
+      const newWebsocket = io("ws://127.0.0.1:5000");
+      setWebsocket(newWebsocket);
+    }
     return () => {
-      newWebsocket.close();
+      websocket.close();
     };
   }, []);
 
