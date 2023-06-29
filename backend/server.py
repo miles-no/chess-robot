@@ -18,32 +18,16 @@ def handle_connect():
 @socket_io.on('to-server')
 def handle_to_server(arg):
     print(f'new to-server event: {arg}')
-    message = input('Enter message: ')
-    socket_io.emit('from-server', message)
+    message =  getUserInput()
+    messageDictionary = {"prevX": message[0], "prevY": message[1], "nextX": message[2], "nextY": message[3]}
+    socket_io.emit('from-server', messageDictionary)
 
-# @app.route('/data')
-# def data():
-#     return {
-#         'Name': "geek",
-#         'Age': '21',
-#         'Date': x,
-#         'Programming': 'Python'
-#     }
 
-# def getUserInput():
-#     previous = input("Enter previous position: ")
-#     current = input("Enter next position: ")
-#     return translate_notation(previous, current)
+def getUserInput():
+    previous = input("Enter previous position: ")
+    current = input("Enter next position: ")
+    return translate_notation(previous, current)
 
-# @app.route('/moves', methods=['GET'])
-# def moves():
-#     prevX, prevY, nextX, nextY = getUserInput()
-#     return {
-#         'prevX': prevX,
-#         'prevY': prevY,
-#         'nextX': nextX,
-#         'nextY': nextY
-#         }
 
 if __name__ == '__main__':
     socket_io.run(app, port=5000)

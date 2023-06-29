@@ -6,7 +6,7 @@ import Data from "./pages/Data";
 import Game from "./pages/Game";
 import Home from "./pages/Home";
 function App() {
-  const [socket, setSocket] = React.useState(io("ws://127.0.0.1:5000"));
+  const [socket] = React.useState(io("ws://127.0.0.1:5000"));
   return (
     <div className="App">
       <BrowserRouter>
