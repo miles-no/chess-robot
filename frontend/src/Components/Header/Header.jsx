@@ -1,6 +1,5 @@
 import { Avatar, Button } from "@mui/material";
 import Box from "@mui/material/Box";
-import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Header() {
@@ -9,12 +8,11 @@ export default function Header() {
     <Box
       id="main-container"
       sx={{
-        
         position: "absolute",
         backgroundColor: "white",
         width: "100%",
         height: "4em",
-        
+
         display: "flex",
         justifyContent: "stretch",
         borderBottom: "1px solid black",
@@ -31,8 +29,7 @@ export default function Header() {
         }}
       >
         <Button
-          
-          onClick={() => navigate('')}
+          onClick={() => navigate("")}
           sx={{
             width: "10em",
             height: "auto",

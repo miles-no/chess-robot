@@ -1,9 +1,27 @@
 import Button from "@mui/material/Button";
 import React, { useState } from "react";
+import { io } from "socket.io-client";
+import xtype from "xtypejs";
 import "./Chessboard.css";
 import Tile from "./Tile";
-export default function Chessboard({ size = 8, initialPieces = [] }) {
+export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const [moves, setMoves] = useState([[]]);
+  const [serverMessage, setServerMessage] = useState(null);
+  React.useEffect(() => {
+    if (!serverMessage) {
+      setServerMessage("No message");
+    }
+    return;
+  }, [serverMessage]);
+  //Listen for messages from the server
+  socket.on("from-server", (msg) => {
+    setServerMessage(msg);
+  });
+
+  // Send message to the server
+  const sendToServer = () => {
+    socket.emit("to-server", "hello");
+  };
 
   function getMoves() {
     fetch("/moves")
@@ -80,7 +98,7 @@ export default function Chessboard({ size = 8, initialPieces = [] }) {
     }
     handlePieceMove(index, moves.currX, moves.currY);
   }
-
+  console.log(serverMessage);
   return (
     <div>
       <h1>Chessboard</h1>
@@ -91,7 +109,10 @@ export default function Chessboard({ size = 8, initialPieces = [] }) {
             <h1 key={index}>{coordinate}</h1>
           ))}
         </div>
-        <Button onClick={() => getMoves()}>Move</Button>
+        <Button onClick={() => sendToServer()}>Move</Button>
+        <p>
+          Server: <span>{serverMessage}</span>
+        </p>
       </div>
     </div>
   );
