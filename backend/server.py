@@ -24,9 +24,8 @@ def handle_to_server(arg):
 
 
 def getUserInput():
-    previous = input("Enter previous position: ")
-    current = input("Enter next position: ")
-    return translate_notation(previous, current)
+    move = input("Enter move: ")
+    return translate_notation(move)
 
 
 if __name__ == '__main__':
