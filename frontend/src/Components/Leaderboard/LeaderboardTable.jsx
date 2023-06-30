@@ -16,7 +16,7 @@ export default function LeaderboardTable() {
   ];
 
   return (
-    <div>
+    <div className="leaderboardTable">
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -29,7 +29,9 @@ export default function LeaderboardTable() {
             {data.map((value, key) => {
               return (
                 <TableRow key={key}>
-                  <TableCell>{value.name}</TableCell>
+                  <TableCell component="th" scope="row">
+                    {value.name}
+                  </TableCell>
                   <TableCell>{value.score}</TableCell>
                 </TableRow>
               );
