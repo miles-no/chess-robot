@@ -32,13 +32,13 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       );
 
       if (pieceIndex !== -1) {
-        handlePieceMove(pieceIndex, moves.currX, moves.currY);
+        movePiece(pieceIndex, moves.currX, moves.currY);
         check_positions();
       }
     }
   }, [moves]);
 
-  const handlePieceMove = (pieceIndex, newX, newY) => {
+  const movePiece = (pieceIndex, newX, newY) => {
     setPieces((prevPieces) => {
       const updatedPieces = [...prevPieces];
       updatedPieces[pieceIndex] = {
@@ -84,9 +84,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
           image={image}
           coordinatesX={coordinateX}
           coordinatesY={coordinateY}
-          onPieceMove={(index, newX, newY) =>
-            handlePieceMove(index, newX, newY)
-          }
+          onPieceMove={(index, newX, newY) => movePiece(index, newX, newY)}
         />
       );
     }
