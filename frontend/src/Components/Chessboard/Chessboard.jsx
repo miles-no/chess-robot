@@ -33,7 +33,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
 
       if (pieceIndex !== -1) {
         movePiece(pieceIndex, moves.currX, moves.currY);
-        check_positions();
+        checkPositions();
       }
     }
   }, [moves]);
@@ -50,17 +50,16 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     });
   };
 
-  function check_positions() {
-    console.log(moves);
+  const checkPositions = () => {
     for (let i = 0; i < pieces.length; i++) {
       if (moves.currX === pieces[i].x && moves.currY === pieces[i].y) {
-        deleteItem(i);
+        deletePiece(i);
       }
     }
-  }
+  };
 
-  const deleteItem = (index) => {
-    setPieces((todos) => todos.filter((item, i) => i !== index));
+  const deletePiece = (index) => {
+    setPieces((prevPieces) => prevPieces.filter((_, i) => i !== index));
   };
 
   let board = [];
