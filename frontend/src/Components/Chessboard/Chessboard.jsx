@@ -8,18 +8,20 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const [pieces, setPieces] = useState(initialPieces);
 
   useEffect(() => {
-    socket.on("from-server", (msg) => {
+    const handleServerMessage = (msg) => {
       setMoves({
         prevX: msg.prevX,
         prevY: msg.prevY,
         currX: msg.nextX,
         currY: msg.nextY,
       });
-    });
+    };
+
+    socket.on("from-server", handleServerMessage);
 
     // Cleanup the socket listener when the component unmounts
     return () => {
-      socket.off("from-server");
+      socket.off("from-server", handleServerMessage);
     };
   }, [socket]);
 
@@ -95,7 +97,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   };
 
   return (
-    <div>
+    <div className="main-box">
       <h1>Chessboard</h1>
       <div className="Chessboardcontainer">
         <div id="chessboard">{board}</div>
