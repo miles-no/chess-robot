@@ -62,32 +62,38 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     setPieces((prevPieces) => prevPieces.filter((_, i) => i !== index));
   };
 
-  let board = [];
+  const generateBoard = () => {
+    let board = [];
 
-  for (let i = size - 1; i >= 0; i--) {
-    for (let j = 0; j < size; j++) {
-      const number = i + j + 2;
-      let image = undefined;
+    for (let i = size - 1; i >= 0; i--) {
+      for (let j = 0; j < size; j++) {
+        const number = i + j + 2;
+        let image = undefined;
 
-      pieces.forEach((p, index) => {
-        if (p.x === j && p.y === i) image = p.image;
-      });
+        pieces.forEach((piece, index) => {
+          if (piece.x === j && piece.y === i) {
+            image = piece.image;
+          }
+        });
 
-      const coordinateX = String.fromCharCode(97 + j);
-      const coordinateY = String(i + 1);
+        const coordinateX = String.fromCharCode(97 + j);
+        const coordinateY = String(i + 1);
 
-      board.push(
-        <Tile
-          key={`${i},${j}`}
-          number={number}
-          image={image}
-          coordinatesX={coordinateX}
-          coordinatesY={coordinateY}
-          onPieceMove={(index, newX, newY) => movePiece(index, newX, newY)}
-        />
-      );
+        board.push(
+          <Tile
+            key={`${i},${j}`}
+            number={number}
+            image={image}
+            coordinatesX={coordinateX}
+            coordinatesY={coordinateY}
+            onPieceMove={(index, newX, newY) => movePiece(index, newX, newY)}
+          />
+        );
+      }
     }
-  }
+
+    return board;
+  };
 
   const sendToServer = () => {
     socket.emit("to-server", "hello");
@@ -97,7 +103,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     <div className="main-box">
       <h1>Chessboard</h1>
       <div className="Chessboardcontainer">
-        <div id="chessboard">{board}</div>
+        <div id="chessboard">{generateBoard()}</div>
         <div className="coordinates">
           {Array.from({ length: size }, (_, index) => (
             <h1 key={index}>{String(size - index)}</h1>
