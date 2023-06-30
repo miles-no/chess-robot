@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import Header from "./Components/Header/Header";
 import Game from "./pages/Game";
 import Home from "./pages/Home";
+import Leaderboard from "./pages/Leaderboard";
 function App() {
   const [socket] = React.useState(io("ws://127.0.0.1:5000"));
   return (
@@ -14,6 +15,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/game" element={<Game socket={socket} />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
           </Routes>
         </div>
       </BrowserRouter>
