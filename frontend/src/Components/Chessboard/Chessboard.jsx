@@ -6,6 +6,7 @@ import Tile from "./Tile";
 export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const [moves, setMoves] = useState({});
   const [pieces, setPieces] = useState(initialPieces);
+  const [deletedPieces, setDeletedPieces] = useState([]);
 
   useEffect(() => {
     const handleServerMessage = (msg) => {
@@ -60,6 +61,10 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
 
   const deletePiece = (index) => {
     setPieces((prevPieces) => prevPieces.filter((_, i) => i !== index));
+    setDeletedPieces((prevDeletedPieces) => [
+      ...prevDeletedPieces,
+      pieces[index],
+    ]);
   };
 
   const generateBoard = () => {
@@ -109,10 +114,28 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
             <h1 key={index}>{String(size - index)}</h1>
           ))}
         </div>
-        <Button onClick={sendToServer}>Move</Button>
-        <p>
-          Moves: {moves.prevX} {moves.prevY} to {moves.currX} {moves.currY}
-        </p>
+        <Button
+          sx={{
+            placeSelf: "center end",
+          }}
+          onClick={sendToServer}
+        >
+          Move
+        </Button>
+        <div className="GraveyardContainer" style={{ paddingTop: "3em" }}>
+          <h1>Graveyard</h1>
+          <div className="Graveyard">
+            {deletedPieces.map((dPiece, index) => (
+              <img
+                className="graveyardpieces"
+                key={index}
+                src={dPiece.image}
+                alt={`Piece ${index}`}
+                style={{ width: "70px", height: "70px" }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
