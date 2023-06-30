@@ -8,18 +8,20 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const [pieces, setPieces] = useState(initialPieces);
 
   useEffect(() => {
-    socket.on("from-server", (msg) => {
+    const handleServerMessage = (msg) => {
       setMoves({
         prevX: msg.prevX,
         prevY: msg.prevY,
         currX: msg.nextX,
         currY: msg.nextY,
       });
-    });
+    };
+
+    socket.on("from-server", handleServerMessage);
 
     // Cleanup the socket listener when the component unmounts
     return () => {
-      socket.off("from-server");
+      socket.off("from-server", handleServerMessage);
     };
   }, [socket]);
 
@@ -30,13 +32,13 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       );
 
       if (pieceIndex !== -1) {
-        handlePieceMove(pieceIndex, moves.currX, moves.currY);
-        check_positions();
+        movePiece(pieceIndex, moves.currX, moves.currY);
+        checkPositions();
       }
     }
   }, [moves]);
 
-  const handlePieceMove = (pieceIndex, newX, newY) => {
+  const movePiece = (pieceIndex, newX, newY) => {
     setPieces((prevPieces) => {
       const updatedPieces = [...prevPieces];
       updatedPieces[pieceIndex] = {
@@ -48,57 +50,60 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     });
   };
 
-  function check_positions() {
-    console.log(moves);
+  const checkPositions = () => {
     for (let i = 0; i < pieces.length; i++) {
       if (moves.currX === pieces[i].x && moves.currY === pieces[i].y) {
-        deleteItem(i);
+        deletePiece(i);
       }
     }
-  }
-
-  const deleteItem = (index) => {
-    setPieces((todos) => todos.filter((item, i) => i !== index));
   };
 
-  let board = [];
+  const deletePiece = (index) => {
+    setPieces((prevPieces) => prevPieces.filter((_, i) => i !== index));
+  };
 
-  for (let i = size - 1; i >= 0; i--) {
-    for (let j = 0; j < size; j++) {
-      const number = i + j + 2;
-      let image = undefined;
+  const generateBoard = () => {
+    let board = [];
 
-      pieces.forEach((p, index) => {
-        if (p.x === j && p.y === i) image = p.image;
-      });
+    for (let i = size - 1; i >= 0; i--) {
+      for (let j = 0; j < size; j++) {
+        const number = i + j + 2;
+        let image = undefined;
 
-      const coordinateX = String.fromCharCode(97 + j);
-      const coordinateY = String(i + 1);
-
-      board.push(
-        <Tile
-          key={`${i},${j}`}
-          number={number}
-          image={image}
-          coordinatesX={coordinateX}
-          coordinatesY={coordinateY}
-          onPieceMove={(index, newX, newY) =>
-            handlePieceMove(index, newX, newY)
+        pieces.forEach((piece, index) => {
+          if (piece.x === j && piece.y === i) {
+            image = piece.image;
           }
-        />
-      );
+        });
+
+        const coordinateX = String.fromCharCode(97 + j);
+        const coordinateY = String(i + 1);
+
+        board.push(
+          <Tile
+            key={`${i},${j}`}
+            number={number}
+            image={image}
+            coordinatesX={coordinateX}
+            coordinatesY={coordinateY}
+            onPieceMove={(index, newX, newY) => movePiece(index, newX, newY)}
+          />
+        );
+      }
     }
-  }
+
+    return board;
+  };
 
   const sendToServer = () => {
     socket.emit("to-server", "hello");
   };
 
   return (
-    <div>
+    <div className="main-box">
       <h1>Chessboard</h1>
       <div className="Chessboardcontainer">
-        <div id="chessboard">{board}</div>
+        <div id="chessboard">{generateBoard()}</div>
         <div className="coordinates">
           {Array.from({ length: size }, (_, index) => (
             <h1 key={index}>{String(size - index)}</h1>
