@@ -7,6 +7,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const [moves, setMoves] = useState({});
   const [pieces, setPieces] = useState(initialPieces);
   const [deletedPieces, setDeletedPieces] = useState([]);
+  const [checkMate, setCheckMate] = useState(false);
 
   useEffect(() => {
     const handleServerMessage = (msg) => {
@@ -38,6 +39,13 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       }
     }
   }, [moves]);
+
+  useEffect(() => {
+    if (checkMate) {
+      alert("Checkmate! Starting new game...");
+      newGame();
+    }
+  }, [checkMate]);
 
   const movePiece = (pieceIndex, newX, newY) => {
     setPieces((prevPieces) => {
