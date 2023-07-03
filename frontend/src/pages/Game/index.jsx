@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Socket } from "socket.io-client";
 import Chessboard from "../../Components/Chessboard/Chessboard";
 export default function Game({ socket }) {
-  const [pieces] = React.useState([]);
+  const [pieces, setPieces] = React.useState([]);
   for (let p = 0; p < 2; p++) {
     const type = p === 0 ? "b" : "w";
     const y = p === 0 ? 7 : 0;
@@ -23,9 +23,18 @@ export default function Game({ socket }) {
   for (let i = 0; i < 8; i++) {
     pieces.push({ image: "assets/images/pawn_w.png", x: i, y: 1 });
   }
+
+  const handlePieceUpdate = (updatedPieces) => {
+    setPieces(updatedPieces);
+  };
   return (
     <div>
-      <Chessboard size={8} initialPieces={pieces} socket={socket} />
+      <Chessboard
+        size={8}
+        initialPieces={pieces}
+        socket={socket}
+        onPieceUpdate={handlePieceUpdate}
+      />
     </div>
   );
 }
