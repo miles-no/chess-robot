@@ -12,11 +12,14 @@ class ChessLogic:
     
     def quitEnine(self):
         self.engine.quit()
-
-
+    
+    def validateMove(self, board, move):
+        return move in board.legal_moves
 
 if __name__ == "__main__":
     board = chess.Board()
+    print(board)
+    print(type(board))
     chessLogic = ChessLogic()
     print(chessLogic.getBestMove(board))
     chessLogic.quitEnine()
