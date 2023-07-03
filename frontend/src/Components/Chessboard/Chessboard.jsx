@@ -105,12 +105,8 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   };
 
   function newGame() {
-    console.log(pieces);
-    console.log(initialPieces);
-    for (let i = 0; i < initialPieces.length; i++) {
-      console.log(i);
-      movePiece(i, initialPieces[i].x, initialPieces[i].y);
-    }
+    setPieces(initialPieces);
+    setDeletedPieces([]);
   }
 
   return (
