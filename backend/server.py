@@ -2,7 +2,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 import datetime
 from translator import translate_notation
-from chessLogic.chess import ChessLogic
+from chessLogic.chessLogic import ChessLogic
 import chess
 
 x = datetime.datetime.now()
@@ -29,12 +29,14 @@ def handle_to_server(arg):
 
 def getUserInput():
     move = input("Enter move: ")
+    print(chess_logic.validateMove(chess.Board(), chess.Move.from_uci(move)))
     return translate_notation(move)
 
 
 def getStockfishMove():
     board = chess.Board()
     move = chess_logic.getBestMove(board)
+    print(chess_logic.validateMove(board, chess.Move.from_uci(move.uci())))
     message = translate_notation(move.uci())
     return message
 
