@@ -105,8 +105,13 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   };
 
   function newGame() {
-    setPieces(initialPieces);
-    setDeletedPieces([]);
+    const confirmNewGame = window.confirm(
+      "Are you sure you want to start a new game?"
+    );
+    if (confirmNewGame) {
+      setPieces(initialPieces);
+      setDeletedPieces([]);
+    }
   }
 
   return (
