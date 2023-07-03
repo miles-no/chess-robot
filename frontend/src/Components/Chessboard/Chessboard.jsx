@@ -3,7 +3,12 @@ import React, { useEffect, useState } from "react";
 import "./Chessboard.css";
 import Tile from "./Tile";
 
-export default function Chessboard({ size = 8, initialPieces = [], socket }) {
+export default function Chessboard({
+  size = 8,
+  initialPieces = [],
+  socket,
+  onPieceUpdate,
+}) {
   const [moves, setMoves] = useState({});
   const [pieces, setPieces] = useState(initialPieces);
   const [deletedPieces, setDeletedPieces] = useState([]);
@@ -57,8 +62,8 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       };
       return updatedPieces;
     });
+    onPieceUpdate([...pieces]);
   };
-
   const checkPositions = () => {
     for (let i = 0; i < pieces.length; i++) {
       if (moves.currX === pieces[i].x && moves.currY === pieces[i].y) {
@@ -126,6 +131,49 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     setDeletedPieces([]);
   }
 
+  const checkBoardState = () => {
+    const boardState = [];
+
+    for (let i = size - 1; i >= 0; i--) {
+      const row = [];
+
+      for (let j = 0; j < size; j++) {
+        const piece = pieces.find((p) => p.x === j && p.y === i);
+
+        if (piece) {
+          row.push(getChessNotation(piece.image));
+        } else {
+          row.push(".");
+        }
+      }
+
+      boardState.push(row.join(" "));
+    }
+
+    console.log(boardState.join("\n"));
+  };
+
+  const getChessNotation = (image) => {
+    // Map the image path to the corresponding chess notation
+    const notationMap = {
+      "assets/images/rook_b.png": "r",
+      "assets/images/rook_w.png": "R",
+      "assets/images/knight_b.png": "n",
+      "assets/images/knight_w.png": "N",
+      "assets/images/bishop_b.png": "b",
+      "assets/images/bishop_w.png": "B",
+      "assets/images/queen_b.png": "q",
+      "assets/images/queen_w.png": "Q",
+      "assets/images/king_b.png": "k",
+      "assets/images/king_w.png": "K",
+      "assets/images/pawn_b.png": "p",
+      "assets/images/pawn_w.png": "P",
+    };
+
+    // Return the chess notation if available, or the image path if not found
+    return notationMap[image] || image;
+  };
+
   return (
     <div className="main-box">
       <h1>Chessboard</h1>
@@ -144,6 +192,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
         >
           Move
         </Button>
+        <Button onClick={checkBoardState}>Check Board State</Button>
         <div className="GraveyardContainer" style={{ paddingTop: "3em" }}>
           <h1>Graveyard</h1>
           <div className="Graveyard">
