@@ -129,6 +129,7 @@ export default function Chessboard({
 
     setPieces(initialPieces);
     setDeletedPieces([]);
+    socket.emit("new-game", "Start new game");
   }
 
   const checkBoardState = () => {

@@ -26,6 +26,10 @@ def handle_to_server(arg):
     messageDictionary = {"prevX": message[0], "prevY": message[1], "nextX": message[2], "nextY": message[3]}
     socket_io.emit('from-server', messageDictionary)
 
+@socket_io.on('new-game')
+def handle_to_server(arg):
+    print(f'new to-server event: {arg}')
+
 
 def getUserInput():
     move = input("Enter move: ")
