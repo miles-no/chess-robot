@@ -24,17 +24,9 @@ export default function Game({ socket }) {
     pieces.push({ image: "assets/images/pawn_w.png", x: i, y: 1 });
   }
 
-  const handlePieceUpdate = (updatedPieces) => {
-    setPieces(updatedPieces);
-  };
   return (
     <div>
-      <Chessboard
-        size={8}
-        initialPieces={pieces}
-        socket={socket}
-        onPieceUpdate={handlePieceUpdate}
-      />
+      <Chessboard size={8} initialPieces={pieces} socket={socket} />
     </div>
   );
 }
