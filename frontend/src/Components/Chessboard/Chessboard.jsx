@@ -104,6 +104,11 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     socket.emit("to-server", "hello");
   };
 
+  function newGame() {
+    setPieces(initialPieces);
+    setDeletedPieces([]);
+  }
+
   return (
     <div className="main-box">
       <h1>Chessboard</h1>
@@ -134,6 +139,9 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
                 style={{ width: "70px", height: "70px" }}
               />
             ))}
+          </div>
+          <div>
+            <Button onClick={newGame}>New Game</Button>
           </div>
         </div>
       </div>
