@@ -9,23 +9,38 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const [deletedPieces, setDeletedPieces] = useState([]);
   const [result, setResult] = useState();
 
+  const handleServerMessage = (msg) => {
+    setMoves({
+      prevX: msg.prevX,
+      prevY: msg.prevY,
+      currX: msg.nextX,
+      currY: msg.nextY,
+    });
+  };
+
+  // Event listener for 'from-server' event
+  const handleResultMessage = (messageDictionary) => {
+    if (messageDictionary.result) {
+      setResult(messageDictionary.result);
+    }
+  };
+
   useEffect(() => {
-    const handleServerMessage = (msg) => {
-      setMoves({
-        prevX: msg.prevX,
-        prevY: msg.prevY,
-        currX: msg.nextX,
-        currY: msg.nextY,
-      });
-    };
-
     socket.on("from-server", handleServerMessage);
-
     // Cleanup the socket listener when the component unmounts
     return () => {
       socket.off("from-server", handleServerMessage);
     };
   }, [socket]);
+
+  useEffect(() => {
+    socket.on("from-server", handleResultMessage);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      socket.off("from-server", handleResultMessage);
+    };
+  }, []);
 
   useEffect(() => {
     if (moves.prevX !== undefined && moves.currX !== undefined) {
@@ -40,21 +55,6 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     }
   }, [moves]);
 
-  useEffect(() => {
-    // Event listener for 'from-server' event
-    const handleServerMessage = (messageDictionary) => {
-      if (messageDictionary.result) {
-        setResult(messageDictionary.result);
-      }
-    };
-
-    socket.on("from-server", handleServerMessage);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      socket.off("from-server", handleServerMessage);
-    };
-  }, []);
   useEffect(() => {
     if (result) {
       alert("Game concluded: " + result + " Starting new game...");
