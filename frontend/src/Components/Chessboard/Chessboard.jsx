@@ -41,6 +41,21 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   }, [moves]);
 
   useEffect(() => {
+    const handleServerResponse = (validate) => {
+      if (!validate) {
+        alert("Invalid move");
+      }
+    };
+
+    socket.on("from-server", handleServerResponse);
+
+    return () => {
+      // Clean up the socket listener when component unmounts
+      socket.off("from-server", handleServerResponse);
+    };
+  }, []);
+
+  useEffect(() => {
     if (checkMate) {
       alert("Checkmate! Starting new game...");
       newGame();
