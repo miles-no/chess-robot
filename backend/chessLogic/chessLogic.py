@@ -23,7 +23,6 @@ class ChessLogic:
     def movePiece(self, move):
         move = chess.Move.from_uci(move)
         self.board.push(move)
-        # return board
     
     def get_board(self):
         return self.board
@@ -33,12 +32,17 @@ class ChessLogic:
 
 if __name__ == "__main__":
     chessLogic = ChessLogic()
-    for i in range(5):
-        print(chessLogic.get_board())
-        move = str(chessLogic.getBestMove())
-        print(move)
-        chessLogic.movePiece(move)
-        print(chessLogic.get_board())
-    chessLogic.reset_board()
-    print(chessLogic.get_board())
+    # for i in range(5):
+    #     print(chessLogic.get_board())
+    #     move = str(chessLogic.getBestMove())
+    #     print(move)
+    #     chessLogic.movePiece(move)
+    #     print(chessLogic.get_board())
+    # chessLogic.reset_board()
+    # print(chessLogic.get_board())
+    move = input("Enter move: ")
+    print(chess.Move.from_uci(move))
+    print(type(chess.Move.from_uci(move)))
+    validation = chessLogic.validateMove(chess.Move.from_uci(move))
+    print(validation)
     chessLogic.quitEngine()
