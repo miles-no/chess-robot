@@ -29,6 +29,7 @@ def handle_to_server(arg):
 @socket_io.on('new-game')
 def handle_to_server(arg):
     print(f'new to-server event: {arg}')
+    chess_logic.reset_board()
 
 
 def getUserInput():
@@ -38,9 +39,9 @@ def getUserInput():
 
 
 def getStockfishMove():
-    board = chess.Board()
-    move = chess_logic.getBestMove(board)
-    print(chess_logic.validateMove(board, chess.Move.from_uci(move.uci())))
+    move = chess_logic.getBestMove()
+    print(chess_logic.validateMove(move))
+    chess_logic.movePiece(str(move))
     message = translate_notation(move.uci())
     return message
 
