@@ -26,14 +26,18 @@ def handle_to_server(arg):
     validation = chess_logic.validateMove(move)
     if not validation:
         print("Stockfish made an illegal move")
+        print("MOVE ::: " + move)
         socket_io.emit('from-server', validation)
         return
     print("Stockfish made a legal move")
     move = move.uci()
     chess_logic.movePiece(move)
     message = translate_notation(move)
-    print(chess_logic.check_mate())
-    messageDictionary = {"prevX": message[0], "prevY": message[1], "nextX": message[2], "nextY": message[3], "checkmate": chess_logic.check_mate()}
+    messageDictionary = {"prevX": message[0], "prevY": message[1], 
+                         "nextX": message[2], "nextY": message[3], "checkmate": chess_logic.check_mate(), "result": chess_logic.getOutcome()}
+    print(chess_logic.get_board())
+    if(chess_logic.getOutcome()):
+        print(chess_logic.getOutcome())
     socket_io.emit('from-server', messageDictionary)
 
 @socket_io.on('new-game')
