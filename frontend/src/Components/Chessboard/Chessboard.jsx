@@ -41,20 +41,20 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   }, [moves]);
 
   useEffect(() => {
-    const handleServerResponse = (validate) => {
-      if (!validate) {
-        alert("Invalid move");
+    // Event listener for 'from-server' event
+    const handleServerMessage = (messageDictionary) => {
+      if (messageDictionary.checkmate) {
+        setCheckMate(true);
       }
     };
 
-    socket.on("from-server", handleServerResponse);
+    socket.on("from-server", handleServerMessage);
 
+    // Clean up the event listener on component unmount
     return () => {
-      // Clean up the socket listener when component unmounts
-      socket.off("from-server", handleServerResponse);
+      socket.off("from-server", handleServerMessage);
     };
   }, []);
-
   useEffect(() => {
     if (checkMate) {
       alert("Checkmate! Starting new game...");
