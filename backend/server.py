@@ -22,7 +22,16 @@ def handle_connect():
 @socket_io.on('to-server')
 def handle_to_server(arg):
     print(f'new to-server event: {arg}')
-    message = getStockfishMove() #! Change for user input
+    move = getUserInput() #! Change for user input
+    validation = chess_logic.validateMove(move)
+    if not validation:
+        print("Stockfish made an illegal move")
+        socket_io.emit('from-server', validation)
+        return
+    print("Stockfish made a legal move")
+    move = move.uci()
+    chess_logic.movePiece(move)
+    message = translate_notation(move)
     messageDictionary = {"prevX": message[0], "prevY": message[1], "nextX": message[2], "nextY": message[3]}
     socket_io.emit('from-server', messageDictionary)
 
@@ -31,19 +40,12 @@ def handle_to_server(arg):
     print(f'new to-server event: {arg}')
     chess_logic.reset_board()
 
-
 def getUserInput():
     move = input("Enter move: ")
-    print(chess_logic.validateMove(chess.Board(), chess.Move.from_uci(move)))
-    return translate_notation(move)
-
+    return chess.Move.from_uci(move)
 
 def getStockfishMove():
-    move = chess_logic.getBestMove()
-    print(chess_logic.validateMove(move))
-    chess_logic.movePiece(str(move))
-    message = translate_notation(move.uci())
-    return message
+    return chess_logic.getBestMove()
 
 if __name__ == '__main__':
     socket_io.run(app, port=5000)
