@@ -4,7 +4,7 @@ import chess.engine
 class ChessLogic:
     def __init__(self):
         self.board = chess.Board()
-        self.engine = chess.engine.SimpleEngine.popen_uci("/opt/homebrew/opt/stockfish/bin/stockfish")
+        self.engine = chess.engine.SimpleEngine.popen_uci("/usr/local/opt/stockfish/bin/stockfish")
 
     # Returns move in 'chess.Move' format
     def getBestMove(self):
@@ -33,6 +33,14 @@ class ChessLogic:
     def check_mate(self):
         return self.board.is_checkmate()
 
+    def getOutcome(self):
+    #.winner returns true for white win, false for black, None for draw
+        if self.board.outcome():
+            #Transforming outcome() to satisfactory format
+            result = str(self.board.outcome().termination).split('.')
+            result = result[1].replace('_', ' ').title()
+            return result
+
 if __name__ == "__main__":
     chessLogic = ChessLogic()
     while True:
@@ -40,10 +48,11 @@ if __name__ == "__main__":
         move = str(chessLogic.getBestMove())
         print(move)
         chessLogic.movePiece(move)
-        if chessLogic.check_mate():
-            print("Checkmate")
+        result = chessLogic.getOutcome()
+        if result:
+            print(chessLogic.getOutcome())
             break
         print(chessLogic.get_board())
-    print(chessLogic.check_mate())
+    print(chessLogic.getOutcome())
 
     chessLogic.quitEngine()
