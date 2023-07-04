@@ -29,20 +29,21 @@ class ChessLogic:
     
     def reset_board(self):
         self.board = chess.Board()
+    
+    def check_mate(self):
+        return self.board.is_checkmate()
 
 if __name__ == "__main__":
     chessLogic = ChessLogic()
-    # for i in range(5):
-    #     print(chessLogic.get_board())
-    #     move = str(chessLogic.getBestMove())
-    #     print(move)
-    #     chessLogic.movePiece(move)
-    #     print(chessLogic.get_board())
-    # chessLogic.reset_board()
-    # print(chessLogic.get_board())
-    move = input("Enter move: ")
-    print(chess.Move.from_uci(move))
-    print(type(chess.Move.from_uci(move)))
-    validation = chessLogic.validateMove(chess.Move.from_uci(move))
-    print(validation)
+    while True:
+        print(chessLogic.get_board())
+        move = str(chessLogic.getBestMove())
+        print(move)
+        chessLogic.movePiece(move)
+        if chessLogic.check_mate():
+            print("Checkmate")
+            break
+        print(chessLogic.get_board())
+    print(chessLogic.check_mate())
+
     chessLogic.quitEngine()

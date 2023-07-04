@@ -22,7 +22,7 @@ def handle_connect():
 @socket_io.on('to-server')
 def handle_to_server(arg):
     print(f'new to-server event: {arg}')
-    move = getUserInput() #! Change for user input
+    move = getStockfishMove() #! Change for user input
     validation = chess_logic.validateMove(move)
     if not validation:
         print("Stockfish made an illegal move")
@@ -32,11 +32,12 @@ def handle_to_server(arg):
     move = move.uci()
     chess_logic.movePiece(move)
     message = translate_notation(move)
-    messageDictionary = {"prevX": message[0], "prevY": message[1], "nextX": message[2], "nextY": message[3]}
+    print(chess_logic.check_mate())
+    messageDictionary = {"prevX": message[0], "prevY": message[1], "nextX": message[2], "nextY": message[3], "checkmate": chess_logic.check_mate()}
     socket_io.emit('from-server', messageDictionary)
 
 @socket_io.on('new-game')
-def handle_to_server(arg):
+def newGame(arg):
     print(f'new to-server event: {arg}')
     chess_logic.reset_board()
 
