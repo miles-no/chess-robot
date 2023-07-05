@@ -44,9 +44,14 @@ def startGame(arg):
         elif chess_logic.checkSpecialMove()[0]=="promotion":
             promotion = move[-1]
             move = move[:-1]
-            print("promotion")
-            socket_io.emit('promotion', promotion)
         emitMove(move)
+        if chess_logic.checkSpecialMove()[0]=="promotion":
+            print("Promo board")
+            print(chess_logic.get_board())
+            print(promotion)
+            #promo = {"promotion": promotion, "currX": message[0], "currY": message[1]}
+            #socket_io.emit('promotion', promo)
+
         print(chess_logic.get_board())
     print(chess_logic.get_board())
     print(chess_logic.getOutcome())
