@@ -29,10 +29,9 @@ def newGame(arg):
 def startGame(arg):
     while chess_logic.getOutcome() is None:
         move = getStockfishMove() #! Change for user input
-        validation = chess_logic.validateMove(move)
         if not chess_logic.validateMove(move):
-            socket_io.emit('from-server', validation)
-            return
+            socket_io.emit('validation-error')
+            continue
         move = move.uci()
         chess_logic.movePiece(move)
         if chess_logic.checkSpecialMove()[0] == "castling":
