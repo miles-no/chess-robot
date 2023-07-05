@@ -54,15 +54,14 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     };
   }, []);
 
-  useEffect(() => 
+  useEffect(() => {
+    // Set up the event listeners
     socket.on("promotion", handlePromotion);
+    socket.on("validation-error", validationError);
 
-    // Clean up the event listener on component unmount
+    // Clean up the event listeners on component unmount
     return () => {
       socket.off("promotion", handlePromotion);
-    socket.on("validation-error", validationError);
-    // Clean up the event listener on component unmount
-    return () => {
       socket.off("validation-error", validationError);
     };
   }, []);
