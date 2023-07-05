@@ -46,6 +46,29 @@ def newGame(arg):
     print(f'new to-server event: {arg}')
     chess_logic.reset_board()
 
+@socket_io.on('start-game')
+def startGame(arg):
+    print(f'new to-server event: {arg}')
+    while chess_logic.getOutcome() is None:
+        move = getStockfishMove() #! Change for user input
+        validation = chess_logic.validateMove(move)
+        if not validation:
+            print("Illegal move")
+            socket_io.emit('from-server', validation)
+            return
+        print("Stockfish made a legal move")
+        move = move.uci()
+        chess_logic.movePiece(move)
+        message = translate_notation(move)
+        messageDictionary = {"prevX": message[0], "prevY": message[1], 
+                            "nextX": message[2], "nextY": message[3], "checkmate": chess_logic.check_mate(), "result": chess_logic.getOutcome()}
+        print(chess_logic.get_board())
+        if(chess_logic.getOutcome()):
+            print(chess_logic.getOutcome())
+        socket_io.emit('from-server', messageDictionary)
+    print("Game over")
+
+
 def getUserInput():
     move = input("Enter move: ")
     return chess.Move.from_uci(move)
