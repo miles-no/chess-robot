@@ -5,6 +5,7 @@ from chessLogic.translator import translate_notation
 from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 import chess
+import time
 
 x = datetime.datetime.now()
 
@@ -59,12 +60,27 @@ def startGame(arg):
         print("Stockfish made a legal move")
         move = move.uci()
         chess_logic.movePiece(move)
+        if chess_logic.checkSpecialMove():
+            
+            rookMove = chess_logic.checkSpecialMove()
+            if rookMove is True:
+               print("OTHER SPECIAL")
+               break
+            message2 = translate_notation(rookMove)
+            messageDictionary2 = {"prevX": message2[0], "prevY": message2[1], 
+                            "nextX": message2[2], "nextY": message2[3],
+                              "checkmate": chess_logic.check_mate(), "result": chess_logic.getOutcome()}
+            socket_io.emit('from-server', messageDictionary2)
+            print("SPECIAL MOVE")
+            print(chess_logic.get_board())
+            time.sleep(1) #Sleep added because the frontend is unable to keep up with rook special move
         message = translate_notation(move)
         messageDictionary = {"prevX": message[0], "prevY": message[1], 
                             "nextX": message[2], "nextY": message[3], "checkmate": chess_logic.check_mate(), "result": chess_logic.getOutcome()}
         print(chess_logic.get_board())
         if(chess_logic.getOutcome()):
             print(chess_logic.getOutcome())
+            print("Result, winner is: " + chess_logic.getWinner())
         socket_io.emit('from-server', messageDictionary)
     print("Game over")
 
