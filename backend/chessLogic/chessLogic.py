@@ -59,27 +59,22 @@ class ChessLogic:
     def checkSpecialMove(self):
         if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.G1:
             rookMove = "h1f1"
-            print("Last move was kingside castling.")
             return "castling", rookMove
         if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.C1:
             rookMove = "a1d1"
-            print("Last move was queenside castling.")
             return "castling", rookMove
         if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.G8:
             rookMove="h8f8"
-            print("Last move was black kingside castling.")
             return "castling", rookMove
         if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.C8:
             rookMove = "a8d8"
-            print("Last move was black queenside castling.")
             return "castling", rookMove
         if self.last_move and self.board.is_en_passant(self.last_move):
-            print("Last move was an en passant capture.")
             return "passant", True
         if self.last_move and self.last_move.promotion:
-            print("Last move was a promotion move.")
             return "promotion", True
         return "", False
+    
 if __name__ == "__main__":
     STOCKFISH_PATH = "/usr/local/opt/stockfish/bin/stockfish"
     chessLogic = ChessLogic(STOCKFISH_PATH)
