@@ -33,6 +33,10 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     }
   };
 
+  const validationError = () => {
+    alert("Invalid move, try again.");
+  };
+
   useEffect(() => {
     socket.on("from-server", handleServerMessage);
     // Cleanup the socket listener when the component unmounts
@@ -50,12 +54,16 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     };
   }, []);
 
-  useEffect(() => {
+  useEffect(() => 
     socket.on("promotion", handlePromotion);
 
     // Clean up the event listener on component unmount
     return () => {
       socket.off("promotion", handlePromotion);
+    socket.on("validation-error", validationError);
+    // Clean up the event listener on component unmount
+    return () => {
+      socket.off("validation-error", validationError);
     };
   }, []);
 
