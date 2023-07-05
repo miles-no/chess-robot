@@ -141,6 +141,10 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     socket.emit("new-game", "Start new game");
   }
 
+  function startGame() {
+    socket.emit("start-game", "Start game");
+  }
+
   return (
     <div className="main-box">
       <h1>Chessboard</h1>
@@ -174,6 +178,9 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
           </div>
           <div>
             <Button onClick={newGame}>New Game</Button>
+          </div>
+          <div>
+            <Button onClick={startGame}>Start Game</Button>
           </div>
         </div>
       </div>
