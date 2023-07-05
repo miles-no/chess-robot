@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_socketio import SocketIO
 import datetime
-from translator import translate_notation
+from chessLogic.translator import translate_notation
 from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 import chess
