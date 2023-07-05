@@ -9,6 +9,14 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const [deletedPieces, setDeletedPieces] = useState([]);
   const [result, setResult] = useState();
 
+  const deletedPiecesRef = React.useRef(deletedPieces);
+  const piecesRef = React.useRef(pieces);
+  useEffect(() => {
+    piecesRef.current = pieces;
+  }, [pieces]);
+  useEffect(() => {
+    deletedPiecesRef.current = deletedPieces;
+  }, [deletedPieces]);
   const handleServerMessage = (msg) => {
     setMoves({
       prevX: msg.prevX,
@@ -43,6 +51,15 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   }, []);
 
   useEffect(() => {
+    socket.on("promotion", handlePromotion);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      socket.off("promotion", handlePromotion);
+    };
+  }, []);
+
+  useEffect(() => {
     if (moves.prevX !== undefined && moves.currX !== undefined) {
       const pieceIndex = pieces.findIndex(
         (piece) => piece.x === moves.prevX && piece.y === moves.prevY
@@ -73,6 +90,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       return updatedPieces;
     });
   };
+
   const checkPositions = () => {
     for (let i = 0; i < pieces.length; i++) {
       if (moves.currX === pieces[i].x && moves.currY === pieces[i].y) {
@@ -87,6 +105,40 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       ...prevDeletedPieces,
       pieces[index],
     ]);
+  };
+
+  const handlePromotion = (promo) => {
+    console.log("Promotion from server: " + promo.promotion);
+    const piecesList = piecesRef.current;
+    console.log(piecesList);
+    const pawnToBeReplaced = piecesList.findIndex(
+      (piece) => piece.x === promo.currX && piece.y === promo.currY
+    );
+    const imageReplacement = piecesList[pawnToBeReplaced].image;
+    const deletedPiecesList = deletedPiecesRef.current;
+    console.log(deletedPiecesList);
+    const pieceToBeReplaced = deletedPiecesList.findIndex((piece) =>
+      piece.image.includes(promo.promotion)
+    );
+    const pieceReplaceImage = deletedPiecesList[pieceToBeReplaced].image;
+    setPieces((prevPiece) => {
+      const updatedPieces = [...prevPiece];
+      updatedPieces[pawnToBeReplaced] = {
+        image: pieceReplaceImage,
+        x: promo.currX,
+        y: promo.currY,
+      };
+      return updatedPieces;
+    });
+    setDeletedPieces((prevPiece) => {
+      const updatedPieces = [...prevPiece];
+      updatedPieces[pieceToBeReplaced] = {
+        image: imageReplacement,
+        x: promo.currX,
+        y: promo.currY,
+      };
+      return updatedPieces;
+    });
   };
 
   const generateBoard = () => {
@@ -122,10 +174,6 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     return board;
   };
 
-  const sendToServer = () => {
-    socket.emit("to-server", "hello");
-  };
-
   function newGame() {
     if (pieces !== initialPieces || deletedPieces.length !== 0) {
       const confirmNewGame = window.confirm(
@@ -155,14 +203,6 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
             <h1 key={index}>{String(size - index)}</h1>
           ))}
         </div>
-        <Button
-          sx={{
-            placeSelf: "center end",
-          }}
-          onClick={sendToServer}
-        >
-          Move
-        </Button>
         <div className="GraveyardContainer" style={{ paddingTop: "3em" }}>
           <h1>Graveyard</h1>
           <div className="Graveyard">
