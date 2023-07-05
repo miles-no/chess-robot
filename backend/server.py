@@ -2,6 +2,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 import datetime
 from translator import translate_notation
+from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 import chess
 
@@ -10,7 +11,7 @@ x = datetime.datetime.now()
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
 
-chess_logic = ChessLogic()
+chess_logic = ChessLogic(STOCKFISH_PATH)
 
 # SocketIO to handle new connections
 # Prints for every new connection

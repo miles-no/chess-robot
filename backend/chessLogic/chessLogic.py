@@ -2,9 +2,9 @@ import chess
 import chess.engine
 
 class ChessLogic:
-    def __init__(self):
+    def __init__(self, STOCKFISH_PATH):
         self.board = chess.Board()
-        self.engine = chess.engine.SimpleEngine.popen_uci("/usr/local/opt/stockfish/bin/stockfish")
+        self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
 
     # Returns move in 'chess.Move' format
     def getBestMove(self):
@@ -42,7 +42,8 @@ class ChessLogic:
             return result
 
 if __name__ == "__main__":
-    chessLogic = ChessLogic()
+    STOCKFISH_PATH = "/opt/homebrew/opt/stockfish/bin/stockfish"
+    chessLogic = ChessLogic(STOCKFISH_PATH)
     while True:
         print(chessLogic.get_board())
         move = str(chessLogic.getBestMove())
