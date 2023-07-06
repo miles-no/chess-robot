@@ -2,6 +2,7 @@ import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
 import "./Chessboard.css";
 import Tile from "./Tile";
+import { chessPieceNotation } from "./chessDictionary";
 
 export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const [moves, setMoves] = useState({});
@@ -125,8 +126,16 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     const imageReplacement = piecesList[pawnToBeReplaced].image;
     const deletedPiecesList = deletedPiecesRef.current;
     console.log(deletedPiecesList);
+    console.log(
+      "Piece image to include::: " +
+        chessPieceNotation[promo.promotion] +
+        "_" +
+        promo.turn.charAt(0)
+    );
     const pieceToBeReplaced = deletedPiecesList.findIndex((piece) =>
-      piece.image.includes(promo.promotion)
+      piece.image.includes(
+        chessPieceNotation[promo.promotion] + "_" + promo.turn.charAt(0)
+      )
     );
     const pieceReplaceImage = deletedPiecesList[pieceToBeReplaced].image;
     setPieces((prevPiece) => {
