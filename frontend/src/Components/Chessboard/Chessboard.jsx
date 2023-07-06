@@ -116,22 +116,12 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   };
 
   const handlePromotion = (promo) => {
-    console.log("Promotion from server: " + promo.promotion);
     const piecesList = piecesRef.current;
-    console.log(piecesList);
     const pawnToBeReplaced = piecesList.findIndex(
       (piece) => piece.x === promo.currX && piece.y === promo.currY
     );
-    console.log(pawnToBeReplaced);
     const imageReplacement = piecesList[pawnToBeReplaced].image;
     const deletedPiecesList = deletedPiecesRef.current;
-    console.log(deletedPiecesList);
-    console.log(
-      "Piece image to include::: " +
-        chessPieceNotation[promo.promotion] +
-        "_" +
-        promo.turn.charAt(0)
-    );
     const pieceToBeReplaced = deletedPiecesList.findIndex((piece) =>
       piece.image.includes(
         chessPieceNotation[promo.promotion] + "_" + promo.turn.charAt(0)
