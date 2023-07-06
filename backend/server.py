@@ -34,8 +34,10 @@ def startGame(arg):
             socket_io.emit('validation-error')
             continue
         if chess_logic.checkPassant(move):
+            tmove = translate_notation(move.uci())
+            passant = {"currX": tmove[2], "currY": tmove[1], "turn": playerTurn}
+            socket_io.emit('passant', passant)
             print("Passant")
-            time.sleep(1)
         move = move.uci()
         chess_logic.movePiece(move)
         if chess_logic.checkSpecialMove()[0] == "castling":
@@ -82,6 +84,10 @@ def getStockfishMove():
 #             socket_io.emit('validation-error')
 #             continue
 #         if chess_logic.checkPassant(move):
+#             tmove = translate_notation(move.uci())
+#             passant = {"currX": tmove[2], "currY": tmove[1]}
+#             print(passant)
+#             print(translate_notation("a2a4"))
 #             print("Passant")
 #         move = move.uci()
 #         chess_logic.movePiece(move)
