@@ -190,6 +190,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       if (!confirmNewGame) {
         return; // Exit early if the user cancels the new game confirmation
       }
+      setResult(undefined);
     }
 
     setPieces(initialPieces);
