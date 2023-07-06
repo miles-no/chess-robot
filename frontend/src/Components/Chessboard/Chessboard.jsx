@@ -121,6 +121,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     const pawnToBeReplaced = piecesList.findIndex(
       (piece) => piece.x === promo.currX && piece.y === promo.currY
     );
+    console.log(pawnToBeReplaced);
     const imageReplacement = piecesList[pawnToBeReplaced].image;
     const deletedPiecesList = deletedPiecesRef.current;
     console.log(deletedPiecesList);
