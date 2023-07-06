@@ -38,6 +38,14 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     alert("Invalid move, try again.");
   };
 
+  const handlePassant = (passant) => {
+    const piecesList = piecesRef.current;
+    const pawnToBeRemoved = piecesList.findIndex(
+      (piece) => piece.x === passant.currX && piece.y === passant.currY
+    );
+    deletePiece(pawnToBeRemoved);
+  };
+
   useEffect(() => {
     socket.on("from-server", handleServerMessage);
     // Cleanup the socket listener when the component unmounts
@@ -59,11 +67,13 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     // Set up the event listeners
     socket.on("promotion", handlePromotion);
     socket.on("validation-error", validationError);
+    socket.on("passant", handlePassant);
 
     // Clean up the event listeners on component unmount
     return () => {
       socket.off("promotion", handlePromotion);
       socket.off("validation-error", validationError);
+      socket.off("passant", handlePassant);
     };
   }, []);
 

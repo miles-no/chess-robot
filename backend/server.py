@@ -35,7 +35,7 @@ def startGame(arg):
             continue
         if chess_logic.checkPassant(move):
             tmove = translate_notation(move.uci())
-            passant = {"currX": tmove[2], "currY": tmove[1], "turn": playerTurn}
+            passant = {"currX": tmove[2], "currY": tmove[1]}
             socket_io.emit('passant', passant)
             print("Passant")
         move = move.uci()
@@ -86,8 +86,7 @@ def getStockfishMove():
 #         if chess_logic.checkPassant(move):
 #             tmove = translate_notation(move.uci())
 #             passant = {"currX": tmove[2], "currY": tmove[1]}
-#             print(passant)
-#             print(translate_notation("a2a4"))
+#             socket_io.emit('passant', passant)
 #             print("Passant")
 #         move = move.uci()
 #         chess_logic.movePiece(move)
