@@ -4,12 +4,13 @@ class ChessLogic:
     def __init__(self, STOCKFISH_PATH):
         self.board = chess.Board()
         self.last_move = None
+        self.previous_move = None
         self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
         self.engine.configure({"Skill Level": 1})
 
     # Returns move in 'chess.Move' format
     def getBestMove(self):
-        result = self.engine.play(self.board, chess.engine.Limit(time=0.1))
+        result = self.engine.play(self.board, chess.engine.Limit(time=0.3))
         best_move = result.move
         return best_move
 
@@ -24,7 +25,7 @@ class ChessLogic:
     # Takes move in string format
     def movePiece(self, move):
         move = chess.Move.from_uci(move)
-        self.last_move = move  # Update last_move attribute
+        self.last_move = move
         self.board.push(move)
     
     def get_board(self):
@@ -76,11 +77,15 @@ class ChessLogic:
         if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.C8:
             rookMove = "a8d8"
             return "castling", rookMove
-        if self.last_move and self.board.is_en_passant(self.last_move):
-            return "passant", True
         if self.last_move and self.last_move.promotion:
             return "promotion", True
         return "", False
+    
+    def checkPassant(self, move):
+        if self.board.is_capture(move) and self.board.piece_at(move.to_square) is None:
+            print("EN PASSANT JUST HAPPEND")
+            return "passant"
+        return ""
     
 if __name__ == "__main__":
     STOCKFISH_PATH = "/usr/local/opt/stockfish/bin/stockfish"
