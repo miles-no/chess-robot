@@ -28,10 +28,14 @@ def newGame(arg):
 @socket_io.on('start-game')
 def startGame(arg):
     while chess_logic.getOutcome() is None:
+        playerTurn = chess_logic.getPlayerTurn()
         move = getStockfishMove() #! Change for user input
         if not chess_logic.validateMove(move):
             socket_io.emit('validation-error')
             continue
+        if chess_logic.checkPassant(move):
+            print("Passant")
+            time.sleep(1)
         move = move.uci()
         chess_logic.movePiece(move)
         if chess_logic.checkSpecialMove()[0] == "castling":
@@ -39,15 +43,13 @@ def startGame(arg):
             print("castling")
             emitMove(rookMove)
             time.sleep(1) #Sleep added because the frontend is unable to keep up with rook special move
-        elif chess_logic.checkSpecialMove()[0]=="passant":
-            pass
         elif chess_logic.checkSpecialMove()[0]=="promotion":
             promotion = move[-1]
             move = move[:-1]
         emitMove(move)
         if chess_logic.checkSpecialMove()[0]=="promotion":
             move = translate_notation(move)
-            promo = {"promotion": promotion, "currX": move[0], "currY": move[1], "turn": chess_logic.getPlayerTurn()}
+            promo = {"promotion": promotion, "currX": move[0], "currY": move[1], "turn": playerTurn}
             socket_io.emit('promotion', promo)
         print(chess_logic.get_board())
     print(chess_logic.getOutcome())
@@ -65,6 +67,40 @@ def getUserInput():
 
 def getStockfishMove():
     return chess_logic.getBestMove()
+
+
+# PASSANT_TEST = ["f2f3", "b7b5", "g2g4", "b5b4", "a2a4", "b4a3", "h2h4", "h7h6"]
+
+# @socket_io.on('start-game')
+# def testPassant(arg):
+#     for i in range(len(PASSANT_TEST)-1):
+#         print("Can I do passant?")
+#         print(chess_logic.get_board().has_legal_en_passant())
+#         move = PASSANT_TEST[i]
+#         move = chess.Move.from_uci(move)
+#         if not chess_logic.validateMove(move):
+#             socket_io.emit('validation-error')
+#             continue
+#         if chess_logic.checkPassant(move):
+#             print("Passant")
+#         move = move.uci()
+#         chess_logic.movePiece(move)
+#         if chess_logic.checkSpecialMove()[0] == "castling":
+#             rookMove = chess_logic.checkSpecialMove()[1]
+#             print("castling")
+#             emitMove(rookMove)
+#             time.sleep(1) #Sleep added because the frontend is unable to keep up with rook special move
+#         elif chess_logic.checkSpecialMove()[0]=="promotion":
+#             promotion = move[-1]
+#             move = move[:-1]
+#         emitMove(move)
+#         if chess_logic.checkSpecialMove()[0]=="promotion":
+#             move = translate_notation(move)
+#             promo = {"promotion": promotion, "currX": move[0], "currY": move[1], "turn": chess_logic.getPlayerTurn()}
+#             socket_io.emit('promotion', promo)
+#         print(chess_logic.get_board())
+#         time.sleep(1)
+#     print("Game over")
 
 if __name__ == '__main__':
     socket_io.run(app, port=5000)
