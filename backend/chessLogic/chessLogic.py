@@ -55,6 +55,13 @@ class ChessLogic:
                 return 'draw'
         else:
             return None
+        
+    def getPlayerTurn(self):
+        if self.board.turn:
+            return 'white'
+        else:
+            return 'black'
+
 
     def checkSpecialMove(self):
         if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.G1:

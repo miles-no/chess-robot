@@ -47,7 +47,7 @@ def startGame(arg):
         emitMove(move)
         if chess_logic.checkSpecialMove()[0]=="promotion":
             move = translate_notation(move)
-            promo = {"promotion": promotion, "currX": move[0], "currY": move[1]}
+            promo = {"promotion": promotion, "currX": move[0], "currY": move[1], "turn": chess_logic.getPlayerTurn()}
             socket_io.emit('promotion', promo)
         print(chess_logic.get_board())
     print(chess_logic.getOutcome())
