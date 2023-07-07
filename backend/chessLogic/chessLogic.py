@@ -79,16 +79,13 @@ class ChessLogic:
         return False
     
     def checkPassant(self, move):
-        if self.board.is_capture(move) and self.board.piece_at(move.to_square) is None:
-            print("EN PASSANT JUST HAPPEND")
-            return "passant"
+        if self.board.has_legal_en_passant():
+            if self.board.is_capture(move) and self.board.piece_at(move.to_square) is None:
+                return "passant"
         return ""
     
     def checkPromotion(self):
-        print(self.last_move)
-        print(self.last_move.promotion)
         if self.last_move and self.last_move.promotion:
-            print("PROMOTION JUST HAPPEND")
             return "promotion"
         return ""
     

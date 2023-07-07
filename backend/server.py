@@ -119,22 +119,19 @@ def getStockfishMove():
 #             tmove = translate_notation(move.uci())
 #             passant = {"currX": tmove[2], "currY": tmove[1]}
 #             socket_io.emit('passant', passant)
-#             print("Passant")
 #         move = move.uci()
 #         chess_logic.movePiece(move)
-#         if chess_logic.checkSpecialMove()[0] == "castling":
-#             rookMove = chess_logic.checkSpecialMove()[1]
-#             print("castling")
+#         if chess_logic.checkCastling():
+#             rookMove = chess_logic.checkCastling()
 #             emitMove(rookMove)
 #             time.sleep(1) #Sleep added because the frontend is unable to keep up with rook special move
-#         elif chess_logic.checkSpecialMove()[0]=="promotion":
+#         elif chess_logic.checkPromotion():
 #             promotion = move[-1]
 #             move = move[:-1]
-#         emitMove(move)
-#         if chess_logic.checkSpecialMove()[0]=="promotion":
-#             move = translate_notation(move)
-#             promo = {"promotion": promotion, "currX": move[0], "currY": move[1], "turn": chess_logic.getPlayerTurn()}
+#             pmove = translate_notation(move)
+#             promo = {"promotion": promotion, "currX": pmove[0], "currY": pmove[1], "turn": playerTurn}
 #             socket_io.emit('promotion', promo)
+#         emitMove(move)
 #         print(chess_logic.get_board())
 #         time.sleep(1)
 #     print("Game over")
