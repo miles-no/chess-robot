@@ -1,6 +1,14 @@
 import "./Tile.css";
 
-export default function Tile(props) {
+interface tileProps {
+  number: number;
+  image?: string;
+  coordinatesX: string;
+  coordinatesY: string;
+  onPieceMove: (index: number, newX: number, newY: number) => void;
+}
+
+export default function Tile(props: tileProps) {
   if (props.number % 2 === 0) {
     return (
       <div>
