@@ -15,3 +15,10 @@ stockfish==3.28.0
 websockets==11.0.3
 Werkzeug==2.3.6
 zipp==3.15.0
+pyserial==3.5
+requests==2.21.0
+ndjson==0.3.1
+deprecated==1.2.12
+chess==1.8.0
+berserk==0.10.0
+appdirs==1.4.4
