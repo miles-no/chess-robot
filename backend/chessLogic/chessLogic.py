@@ -63,28 +63,33 @@ class ChessLogic:
         else:
             return 'black'
 
-
-    def checkSpecialMove(self):
+    def checkCastling(self):
         if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.G1:
             rookMove = "h1f1"
-            return "castling", rookMove
+            return rookMove
         if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.C1:
             rookMove = "a1d1"
-            return "castling", rookMove
+            return rookMove
         if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.G8:
             rookMove="h8f8"
-            return "castling", rookMove
+            return rookMove
         if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.C8:
             rookMove = "a8d8"
-            return "castling", rookMove
-        if self.last_move and self.last_move.promotion:
-            return "promotion", True
-        return "", False
+            return rookMove
+        return False
     
     def checkPassant(self, move):
         if self.board.is_capture(move) and self.board.piece_at(move.to_square) is None:
             print("EN PASSANT JUST HAPPEND")
             return "passant"
+        return ""
+    
+    def checkPromotion(self):
+        print(self.last_move)
+        print(self.last_move.promotion)
+        if self.last_move and self.last_move.promotion:
+            print("PROMOTION JUST HAPPEND")
+            return "promotion"
         return ""
     
 if __name__ == "__main__":
