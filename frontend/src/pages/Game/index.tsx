@@ -1,8 +1,14 @@
 import React, { useContext } from "react";
 import { Socket } from "socket.io-client";
 import Chessboard from "../../Components/Chessboard/Chessboard";
-export default function Game({ socket }) {
-  const [pieces, setPieces] = React.useState([]);
+import { PieceType } from "../../Components/Chessboard/types/pieceType";
+
+interface gameProps {
+  socket: Socket;
+}
+
+export default function Game(props: gameProps) {
+  const [pieces] = React.useState<PieceType[]>([]);
   for (let p = 0; p < 2; p++) {
     const type = p === 0 ? "b" : "w";
     const y = p === 0 ? 7 : 0;
@@ -26,7 +32,7 @@ export default function Game({ socket }) {
 
   return (
     <div>
-      <Chessboard size={8} initialPieces={pieces} socket={socket} />
+      <Chessboard size={8} initialPieces={pieces} socket={props.socket} />
     </div>
   );
 }

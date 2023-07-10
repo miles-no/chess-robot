@@ -1,13 +1,20 @@
 import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
+import { PieceType } from "../../Components/Chessboard/types/pieceType";
 import "./Chessboard.css";
 import Tile from "./Tile";
 import { chessPieceNotation } from "./chessDictionary";
-
-export default function Chessboard({ size = 8, initialPieces = [], socket }) {
-  const [moves, setMoves] = useState({});
-  const [pieces, setPieces] = useState(initialPieces);
-  const [deletedPieces, setDeletedPieces] = useState([]);
+import { Moves } from "./types/moves";
+import { Promo } from "./types/promo";
+interface chessboardProps {
+  size: number;
+  initialPieces: PieceType[];
+  socket: any;
+}
+export default function Chessboard(props: chessboardProps) {
+  const [moves, setMoves] = useState<Moves>();
+  const [pieces, setPieces] = useState<PieceType[]>(props.initialPieces);
+  const [deletedPieces, setDeletedPieces] = useState<PieceType[]>([]);
   const [result, setResult] = useState();
 
   const deletedPiecesRef = React.useRef(deletedPieces);
@@ -18,7 +25,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   useEffect(() => {
     deletedPiecesRef.current = deletedPieces;
   }, [deletedPieces]);
-  const handleServerMessage = (msg) => {
+  const handleServerMessage = (msg: any) => {
     setMoves({
       prevX: msg.prevX,
       prevY: msg.prevY,
@@ -28,7 +35,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   };
 
   // Event listener for 'from-server' event
-  const handleResultMessage = (messageDictionary) => {
+  const handleResultMessage = (messageDictionary: any) => {
     if (messageDictionary.result) {
       setResult(messageDictionary.result);
     }
@@ -38,7 +45,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     alert("Invalid move, try again.");
   };
 
-  const handlePassant = (passant) => {
+  const handlePassant = (passant: any) => {
     const piecesList = piecesRef.current;
     const pawnToBeRemoved = piecesList.findIndex(
       (piece) => piece.x === passant.currX && piece.y === passant.currY
@@ -47,45 +54,47 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   };
 
   useEffect(() => {
-    socket.on("from-server", handleServerMessage);
-    // Cleanup the socket listener when the component unmounts
+    props.socket.on("from-server", handleServerMessage);
+    // Cleanup the props.socket listener when the component unmounts
     return () => {
-      socket.off("from-server", handleServerMessage);
+      props.socket.off("from-server", handleServerMessage);
     };
-  }, [socket]);
+  }, [props.socket]);
 
   useEffect(() => {
-    socket.on("from-server", handleResultMessage);
+    props.socket.on("from-server", handleResultMessage);
 
     // Clean up the event listener on component unmount
     return () => {
-      socket.off("from-server", handleResultMessage);
+      props.socket.off("from-server", handleResultMessage);
     };
   }, []);
 
   useEffect(() => {
     // Set up the event listeners
-    socket.on("promotion", handlePromotion);
-    socket.on("validation-error", validationError);
-    socket.on("passant", handlePassant);
+    props.socket.on("promotion", handlePromotion);
+    props.socket.on("validation-error", validationError);
+    props.socket.on("passant", handlePassant);
 
     // Clean up the event listeners on component unmount
     return () => {
-      socket.off("promotion", handlePromotion);
-      socket.off("validation-error", validationError);
-      socket.off("passant", handlePassant);
+      props.socket.off("promotion", handlePromotion);
+      props.socket.off("validation-error", validationError);
+      props.socket.off("passant", handlePassant);
     };
   }, []);
 
   useEffect(() => {
-    if (moves.prevX !== undefined && moves.currX !== undefined) {
-      const pieceIndex = pieces.findIndex(
-        (piece) => piece.x === moves.prevX && piece.y === moves.prevY
-      );
+    if (moves) {
+      if (moves.prevX !== undefined && moves.currX !== undefined) {
+        const pieceIndex = pieces.findIndex(
+          (piece) => piece.x === moves.prevX && piece.y === moves.prevY
+        );
 
-      if (pieceIndex !== -1) {
-        movePiece(pieceIndex, moves.currX, moves.currY);
-        checkPositions();
+        if (pieceIndex !== -1 && moves.currY) {
+          movePiece(pieceIndex, moves.currX, moves.currY);
+          checkPositions();
+        }
       }
     }
   }, [moves]);
@@ -97,7 +106,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     }
   }, [result]);
 
-  const movePiece = (pieceIndex, newX, newY) => {
+  const movePiece = (pieceIndex: number, newX: number, newY: number) => {
     setPieces((prevPieces) => {
       const updatedPieces = [...prevPieces];
       updatedPieces[pieceIndex] = {
@@ -111,21 +120,23 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
 
   const checkPositions = () => {
     for (let i = 0; i < pieces.length; i++) {
-      if (moves.currX === pieces[i].x && moves.currY === pieces[i].y) {
-        deletePiece(i);
+      if (moves) {
+        if (moves.currX === pieces[i].x && moves.currY === pieces[i].y) {
+          deletePiece(i);
+        }
       }
     }
   };
 
-  const deletePiece = (index) => {
+  const deletePiece = (index: number) => {
     setPieces((prevPieces) => prevPieces.filter((_, i) => i !== index));
-    setDeletedPieces((prevDeletedPieces) => [
+    setDeletedPieces((prevDeletedPieces: PieceType[]) => [
       ...prevDeletedPieces,
       pieces[index],
     ]);
   };
 
-  const handlePromotion = (promo) => {
+  const handlePromotion = (promo: Promo) => {
     const piecesList = piecesRef.current;
     const pawnToBeReplaced = piecesList.findIndex(
       (piece) => piece.x === promo.currX && piece.y === promo.currY
@@ -134,7 +145,9 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
     const deletedPiecesList = deletedPiecesRef.current;
     const pieceToBeReplaced = deletedPiecesList.findIndex((piece) =>
       piece.image.includes(
-        chessPieceNotation[promo.promotion] + "_" + promo.turn.charAt(0)
+        chessPieceNotation[promo.promotion as keyof typeof chessPieceNotation] +
+          "_" +
+          promo.turn.charAt(0)
       )
     );
     const pieceReplaceImage = deletedPiecesList[pieceToBeReplaced].image;
@@ -161,8 +174,8 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   const generateBoard = () => {
     let board = [];
 
-    for (let i = size - 1; i >= 0; i--) {
-      for (let j = 0; j < size; j++) {
+    for (let i = props.size - 1; i >= 0; i--) {
+      for (let j = 0; j < props.size; j++) {
         const number = i + j + 2;
         let image = undefined;
 
@@ -182,7 +195,9 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
             image={image}
             coordinatesX={coordinateX}
             coordinatesY={coordinateY}
-            onPieceMove={(index, newX, newY) => movePiece(index, newX, newY)}
+            onPieceMove={(index: number, newX: number, newY: number) =>
+              movePiece(index, newX, newY)
+            }
           />
         );
       }
@@ -192,7 +207,7 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
   };
 
   function newGame() {
-    if (pieces !== initialPieces || deletedPieces.length !== 0) {
+    if (pieces !== props.initialPieces || deletedPieces.length !== 0) {
       const confirmNewGame = window.confirm(
         "Are you sure you want to start a new game?"
       );
@@ -202,13 +217,13 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       setResult(undefined);
     }
 
-    setPieces(initialPieces);
+    setPieces(props.initialPieces);
     setDeletedPieces([]);
-    socket.emit("new-game", "Start new game");
+    props.socket.emit("new-game", "Start new game");
   }
 
   function startGame() {
-    socket.emit("start-game", "Start game");
+    props.socket.emit("start-game", "Start game");
   }
 
   return (
@@ -217,8 +232,8 @@ export default function Chessboard({ size = 8, initialPieces = [], socket }) {
       <div className="Chessboardcontainer">
         <div id="chessboard">{generateBoard()}</div>
         <div className="coordinates">
-          {Array.from({ length: size }, (_, index) => (
-            <h1 key={index}>{String(size - index)}</h1>
+          {Array.from({ length: props.size }, (_, index) => (
+            <h1 key={index}>{String(props.size - index)}</h1>
           ))}
         </div>
         <div className="GraveyardContainer" style={{ paddingTop: "3em" }}>
