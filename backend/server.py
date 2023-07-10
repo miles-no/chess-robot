@@ -27,15 +27,13 @@ def newGame(arg):
 def startGame(arg):
     for i in range(40):
         print("READY")
-        print(mycertabo.get_user_move())
+        mycertabo.get_user_move()
         move = mycertabo.pending_moves[0]
-        print(move)
         fen = mycertabo.chessboard.board_fen()
+        print(move)
         print(fen)
         socket_io.emit("get-fen", fen)
-        print(fen)
-        print(move)
-
     print("Game over")
+
 if __name__ == '__main__':
     socket_io.run(app, port=5000)
