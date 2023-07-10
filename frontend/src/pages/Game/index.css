@@ -1,0 +1,3 @@
+.unclickable-area {
+  pointer-events: none;
+}
