@@ -1,18 +1,25 @@
-import React, { useContext } from "react";
+import { Button } from "@mui/material";
 import { Socket } from "socket.io-client";
-import { getAutomaticTypeDirectiveNames } from "typescript";
-import { getPieces } from "../../helpers/pieces";
-import { PieceType } from "../../types/pieceType";
+import MyChessboard from "../../Components/Chessboard/Chessboard";
 
 interface gameProps {
   socket: Socket;
 }
 
 export default function Game(props: gameProps) {
-  const pieces = getPieces();
+  function newGame() {
+    props.socket.emit("new-game", "new-game");
+  }
+
+  function startGame() {
+    props.socket.emit("start-game", "startGame");
+  }
+
   return (
     <div>
-      <h1>Chessboard here</h1>
+      <MyChessboard socket={props.socket} />
+      <Button onClick={() => startGame()}>Start game</Button>
+      <Button onClick={() => newGame()}>New game</Button>
     </div>
   );
 }

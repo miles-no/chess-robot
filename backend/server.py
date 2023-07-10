@@ -29,7 +29,10 @@ def startGame(arg):
         print("READY")
         print(mycertabo.get_user_move())
         move = mycertabo.pending_moves[0]
+        print(move)
         fen = mycertabo.chessboard.board_fen()
+        print(fen)
+        socket_io.emit("get-fen", fen)
         print(fen)
         print(move)
 
