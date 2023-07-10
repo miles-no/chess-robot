@@ -3,6 +3,7 @@ import { Chessboard } from "react-chessboard";
 import { Socket } from "socket.io-client";
 interface mychessboardProps {
   socket: Socket;
+  boardWidth: number;
 }
 export default function MyChessboard(props: mychessboardProps) {
   const [FEN, setFEN] = useState<string>(
@@ -27,7 +28,7 @@ export default function MyChessboard(props: mychessboardProps) {
 
   return (
     <div>
-      <Chessboard boardWidth={500} position={FEN} />
+      <Chessboard boardWidth={props.boardWidth} position={FEN} />
     </div>
   );
 }
