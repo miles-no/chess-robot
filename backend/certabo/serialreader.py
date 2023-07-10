@@ -7,10 +7,7 @@
 import time
 import os
 import sys
-import argparse
-import subprocess
 import threading
-import queue
 import serial
 import fcntl
 import logging

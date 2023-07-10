@@ -1,14 +1,8 @@
 import sys
-import time
 import logging
 import logging.handlers
-import traceback
 import os
-import argparse
-import threading
 import importlib
-
-
 import certabo
 from certabo.certabo import CERTABO_DATA_PATH as CERTABO_DATA_PATH
 

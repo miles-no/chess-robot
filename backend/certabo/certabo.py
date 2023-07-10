@@ -69,17 +69,15 @@ class Certabo():
         self.serialthread = serialreader.serialreader(self.handle_usb_data, self.portname)
         self.serialthread.daemon = True
         self.serialthread.start()
-        time.sleep(10)
+        time.sleep(5)
 
 
     def get_user_move(self):
-        print('get_user_move')
         self.wait_for_move = True
         logging.debug('waiting for event signal')
         self.move_event.wait()
         self.move_event.clear()
         logging.debug(f'event signal received, pending moves: {self.pending_moves}')
-        print(f'event signal received, pending moves: {self.pending_moves}')
         self.wait_for_move = False
         return self.pending_moves 
 
@@ -135,38 +133,27 @@ class Certabo():
                 self.usb_data_processed = codes.statistic_processing(self.usb_data_history, False)
                 if self.usb_data_processed != []:
                     test_state = codes.usb_data_to_FEN(self.usb_data_processed, self.rotate180)
-                    board = chess.Board(test_state)
-                    #print(self.chessboard)
                     if test_state != "":
-                        #print("Test state is not empty")
                         if self.board_state_usb != test_state:
                             new_position = True
                         else:
                             new_position = False
-                        #print(f'new position: {new_position}')
                         self.board_state_usb = test_state
                         self.diff_leds()
                         if new_position:
-                            print(self.wait_for_move)
-                            print(chess.Board(self.board_state_usb))
-                            print(self.chessboard)
                             # new board state via usb
                             # logging.info(f'info string FEN {test_state}')
                             if self.wait_for_move:
                                 logging.debug('trying to find user move in usb data')
-                                print("trying to find user move in usb data")
                                 try:
-                                    print(self.board_state_usb )
                                     self.pending_moves = codes.get_moves(self.chessboard, self.board_state_usb, 1) # only search one move deep
-                                    print(f'pending moves: {self.pending_moves}')
                                     if self.pending_moves != []:
                                         logging.debug('firing event')
-                                        print(self.pending_moves[0])
                                         self.chessboard.push_uci(self.pending_moves[0])
                                         self.move_event.set()
                                 except:
                                     print("error in get_moves")
-                                    self.pending_moves = ["Invalid"]
+                                    self.pending_moves = []
 
     def calibrate_from_usb_data(self, usb_data):
         self.calibration_samples.append(usb_data)
