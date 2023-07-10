@@ -58,7 +58,6 @@ class serialreader(threading.Thread):
         self.buf = bytearray()
 
     def send_led(self, message: bytes):
-        # logging.debug(f'Sending to serial: {message}')
         if self.connected:
             return self.uart.write(message)
         return None

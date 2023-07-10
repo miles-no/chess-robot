@@ -6,6 +6,7 @@ from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 import chess
 import time
+from test_certabo import mycertabo
 
 x = datetime.datetime.now()
 
@@ -23,36 +24,47 @@ def handle_connect():
 @socket_io.on('new-game')
 def newGame(arg):
     print(f'new to-server event: {arg}')
-    chess_logic.reset_board()
+    mycertabo.new_game()
+
+# @socket_io.on('start-game')
+# def startGame(arg):
+#     while chess_logic.getOutcome() is None:
+#         playerTurn = chess_logic.getPlayerTurn()
+#         move = getStockfishMove() #! Change for user input
+#         if not chess_logic.validateMove(move):
+#             socket_io.emit('validation-error')
+#             continue
+#         if chess_logic.checkPassant(move):
+#             tmove = translate_notation(move.uci())
+#             passant = {"currX": tmove[2], "currY": tmove[1]}
+#             socket_io.emit('passant', passant)
+#         move = move.uci()
+#         chess_logic.movePiece(move)
+#         if chess_logic.checkCastling():
+#             rookMove = chess_logic.checkCastling()
+#             emitMove(rookMove)
+#             time.sleep(1) #Sleep added because the frontend is unable to keep up with rook special move
+#         elif chess_logic.checkPromotion():
+#             promotion = move[-1]
+#             move = move[:-1]
+#             pmove = translate_notation(move)
+#             promo = {"promotion": promotion, "currX": pmove[0], "currY": pmove[1], "turn": playerTurn}
+#             socket_io.emit('promotion', promo)
+#         emitMove(move)
+#         print(chess_logic.get_board())
+#     print(chess_logic.getOutcome())
+#     print("Result, winner is: " + chess_logic.getWinner())
 
 @socket_io.on('start-game')
 def startGame(arg):
-    while chess_logic.getOutcome() is None:
-        playerTurn = chess_logic.getPlayerTurn()
-        move = getStockfishMove() #! Change for user input
-        if not chess_logic.validateMove(move):
-            socket_io.emit('validation-error')
-            continue
-        if chess_logic.checkPassant(move):
-            tmove = translate_notation(move.uci())
-            passant = {"currX": tmove[2], "currY": tmove[1]}
-            socket_io.emit('passant', passant)
-        move = move.uci()
-        chess_logic.movePiece(move)
-        if chess_logic.checkCastling():
-            rookMove = chess_logic.checkCastling()
-            emitMove(rookMove)
-            time.sleep(1) #Sleep added because the frontend is unable to keep up with rook special move
-        elif chess_logic.checkPromotion():
-            promotion = move[-1]
-            move = move[:-1]
-            pmove = translate_notation(move)
-            promo = {"promotion": promotion, "currX": pmove[0], "currY": pmove[1], "turn": playerTurn}
-            socket_io.emit('promotion', promo)
+    for i in range(40):
+        print("READY")
+        print(mycertabo.get_user_move())
+        move = mycertabo.pending_moves[0]
+        print(move)
+        print(type(move))
         emitMove(move)
-        print(chess_logic.get_board())
-    print(chess_logic.getOutcome())
-    print("Result, winner is: " + chess_logic.getWinner())
+    print("Game over")
 
 def emitMove(move):
     tMove = translate_notation(move)

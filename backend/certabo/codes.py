@@ -600,20 +600,27 @@ def get_moves(board, fen, max_depth =2):
     :param max_depth:
     :return:
     """
+    print('get_moves')
     board_fen = fen.split()[0]
     # logging.debug('Getting diff between {} and {}'.format(board.board_fen(), board_fen))
     if board.board_fen() == board_fen:
-        # logging.debug('Positions identical')
+        print('Positions identical')
         return []
     copy_board = board.copy()  # type: chess.Board
     moves = list(board.generate_legal_moves())
+    print('moves', moves)
     for move in moves:
         copy_board.push(move)
+        print(board_fen)
+        print(copy_board.board_fen())
         if board_fen == copy_board.board_fen():
             logging.debug('Single move detected - {}'.format(move.uci()))
+            print('Single move detected - {}'.format(move.uci()))
+            print()
             return [move.uci()]
         copy_board.pop()
     if max_depth > 1:
+        print('max_depth', max_depth)
         for move in moves:
             copy_board.push(move)
             legal_moves2 = list(copy_board.generate_legal_moves())
