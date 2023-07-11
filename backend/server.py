@@ -1,11 +1,8 @@
 from flask import Flask
 from flask_socketio import SocketIO
-import datetime
 from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 from test_certabo import mycertabo
-
-x = datetime.datetime.now()
 
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
@@ -25,14 +22,14 @@ def newGame(arg):
 
 @socket_io.on('start-game')
 def startGame(arg):
-    for i in range(40):
-        print("READY")
+    print(arg)
+    while chess_logic.getOutcome(mycertabo.chessboard) is None:
         mycertabo.get_user_move()
-        move = mycertabo.pending_moves[0]
         fen = mycertabo.chessboard.board_fen()
-        print(move)
-        print(fen)
         socket_io.emit("get-fen", fen)
+    outcome = chess_logic.getOutcome(mycertabo.chessboard)
+    result = {"result": outcome[0], "winner": outcome[1]}
+    socket_io.emit("game-over", result)
     print("Game over")
 
 if __name__ == '__main__':
