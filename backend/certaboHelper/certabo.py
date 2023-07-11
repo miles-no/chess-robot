@@ -19,9 +19,8 @@ CALIBRATION_DATA = os.path.join(CERTABO_DATA_PATH,"calibration.bin")
 os.makedirs(CERTABO_DATA_PATH, exist_ok=True)
 
 class Certabo():
-    def __init__(self, port='auto', calibrate=0, **kwargs):
+    def __init__(self, calibrate=0, **kwargs):
         super().__init__(**kwargs)
-        self.portname = port
         if calibrate:
             self.calibration = True
         else:
@@ -40,19 +39,16 @@ class Certabo():
         self.usb_data_history = list(range(self.usb_data_history_depth))
         self.usb_data_history_filled = False
         self.usb_data_history_i = 0
-        self.move_detect_tries = 0
-        self.move_detect_max_tries = 3
 
         # try to load calibration data (mapping of RFID chip IDs to pieces)
         load_calibration(CALIBRATION_DATA)
 
         # spawn a serial thread and pass our data handler
-        self.serialthread = serialreader(self.handle_usb_data, self.portname)
+        self.serialthread = serialreader(self.handle_usb_data)
         self.serialthread.daemon = True
         self.serialthread.start()
         time.sleep(5)
 
-    #! Use
     def get_user_move(self):
         self.wait_for_move = True
         logging.debug('waiting for event signal')
@@ -102,7 +98,6 @@ class Certabo():
                         self.diff_leds()
                         if new_position:
                             # new board state via usb
-                            # logging.info(f'info string FEN {test_state}')
                             if self.wait_for_move:
                                 logging.debug('trying to find user move in usb data')
                                 try:

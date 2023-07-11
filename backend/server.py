@@ -12,7 +12,7 @@ chess_logic = ChessLogic(STOCKFISH_PATH)
 
 InitializeCertabo()
 calibrate = 2 # do fresh calibration
-mycertabo = Certabo('auto', calibrate)
+mycertabo = Certabo(calibrate)
 
 # SocketIO to handle new connections
 # Prints for every new connection
