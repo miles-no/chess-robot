@@ -11,7 +11,7 @@ socket_io = SocketIO(app, cors_allowed_origins="*")
 chess_logic = ChessLogic(STOCKFISH_PATH)
 
 InitializeCertabo()
-calibrate = 2 # do fresh calibration
+calibrate = True # do fresh calibration
 mycertabo = Certabo(calibrate)
 
 # SocketIO to handle new connections

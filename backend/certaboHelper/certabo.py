@@ -19,7 +19,7 @@ CALIBRATION_DATA = os.path.join(CERTABO_DATA_PATH,"calibration.bin")
 os.makedirs(CERTABO_DATA_PATH, exist_ok=True)
 
 class Certabo():
-    def __init__(self, calibrate=0, **kwargs):
+    def __init__(self, calibrate, **kwargs):
         super().__init__(**kwargs)
         if calibrate:
             self.calibration = True
@@ -70,7 +70,6 @@ class Certabo():
         s2 = self.board_state_usb.split(" ")[0]
         if (s1 != s2):
             diffmap = diff2squareset(s1, s2)
-            # logging.debug(f'Difference on Squares:\n{diffmap}')
             self.send_leds(squareset2ledbytes(diffmap))
         else:
             self.send_leds()
