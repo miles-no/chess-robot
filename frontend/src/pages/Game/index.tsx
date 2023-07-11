@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Alert, Button, Collapse, Fade, Snackbar, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
@@ -14,9 +14,16 @@ export default function Game(props: gameProps) {
   const [result, setResult] = useState<string>();
   const [winner, setWinner] = useState<string>();
   function newGame() {
-    //set FEN to "start"
-    setFEN("start");
-    props.socket.emit("new-game", "new-game");
+    if (FEN !== "start") {
+      const confirmNewGame = window.confirm(
+        "Are you sure you want to start a new game? Please adjust the pieces to starting positions!"
+      );
+      if (!confirmNewGame) {
+        return; // Exit early if the user cancels the new game confirmation
+      }
+      props.socket.emit("new-game", "new-game");
+      setFEN("start");
+    }
   }
   useEffect(() => {
     props.socket.on("get-fen", handleFEN);
@@ -31,8 +38,16 @@ export default function Game(props: gameProps) {
       setFEN(fen);
     }
   };
+  function handleStartGame() {
+    if (FEN === "start" && props.socket.connected) {
+      props.socket.emit("start-game", "startGame");
+      setOpen(false);
+    } else {
+      alert("Pieces are not in starting position!");
+    }
+  }
   function startGame() {
-    props.socket.emit("start-game", "startGame");
+    setOpen(true);
   }
 
   useEffect(() => {
@@ -59,8 +74,8 @@ export default function Game(props: gameProps) {
     setOpen(false);
   };
   const handleOK = () => {
-    setOpen(false);
     setResult(undefined);
+    setOpen(false);
     newGame();
   };
 
@@ -80,9 +95,25 @@ export default function Game(props: gameProps) {
       <div className="unclickable-area">
         <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
       </div>
+      <AlertComponent
+        alertTitle="Start Game"
+        message="Make sure pieces are in starting position"
+        handleClose={handleClose}
+        handleOK={handleStartGame}
+        open={open}
+      />
       <div className="buttons">
-        <Button onClick={() => startGame()}>Start game</Button>
-        <Button onClick={() => newGame()}>New game</Button>
+        {FEN !== "start" ? (
+          <>
+            <Button variant="outlined" onClick={() => newGame()}>
+              New game
+            </Button>
+          </>
+        ) : (
+          <Button variant="contained" onClick={() => startGame()}>
+            Start game
+          </Button>
+        )}
       </div>
     </div>
   );
