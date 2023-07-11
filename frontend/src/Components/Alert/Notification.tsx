@@ -16,12 +16,18 @@ interface alertProps {
 }
 
 export default function AlertComponent(props: alertProps) {
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+  };
+
   return (
     <Dialog
       open={props.open}
       onClose={props.handleClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      onClick={handleBackdropClick}
+      disableEscapeKeyDown
     >
       <DialogTitle id="alert-dialog-title">{props.alertTitle}</DialogTitle>
       <DialogContent>
