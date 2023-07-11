@@ -33,28 +33,12 @@ export default function Game(props: gameProps) {
   function handleResultMessage(messageDisctionary: any) {
     if (messageDisctionary.result) {
       setResult(messageDisctionary.result);
+      setOpen(true);
     }
     if (messageDisctionary.winner) {
       setWinner(messageDisctionary.winner);
     }
   }
-
-  useEffect(() => {
-    if (winner) {
-      setWinner("White");
-    } else if (winner === null) {
-      setWinner("Draw");
-    } else {
-      setWinner("Black");
-    }
-  }, [winner]);
-
-  useEffect(() => {
-    if (result) {
-      setResult(result);
-      setOpen(true);
-    }
-  }, [result]);
 
   const handleClose = () => {
     // On closing the alert
@@ -73,7 +57,7 @@ export default function Game(props: gameProps) {
           <AlertComponent
             open={open}
             alertTitle={result}
-            message={"Winner is... " + winner}
+            message={"Winner is " + winner}
             handleClose={handleClose}
             handleOK={handleOK}
           />
