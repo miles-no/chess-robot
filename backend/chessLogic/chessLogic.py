@@ -33,8 +33,14 @@ class ChessLogic:
             #Transforming outcome() to satisfactory format
             result = str(board.outcome().termination).split('.')
             result = result[1].replace('_', ' ').title()
-            return result, board.outcome().winner
+            return result, self.getWinner(board)
 
+    def getWinner(self, board):
+        if board.outcome().winner == True:
+            return "white"
+        elif board.outcome().winner == False:
+            return "black"
+        return "undefined"
 
     
 if __name__ == "__main__":
