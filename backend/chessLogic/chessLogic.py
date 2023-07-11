@@ -14,7 +14,6 @@ class ChessLogic:
         best_move = result.move
         return best_move
 
-        
     def quitEngine(self):
         self.engine.quit()
     
@@ -27,85 +26,16 @@ class ChessLogic:
         move = chess.Move.from_uci(move)
         self.last_move = move
         self.board.push(move)
-    
-    def get_board(self):
-        return self.board
-    
-    def reset_board(self):
-        self.board = chess.Board()
-    
-    def check_mate(self):
-        return self.board.is_checkmate()
 
-    def getOutcome(self):
+    def getOutcome(self, board):
     #.winner returns true for white win, false for black, None for draw
-        if self.board.outcome():
+        if board.outcome():
             #Transforming outcome() to satisfactory format
-            result = str(self.board.outcome().termination).split('.')
+            result = str(board.outcome().termination).split('.')
             result = result[1].replace('_', ' ').title()
-            return result
-        
-    def getWinner(self):
-        outcome = self.board.outcome()
-        if outcome is not None:
-            if outcome.winner == chess.WHITE:
-                return 'white'
-            elif outcome.winner == chess.BLACK:
-                return 'black'
-            else:
-                return 'draw'
-        else:
-            return None
-        
-    def getPlayerTurn(self):
-        if self.board.turn:
-            return 'white'
-        else:
-            return 'black'
+            return result, board.outcome().winner
 
-    def checkCastling(self):
-        if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.G1:
-            rookMove = "h1f1"
-            return rookMove
-        if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.C1:
-            rookMove = "a1d1"
-            return rookMove
-        if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.G8:
-            rookMove="h8f8"
-            return rookMove
-        if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.C8:
-            rookMove = "a8d8"
-            return rookMove
-        return False
-    
-    def checkPassant(self, move):
-        if self.board.has_legal_en_passant():
-            if self.board.is_capture(move) and self.board.piece_at(move.to_square) is None:
-                return "passant"
-        return ""
-    
-    def checkPromotion(self):
-        if self.last_move and self.last_move.promotion:
-            return "promotion"
-        return ""
+
     
 if __name__ == "__main__":
-    STOCKFISH_PATH = "/usr/local/opt/stockfish/bin/stockfish"
-    chessLogic = ChessLogic(STOCKFISH_PATH)
-    while True:
-        print(chessLogic.get_board())
-        move = chessLogic.getBestMove()
-        #print(move)
-        chessLogic.movePiece(move.uci())
-        if chessLogic.checkSpecialMove():
-            print(chessLogic.get_board())
-            print(chessLogic.last_move)
-            print(move)
-            break  # Check special move after making the move
-        result = chessLogic.getOutcome()
-        if result:
-            print(result)
-            break
-        print(chessLogic.get_board())
-
-    chessLogic.quitEngine()
+    pass
