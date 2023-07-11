@@ -26,21 +26,12 @@ class Certabo():
             self.calibration = True
         else:
             self.calibration = False
-        if calibrate > 1:
-            self.new_setup = True
-        else:
-            self.new_setup = False
         self.rotate180 = False
-        self.color = chess.WHITE
-        self.starting_position = chess.STARTING_FEN
         self.chessboard = chess.Board(chess.STARTING_FEN)
         self.board_state_usb = ""
-        self.mystate = "init"
-        self.reference = ""
         self.move_event = threading.Event()
         self.wait_for_move = False
         self.pending_moves = []
-        self.validation = False
 
         # internal values for CERTABO board
         self.calibration_samples_counter = 0
@@ -131,7 +122,7 @@ class Certabo():
         if self.calibration_samples_counter >= 15:
             logging.info( "------- we have collected enough samples for averaging ----")
             usb_data = statistic_processing_for_calibration( self.calibration_samples, False)
-            calibration(usb_data, self.new_setup, CALIBRATION_DATA)
+            calibration(usb_data, CALIBRATION_DATA)
             self.calibration = False
             logging.info('calibration ok') 
             self.send_leds()
@@ -140,21 +131,4 @@ class Certabo():
         else:
             self.send_leds()
 
-   #! Not in use
-    def get_reference(self):
-        return self.reference
-    def set_reference(self, reference):
-        self.reference = reference
-    def get_color(self):
-        return self.color
-    def set_color(self, color):
-        self.color = color
-    def set_state(self, state):
-        self.mystate = state
-    def get_state(self):
-        return self.mystate
-
-    #! Can use
-    def set_board_from_fen(self, fen):
-        self.chessboard = chess.Board(fen)
 

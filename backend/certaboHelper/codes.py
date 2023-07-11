@@ -195,7 +195,7 @@ def cell_empty(x):
         return False
 
 
-def calibration(usb_data, new_setup, filename):
+def calibration(usb_data, filename):
     global p, r, n, b, k, q, P, R, N, B, K, Q
     prev_results = p, r, n, b, k, q, P, R, N, B, K, Q
 
@@ -280,23 +280,6 @@ def calibration(usb_data, new_setup, filename):
     logging.info("Q after = %s", Qn)
 
     # compare_cells( cell, cell_p )
-    if not new_setup:
-        logging.info("------- not new setup ----")
-        results = pn, rn, nn, bn, kn, qn, Pn, Rn, Nn, Bn, Kn, Qn
-        p, r, n, b, k, q, P, R, N, B, K, Q = (
-            pn,
-            rn,
-            nn,
-            bn,
-            kn,
-            qn,
-            Pn,
-            Rn,
-            Nn,
-            Bn,
-            Kn,
-            Qn,
-        )
     pickle.dump(results, open(filename, "wb"))
 
     logging.info("----------------")
