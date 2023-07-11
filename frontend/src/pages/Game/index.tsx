@@ -9,14 +9,28 @@ interface gameProps {
 }
 
 export default function Game(props: gameProps) {
+  const [FEN, setFEN] = useState<string>("start");
   const [open, setOpen] = useState<boolean>(false);
   const [result, setResult] = useState<string>();
   const [winner, setWinner] = useState<string>();
   function newGame() {
     //set FEN to "start"
+    setFEN("start");
     props.socket.emit("new-game", "new-game");
   }
+  useEffect(() => {
+    props.socket.on("get-fen", handleFEN);
+    // Cleanup the props.socket listener when the component unmounts
+    return () => {
+      props.socket.off("get-fen", handleFEN);
+    };
+  }, [props.socket]);
 
+  const handleFEN = (fen: string) => {
+    if (fen) {
+      setFEN(fen);
+    }
+  };
   function startGame() {
     props.socket.emit("start-game", "startGame");
   }
@@ -64,7 +78,7 @@ export default function Game(props: gameProps) {
         )}
       </div>
       <div className="unclickable-area">
-        <MyChessboard boardWidth={600} socket={props.socket} />
+        <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
       </div>
       <div className="buttons">
         <Button onClick={() => startGame()}>Start game</Button>
