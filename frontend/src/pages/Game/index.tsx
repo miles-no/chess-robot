@@ -13,6 +13,7 @@ export default function Game(props: gameProps) {
   const [result, setResult] = useState<string>();
   const [winner, setWinner] = useState<string>();
   function newGame() {
+    //set FEN to "start"
     props.socket.emit("new-game", "new-game");
   }
 
@@ -43,20 +44,23 @@ export default function Game(props: gameProps) {
   };
   const handleOK = () => {
     setOpen(false);
+    setResult(undefined);
     newGame();
   };
 
   return (
     <div className="main-container">
-      {result && (
-        <AlertComponent
-          open={open}
-          alertTitle={result}
-          message={"Winner is... " + winner}
-          handleClose={handleClose}
-          handleOK={handleOK}
-        />
-      )}
+      <div className="alert">
+        {result && (
+          <AlertComponent
+            open={open}
+            alertTitle={result}
+            message={"Winner is... " + winner}
+            handleClose={handleClose}
+            handleOK={handleOK}
+          />
+        )}
+      </div>
       <div className="unclickable-area">
         <MyChessboard boardWidth={600} socket={props.socket} />
       </div>
