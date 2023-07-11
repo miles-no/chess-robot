@@ -40,7 +40,7 @@ class ChessLogic:
             return "white"
         elif board.outcome().winner == False:
             return "black"
-        return "undefined"
+        return None
 
     
 if __name__ == "__main__":
