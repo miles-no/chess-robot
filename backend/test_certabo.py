@@ -2,9 +2,9 @@ import sys
 import logging
 import logging.handlers
 import os
-import importlib
-import certabo
-from certabo.certabo import CERTABO_DATA_PATH as CERTABO_DATA_PATH
+import importlib.util
+from certaboHelper.certabo import *
+from certaboHelper.certabo import CERTABO_DATA_PATH
 
 calibrate = 2 # do fresh calibration
 
@@ -29,6 +29,6 @@ if simplejson_spec is not None:
     print(f'ERROR: simplejson is installed. The berserk lichess client will not work with simplejson. Please remove the module. Aborting.')
     sys.exit(-1)
 
-mycertabo = certabo.certabo.Certabo('auto', False)
+mycertabo = Certabo('auto', False)
 
 

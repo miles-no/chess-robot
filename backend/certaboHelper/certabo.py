@@ -21,8 +21,8 @@ import chess.pgn
 import chess
 
 # certabo helpers
-from certabo import codes
-from certabo import serialreader
+from certaboHelper.codes import *
+from certaboHelper.serialreader import *
 
 CERTABO_DATA_PATH = appdirs.user_data_dir("GUI", "Certabo")
 CALIBRATION_DATA = os.path.join(CERTABO_DATA_PATH,"calibration.bin")
@@ -63,10 +63,10 @@ class Certabo():
         self.move_detect_max_tries = 3
 
         # try to load calibration data (mapping of RFID chip IDs to pieces)
-        codes.load_calibration(CALIBRATION_DATA)
+        load_calibration(CALIBRATION_DATA)
 
         # spawn a serial thread and pass our data handler
-        self.serialthread = serialreader.serialreader(self.handle_usb_data, self.portname)
+        self.serialthread = serialreader(self.handle_usb_data, self.portname)
         self.serialthread.daemon = True
         self.serialthread.start()
         time.sleep(5)
@@ -113,9 +113,9 @@ class Certabo():
         s1 = self.chessboard.board_fen()
         s2 = self.board_state_usb.split(" ")[0]
         if (s1 != s2):
-            diffmap = codes.diff2squareset(s1, s2)
+            diffmap = diff2squareset(s1, s2)
             # logging.debug(f'Difference on Squares:\n{diffmap}')
-            self.send_leds(codes.squareset2ledbytes(diffmap))
+            self.send_leds(squareset2ledbytes(diffmap))
         else:
             self.send_leds()
 
@@ -130,9 +130,9 @@ class Certabo():
             self.usb_data_history[self.usb_data_history_i] = list(usb_data)[:]
             self.usb_data_history_i += 1
             if self.usb_data_history_filled:
-                self.usb_data_processed = codes.statistic_processing(self.usb_data_history, False)
+                self.usb_data_processed = statistic_processing(self.usb_data_history, False)
                 if self.usb_data_processed != []:
-                    test_state = codes.usb_data_to_FEN(self.usb_data_processed, self.rotate180)
+                    test_state = usb_data_to_FEN(self.usb_data_processed, self.rotate180)
                     if test_state != "":
                         if self.board_state_usb != test_state:
                             new_position = True
@@ -146,7 +146,7 @@ class Certabo():
                             if self.wait_for_move:
                                 logging.debug('trying to find user move in usb data')
                                 try:
-                                    self.pending_moves = codes.get_moves(self.chessboard, self.board_state_usb, 1) # only search one move deep
+                                    self.pending_moves = get_moves(self.chessboard, self.board_state_usb, 1) # only search one move deep
                                     if self.pending_moves != []:
                                         logging.debug('firing event')
                                         self.chessboard.push_uci(self.pending_moves[0])
@@ -161,8 +161,8 @@ class Certabo():
         self.calibration_samples_counter += 1
         if self.calibration_samples_counter >= 15:
             logging.info( "------- we have collected enough samples for averaging ----")
-            usb_data = codes.statistic_processing_for_calibration( self.calibration_samples, False)
-            codes.calibration(usb_data, self.new_setup, CALIBRATION_DATA)
+            usb_data = statistic_processing_for_calibration( self.calibration_samples, False)
+            calibration(usb_data, self.new_setup, CALIBRATION_DATA)
             self.calibration = False
             logging.info('calibration ok') 
             self.send_leds()
