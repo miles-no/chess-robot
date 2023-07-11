@@ -22,6 +22,24 @@ export default function Game(props: gameProps) {
   }
 
   useEffect(() => {
+    props.socket.on("game-over", handleResultMessage);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      props.socket.off("game-over", handleResultMessage);
+    };
+  }, [props.socket]);
+
+  function handleResultMessage(messageDisctionary: any) {
+    if (messageDisctionary.result) {
+      setResult(messageDisctionary.result);
+    }
+    if (messageDisctionary.winner) {
+      setWinner(messageDisctionary.winner);
+    }
+  }
+
+  useEffect(() => {
     if (winner) {
       setWinner("White");
     } else if (winner === null) {
