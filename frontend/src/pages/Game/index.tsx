@@ -1,4 +1,4 @@
-import { Alert, Button, Collapse, Fade, Snackbar, styled } from "@mui/material";
+import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
@@ -95,13 +95,15 @@ export default function Game(props: gameProps) {
       <div className="unclickable-area">
         <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
       </div>
-      <AlertComponent
-        alertTitle="Start Game"
-        message="Make sure pieces are in starting position"
-        handleClose={handleClose}
-        handleOK={handleStartGame}
-        open={open}
-      />
+      {!result && (
+        <AlertComponent
+          alertTitle="Start Game"
+          message="Make sure pieces are in starting position"
+          handleClose={handleClose}
+          handleOK={handleStartGame}
+          open={open}
+        />
+      )}
       <div className="buttons">
         {FEN !== "start" ? (
           <>
