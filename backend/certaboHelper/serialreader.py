@@ -11,7 +11,6 @@ import threading
 import serial
 import fcntl
 import logging
-
 import serial.tools.list_ports
 
 if os.name == 'nt':  # sys.platform == 'win32':
@@ -20,7 +19,6 @@ elif os.name == 'posix':
     from serial.tools.list_ports_posix import comports
 
 def find_port():
-    #logging.debug('Searching for port...')
     for port in comports():
         device = port[0]
         if 'bluetooth' in device.lower():
@@ -46,9 +44,8 @@ def find_port():
         return
 
 class serialreader(threading.Thread):
-    def __init__ (self, handler, device='auto'):
+    def __init__ (self, handler):
         threading.Thread.__init__(self)
-        self.device = device
         self.connected = False
         self.handler = handler
         self.uart = None
@@ -80,18 +77,14 @@ class serialreader(threading.Thread):
         while True:
             if not self.connected:
                 try:
-                    if self.device == 'auto':
-                        logging.info(f'Auto-detecting serial port')
-                        serialport = find_port()
-                    else:
-                        serialport = self.device
+                    logging.info(f'Auto-detecting serial port')
+                    serialport = find_port()
                     if serialport is None:
                         logging.info(f'No port found, retrying')
                         time.sleep(1)
                         continue
                     logging.info(f'Opening serial port {serialport}')
                     self.uart = serial.Serial(serialport, 38400)  # 0-COM1, 1-COM2 / speed /
-                    # self.uart = serial.Serial(serialport, 38400, timeout=2.5)  # 0-COM1, 1-COM2 / speed /
                     if os.name == 'posix':
                         logging.debug(f'Attempting to lock {serialport}')
                         fcntl.flock(self.uart.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -110,13 +103,9 @@ class serialreader(threading.Thread):
             else:
                 try:
                     while True:
-                        # logging.debug(f'serial data pending')
-                        #raw_message = self.uart.readline()
                         raw_message = self.readline()
                         try:
                             message = raw_message.decode("ascii")[1: -3]
-                            #if DEBUG:
-                            #    print(len(message.split(" ")), "numbers")
                             if len(message.split(" ")) == 320:  # 64*5
                                 self.handler(message)
                             message = ""

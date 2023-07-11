@@ -3,24 +3,14 @@
 #
 # Copyright (c) 2020 by Harald Klein <hari@vt100.at> - All rights reserved
 # 
-
 import os
 import time
 import logging
 import logging.handlers
-import traceback
-import argparse
-import subprocess
-import threading
 import appdirs
-import pathlib
-
-# import berserk
-
 import chess.pgn
 import chess
 
-# certabo helpers
 from certaboHelper.codes import *
 from certaboHelper.serialreader import *
 
@@ -29,28 +19,18 @@ CALIBRATION_DATA = os.path.join(CERTABO_DATA_PATH,"calibration.bin")
 os.makedirs(CERTABO_DATA_PATH, exist_ok=True)
 
 class Certabo():
-    def __init__(self, port='auto', calibrate=0, **kwargs):
+    def __init__(self, calibrate=0, **kwargs):
         super().__init__(**kwargs)
-        self.portname = port
         if calibrate:
             self.calibration = True
         else:
             self.calibration = False
-        if calibrate > 1:
-            self.new_setup = True
-        else:
-            self.new_setup = False
         self.rotate180 = False
-        self.color = chess.WHITE
-        self.starting_position = chess.STARTING_FEN
         self.chessboard = chess.Board(chess.STARTING_FEN)
         self.board_state_usb = ""
-        self.mystate = "init"
-        self.reference = ""
         self.move_event = threading.Event()
         self.wait_for_move = False
         self.pending_moves = []
-        self.validation = False
 
         # internal values for CERTABO board
         self.calibration_samples_counter = 0
@@ -59,18 +39,15 @@ class Certabo():
         self.usb_data_history = list(range(self.usb_data_history_depth))
         self.usb_data_history_filled = False
         self.usb_data_history_i = 0
-        self.move_detect_tries = 0
-        self.move_detect_max_tries = 3
 
         # try to load calibration data (mapping of RFID chip IDs to pieces)
         load_calibration(CALIBRATION_DATA)
 
         # spawn a serial thread and pass our data handler
-        self.serialthread = serialreader(self.handle_usb_data, self.portname)
+        self.serialthread = serialreader(self.handle_usb_data)
         self.serialthread.daemon = True
         self.serialthread.start()
         time.sleep(5)
-
 
     def get_user_move(self):
         self.wait_for_move = True
@@ -79,32 +56,11 @@ class Certabo():
         self.move_event.clear()
         logging.debug(f'event signal received, pending moves: {self.pending_moves}')
         self.wait_for_move = False
-        return self.pending_moves 
-
-    def get_reference(self):
-        return self.reference
-
-    def set_reference(self, reference):
-        self.reference = reference
-
-    def get_color(self):
-        return self.color
-
-    def set_color(self, color):
-        self.color = color
-
-    def set_state(self, state):
-        self.mystate = state
-
-    def get_state(self):
-        return self.mystate
-
+        return self.pending_moves
+    
     def new_game(self):
         self.chessboard = chess.Board()
         self.mystate = "init"
-
-    def set_board_from_fen(self, fen):
-        self.chessboard = chess.Board(fen)
 
     def send_leds(self, message:bytes=(0).to_bytes(8,byteorder='big',signed=False)):
         self.serialthread.send_led(message)
@@ -142,7 +98,6 @@ class Certabo():
                         self.diff_leds()
                         if new_position:
                             # new board state via usb
-                            # logging.info(f'info string FEN {test_state}')
                             if self.wait_for_move:
                                 logging.debug('trying to find user move in usb data')
                                 try:
@@ -162,7 +117,7 @@ class Certabo():
         if self.calibration_samples_counter >= 15:
             logging.info( "------- we have collected enough samples for averaging ----")
             usb_data = statistic_processing_for_calibration( self.calibration_samples, False)
-            calibration(usb_data, self.new_setup, CALIBRATION_DATA)
+            calibration(usb_data, CALIBRATION_DATA)
             self.calibration = False
             logging.info('calibration ok') 
             self.send_leds()
