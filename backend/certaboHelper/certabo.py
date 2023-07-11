@@ -3,24 +3,14 @@
 #
 # Copyright (c) 2020 by Harald Klein <hari@vt100.at> - All rights reserved
 # 
-
 import os
 import time
 import logging
 import logging.handlers
-import traceback
-import argparse
-import subprocess
-import threading
 import appdirs
-import pathlib
-
-# import berserk
-
 import chess.pgn
 import chess
 
-# certabo helpers
 from certaboHelper.codes import *
 from certaboHelper.serialreader import *
 
@@ -71,7 +61,7 @@ class Certabo():
         self.serialthread.start()
         time.sleep(5)
 
-
+    #! Use
     def get_user_move(self):
         self.wait_for_move = True
         logging.debug('waiting for event signal')
@@ -79,32 +69,11 @@ class Certabo():
         self.move_event.clear()
         logging.debug(f'event signal received, pending moves: {self.pending_moves}')
         self.wait_for_move = False
-        return self.pending_moves 
-
-    def get_reference(self):
-        return self.reference
-
-    def set_reference(self, reference):
-        self.reference = reference
-
-    def get_color(self):
-        return self.color
-
-    def set_color(self, color):
-        self.color = color
-
-    def set_state(self, state):
-        self.mystate = state
-
-    def get_state(self):
-        return self.mystate
-
+        return self.pending_moves
+    
     def new_game(self):
         self.chessboard = chess.Board()
         self.mystate = "init"
-
-    def set_board_from_fen(self, fen):
-        self.chessboard = chess.Board(fen)
 
     def send_leds(self, message:bytes=(0).to_bytes(8,byteorder='big',signed=False)):
         self.serialthread.send_led(message)
@@ -171,4 +140,21 @@ class Certabo():
         else:
             self.send_leds()
 
+   #! Not in use
+    def get_reference(self):
+        return self.reference
+    def set_reference(self, reference):
+        self.reference = reference
+    def get_color(self):
+        return self.color
+    def set_color(self, color):
+        self.color = color
+    def set_state(self, state):
+        self.mystate = state
+    def get_state(self):
+        return self.mystate
+
+    #! Can use
+    def set_board_from_fen(self, fen):
+        self.chessboard = chess.Board(fen)
 
