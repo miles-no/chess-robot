@@ -11,7 +11,7 @@ socket_io = SocketIO(app, cors_allowed_origins="*")
 chess_logic = ChessLogic(STOCKFISH_PATH)
 
 InitializeCertabo()
-calibrate = True # do fresh calibration
+calibrate = False # do fresh calibration
 mycertabo = Certabo(calibrate)
 
 # SocketIO to handle new connections
@@ -27,9 +27,18 @@ def newGame(arg):
 
 @socket_io.on('start-game')
 def startGame(arg):
-    print(arg)
-    while chess_logic.getOutcome(mycertabo.chessboard) is None:
-        mycertabo.get_user_move()
+    arg = "white"
+    chess_logic.setSkillLevel(20)
+    while chess_logic.getOutcome(mycertabo.chessboard) is None: #or mycertabo.state is true
+        if chess_logic.color == arg: # stockfish start
+            stockfish_color = True #white pieces
+            best_move = chess_logic.getBestMove(mycertabo.chessboard)
+            print(best_move)   
+            mycertabo.stockfish_move(best_move, stockfish_color)
+            chess_logic.setColor()
+        else:
+            mycertabo.get_user_move()
+            chess_logic.setColor()
         fen = mycertabo.chessboard.board_fen()
         socket_io.emit("get-fen", fen)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
