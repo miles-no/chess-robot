@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
 import MyChessboard from "../../Components/Chessboard/Chessboard";
+import ColorPicker from "../../Components/ColorPicker/ColorPicker";
 import "./index.css";
 interface gameProps {
   socket: Socket;
@@ -13,6 +14,8 @@ export default function Game(props: gameProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [result, setResult] = useState<string>();
   const [winner, setWinner] = useState<string>();
+  const [color, setColor] = useState<string>();
+  const [sidePicker, setSidePicker] = useState<boolean>(true);
   function newGame() {
     if (FEN !== "start") {
       const confirmNewGame = window.confirm(
@@ -82,6 +85,19 @@ export default function Game(props: gameProps) {
 
   return (
     <div className="main-container">
+      <div className="color-picker">
+        <ColorPicker
+          open={sidePicker}
+          handleBlack={() => {
+            setColor("black");
+            setSidePicker(false);
+          }}
+          handleWhite={() => {
+            setColor("white");
+            setSidePicker(false);
+          }}
+        />
+      </div>
       <div className="alert">
         {result && (
           <AlertComponent
