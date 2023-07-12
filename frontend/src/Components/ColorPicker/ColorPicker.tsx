@@ -8,8 +8,8 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-// import blackKing from "./king_b.png";
-// import whiteKing from "./king_w.png";
+//import blackKing from "../../../public/assets/images/king_b";
+// import whiteKing from "../../../public/assets/images/king_w";
 interface alertProps {
   handleWhite: () => void;
   handleBlack: () => void;
