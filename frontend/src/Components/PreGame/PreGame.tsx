@@ -22,7 +22,7 @@ interface alertProps {
 }
 
 export default function PreGame(props: alertProps) {
-  const [level, setLevel] = useState(0);
+  const [level, setLevel] = useState(1);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -39,12 +39,12 @@ export default function PreGame(props: alertProps) {
       PaperProps={{
         sx: {
           overflow: "hidden",
-          // Add your custom styles to the Paper component
-          // Add any other desired styles
         },
       }}
     >
-      <DialogTitle id="alert-dialog-title">Pick your side</DialogTitle>
+      <DialogTitle id="alert-dialog-title">
+        Select your preferred options
+      </DialogTitle>
       <Grid
         sx={{
           padding: "3em",
