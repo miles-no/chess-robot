@@ -1,9 +1,9 @@
-import { Button } from "@mui/material";
+import { Button, LinearProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
 import MyChessboard from "../../Components/Chessboard/Chessboard";
-import { default as PreGame } from "../../Components/ColorPicker/PreGame";
+import { default as PreGame } from "../../Components/PreGame/PreGame";
 import "./index.css";
 interface gameProps {
   socket: Socket;
@@ -15,9 +15,51 @@ export default function Game(props: gameProps) {
   const [result, setResult] = useState<string>();
   const [winner, setWinner] = useState<string>();
   const [color, setColor] = useState<string>();
-  const [sidePicker, setSidePicker] = useState<boolean>(true);
+  const [preGame, setpreGame] = useState<boolean>(true);
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
+  const [connection, setConnection] = useState<boolean>(false);
+  useEffect(() => {
+    props.socket.on("game-over", handleResultMessage);
 
+    // Clean up the event listener on component unmount
+    return () => {
+      props.socket.off("game-over", handleResultMessage);
+    };
+  }, [props.socket]);
+
+  useEffect(() => {
+    props.socket.on("get-fen", handleFEN);
+    // Cleanup the props.socket listener when the component unmounts
+    return () => {
+      props.socket.off("get-fen", handleFEN);
+    };
+  }, [props.socket]);
+
+  useEffect(() => {
+    props.socket.on("invalid-move", handleInvalidMove);
+    return () => {
+      props.socket.off("invalid-move", handleInvalidMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    props.socket.on("connect", handleSocketConnect);
+    props.socket.on("disconnect", handleSocketDisconnect);
+
+    // Clean up the event listeners on component unmount
+    return () => {
+      props.socket.off("connect", handleSocketConnect);
+      props.socket.off("disconnect", handleSocketDisconnect);
+    };
+  }, [props.socket]);
+
+  function handleSocketConnect() {
+    setConnection(true);
+  }
+
+  function handleSocketDisconnect() {
+    setConnection(false);
+  }
   function newGame() {
     if (FEN !== "start") {
       const confirmNewGame = window.confirm(
@@ -28,16 +70,9 @@ export default function Game(props: gameProps) {
       }
       props.socket.emit("new-game", "new-game");
       setFEN("start");
+      setpreGame(true);
     }
   }
-  useEffect(() => {
-    props.socket.on("get-fen", handleFEN);
-    // Cleanup the props.socket listener when the component unmounts
-    return () => {
-      props.socket.off("get-fen", handleFEN);
-    };
-  }, [props.socket]);
-
   const handleFEN = (fen: string) => {
     if (fen) {
       setFEN(fen);
@@ -62,15 +97,6 @@ export default function Game(props: gameProps) {
     setOpen(true);
   }
 
-  useEffect(() => {
-    props.socket.on("game-over", handleResultMessage);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      props.socket.off("game-over", handleResultMessage);
-    };
-  }, [props.socket]);
-
   function handleResultMessage(messageDisctionary: any) {
     if (messageDisctionary.result) {
       setResult(messageDisctionary.result);
@@ -80,13 +106,6 @@ export default function Game(props: gameProps) {
       setWinner(messageDisctionary.winner);
     }
   }
-
-  useEffect(() => {
-    props.socket.on("invalid-move", handleInvalidMove);
-    return () => {
-      props.socket.off("invalid-move", handleInvalidMove);
-    };
-  }, []);
 
   const handleInvalidMove = () => {
     alert("Invalid move!");
@@ -104,14 +123,14 @@ export default function Game(props: gameProps) {
   const handlePregame = (level: number, selectedSide: string) => {
     setStockfishLevel(level);
     setColor(selectedSide);
-    setSidePicker(false);
+    setpreGame(false);
   };
 
-  return (
+  return connection ? (
     <div className="main-container">
-      <div className="color-picker">
+      <div className="pre-game">
         <PreGame
-          open={sidePicker}
+          open={preGame}
           stockfishLevel={stockfishlevel}
           handleOK={handlePregame}
         />
@@ -152,6 +171,10 @@ export default function Game(props: gameProps) {
           </Button>
         )}
       </div>
+    </div>
+  ) : (
+    <div>
+      <LinearProgress />
     </div>
   );
 }
