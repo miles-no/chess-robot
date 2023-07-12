@@ -1,18 +1,13 @@
 import {
-  Button,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
   Grid,
   Typography,
 } from "@mui/material";
-import { setMaxListeners } from "events";
 // import blackKing from "./king_b.png";
 // import whiteKing from "./king_w.png";
 interface alertProps {
@@ -58,7 +53,7 @@ export default function ColorPicker(props: alertProps) {
                 sx={{ padding: "0 2em 2em 0em", objectFit: "contain" }}
                 component="img"
                 height="100"
-                image="./king_w.png"
+                //image={whiteKing}
                 alt="White piece"
               />
               <CardContent>
@@ -76,7 +71,7 @@ export default function ColorPicker(props: alertProps) {
                 sx={{ padding: "0 2em 2em 0em", objectFit: "contain" }}
                 component="img"
                 height="100"
-                //   image={blackKing}
+                //image={blackKing}
                 alt="black piece"
               />
               <CardContent>
