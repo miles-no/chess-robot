@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from flask import Flask
 from flask_socketio import SocketIO
 from config import STOCKFISH_PATH
@@ -10,8 +11,14 @@ socket_io = SocketIO(app, cors_allowed_origins="*")
 
 chess_logic = ChessLogic(STOCKFISH_PATH)
 
+calibrate = False 
+parser = ArgumentParser()
+parser.add_argument('--calibrate', action="store_true")
+args = parser.parse_args()
+if args.calibrate:
+    calibrate = args.calibrate
+
 InitializeCertabo()
-calibrate = False # do fresh calibration
 mycertabo = Certabo(calibrate)
 
 # SocketIO to handle new connections
