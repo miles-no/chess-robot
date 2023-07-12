@@ -413,39 +413,54 @@ def usb_data_to_FEN(usb_data, rotate180=False):
 black_pieces = "r", "b", "k", "n", "p", "q"
 white_pieces = "R", "B", "K", "N", "P", "Q"
 
-class InvalidMove(Exception):
+class NoMove(Exception):
     pass
 
-def get_moves(board, fen, max_depth =2):
+def get_moves(board, fen, color):
     board_fen = fen.split()[0]
-    # logging.debug('Getting diff between {} and {}'.format(board.board_fen(), board_fen))
     if board.board_fen() == board_fen:
-        return []
+        return None
     copy_board = board.copy()
     moves = list(board.generate_legal_moves())
     for move in moves:
         copy_board.push(move)
         if board_fen == copy_board.board_fen():
             logging.debug('Single move detected - {}'.format(move.uci()))
-            return [move.uci()]
+            return move.uci()
         copy_board.pop()
-    if max_depth > 1:
-        for move in moves:
-            copy_board.push(move)
-            legal_moves2 = list(copy_board.generate_legal_moves())
-            for move2 in legal_moves2:
-                copy_board.push(move2)
-                if board_fen == copy_board.board_fen():
-                    logging.debug('Double move detected - {}, {}'.format(move.uci(), move2.uci()))
-                    return [move.uci(), move2.uci()]
-                copy_board.pop()
-            copy_board.pop()
+    else:
+        move = FEN2Move(board, chess.Board(fen), color)
+        if move != "" and chess.Move.from_uci(move) not in board.legal_moves:
+            return "Invalid move"
     logging.debug('Unable to detect moves')
-    raise InvalidMove()
+    raise NoMove()
+
+def FEN2Move(board1, board2, who_moved):
+    nums = {1:"a", 2:"b", 3:"c", 4:"d", 5:"e", 6:"f", 7:"g", 8:"h"}
+    str_board = str(board1).split("\n")
+    str_board2 = str(board2).split("\n")
+    move = ""
+    flip = False
+    if who_moved:
+        for i in range(8)[::-1]:
+            for x in range(15)[::-1]:
+                if str_board[i][x] != str_board2[i][x]:
+                    if str_board[i][x] == "." and move == "":
+                        flip = True
+                    move+=str(nums.get(round(x/2)+1))+str(9-(i+1))
+    else:
+        for i in range(8):
+            for x in range(15):
+                if str_board[i][x] != str_board2[i][x]:
+                    if str_board[i][x] == "." and move == "":
+                        flip = True
+                    move+=str(nums.get(round(x/2)+1))+str(9-(i+1))
+    if flip:
+        move = move[2]+move[3]+move[0]+move[1]
+    return move
 
 # convert FEN to 2d list with user playing pieces
 def FEN2board(FEN_string, play_white):
-
     if play_white:
         pieces = white_pieces
     else:
@@ -467,35 +482,18 @@ def FEN2board(FEN_string, play_white):
                 row.append("-")
         else:
             row.append("*")
-
     board.append(row)
-
     return board
 
 
 def FENs2move(FEN_prev, FEN, play_white):
-    logging.info("---------------------- FENs2move() --------------------")
     logging.info("FEN_prev=%s FEN=%s", FEN_prev, FEN)
-
     board_prev = FEN2board(FEN_prev, play_white)
     board = FEN2board(FEN, play_white)
-
-    #    for i in range(8):
-    #        for j in range(8):
-    #            print board_prev[i][j],
-    #        print
-
-    #    print
-    #    for i in range(8):
-    #        for j in range(8):
-    #            print board[i][j],
-    #        print
-
     if play_white:
         pieces = white_pieces
     else:
         pieces = black_pieces
-
     p_from = {}
     p_to = {}
     for i in range(8):
@@ -508,7 +506,6 @@ def FENs2move(FEN_prev, FEN, play_white):
                 p_to[board[i][j]] = letter[j] + str(8 - i)
 
     move = ""
-
     # test for conversion
     if play_white:
         pawn = "P"
@@ -516,7 +513,6 @@ def FENs2move(FEN_prev, FEN, play_white):
     else:
         pawn = "p"
         row = "2"
-
     if pawn in p_from:
         logging.info("Movement %s", pawn)
         if row in p_from[pawn]:
@@ -536,6 +532,4 @@ def FENs2move(FEN_prev, FEN, play_white):
         for key in p_from:
             if key in p_to:
                 move = p_from[key] + p_to[key]
-
-    logging.info("------------ move found: %s ------------------", move)
     return move

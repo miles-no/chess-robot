@@ -30,7 +30,9 @@ class Certabo():
         self.board_state_usb = ""
         self.move_event = threading.Event()
         self.wait_for_move = False
-        self.pending_moves = []
+        self.pending_move = None
+        self.color = True # white pieces start
+        self.stockfish_color = None
 
         # internal values for CERTABO board
         self.calibration_samples_counter = 0
@@ -54,9 +56,9 @@ class Certabo():
         logging.debug('waiting for event signal')
         self.move_event.wait()
         self.move_event.clear()
-        logging.debug(f'event signal received, pending moves: {self.pending_moves}')
+        logging.debug(f'event signal received, pending moves: {self.pending_move}')
         self.wait_for_move = False
-        return self.pending_moves
+        return self.pending_move
     
     def new_game(self):
         self.chessboard = chess.Board()
@@ -100,14 +102,15 @@ class Certabo():
                             if self.wait_for_move:
                                 logging.debug('trying to find user move in usb data')
                                 try:
-                                    self.pending_moves = get_moves(self.chessboard, self.board_state_usb, 1) # only search one move deep
-                                    if self.pending_moves != []:
+                                    self.pending_move = get_moves(self.chessboard, self.board_state_usb, self.color) # only search one move deep
+                                    if self.pending_move != None and self.pending_move != "Invalid move":
                                         logging.debug('firing event')
-                                        self.chessboard.push_uci(self.pending_moves[0])
+                                        self.chessboard.push_uci(self.pending_move)
                                         self.move_event.set()
-                                except:
-                                    print("error in get_moves")
-                                    self.pending_moves = []
+                                    elif self.pending_move == "Invalid move":
+                                        self.move_event.set()
+                                except NoMove:
+                                    self.pending_move = None
 
     def calibrate_from_usb_data(self, usb_data):
         self.calibration_samples.append(usb_data)
@@ -125,9 +128,22 @@ class Certabo():
         else:
             self.send_leds()
 
-    def stockfish_move(self, best_move, color):
+    def stockfish_move(self, best_move):
         prev_fen = self.chessboard.board_fen()
         self.chessboard.push(best_move)
         curr_fen = self.chessboard.board_fen()
-        FENs2move(prev_fen, curr_fen, color)
+        FENs2move(prev_fen, curr_fen, self.stockfish_color)
 
+
+    # True for white and False for black
+    def setColor(self):
+        if self.color: 
+            self.color = False
+        else:
+            self.color = True
+    
+    def setStockfishColor(self, color):
+        if color: 
+            return False
+        else: 
+            return True

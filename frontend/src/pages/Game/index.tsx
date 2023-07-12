@@ -75,6 +75,17 @@ export default function Game(props: gameProps) {
     }
   }
 
+  useEffect(() => {
+    props.socket.on("invalid-move", handleInvalidMove);
+    return () => {
+      props.socket.off("invalid-move", handleInvalidMove);
+    };
+  }, []);
+
+  const handleInvalidMove = () => {
+    alert("Invalid move!");
+  };
+
   const handleClose = () => {
     // On closing the alert
     setOpen(false);

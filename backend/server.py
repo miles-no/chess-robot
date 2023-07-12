@@ -34,17 +34,20 @@ def newGame(arg):
 
 @socket_io.on('start-game')
 def startGame(arg):
-    stockfish_color = chess_logic.getStockfishColor(arg['color'])
+    mycertabo.setStockfishColor(arg['color'])
     chess_logic.setSkillLevel(arg['skill_level'])
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
-        if chess_logic.color == arg['color']:
-            mycertabo.get_user_move()
-            chess_logic.setColor()
+        if mycertabo.color == arg['color']:
+            move = mycertabo.get_user_move()
+            if move == "Invalid move":
+                socket_io.emit("invalid-move")
+                continue
+            mycertabo.setColor()
         else:
             best_move = chess_logic.getBestMove(mycertabo.chessboard)
             print(best_move)   
-            mycertabo.stockfish_move(best_move, stockfish_color)
-            chess_logic.setColor()
+            mycertabo.stockfish_move(best_move)
+            mycertabo.setColor()
         fen = mycertabo.chessboard.board_fen()
         socket_io.emit("get-fen", fen)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
