@@ -39,8 +39,9 @@ export default function Game(props: gameProps) {
     }
   };
   function handleStartGame() {
+    const preferences = { skill_level: 1, color: true };
     if (FEN === "start" && props.socket.connected) {
-      props.socket.emit("start-game", "startGame");
+      props.socket.emit("start-game", preferences);
       setOpen(false);
     } else {
       alert("Pieces are not in starting position!");
