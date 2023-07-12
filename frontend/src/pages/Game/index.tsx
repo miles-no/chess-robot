@@ -17,7 +17,6 @@ export default function Game(props: gameProps) {
   const [color, setColor] = useState<string>();
   const [preGame, setpreGame] = useState<boolean>(true);
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
-  const [connection, setConnection] = useState<boolean>(false);
   useEffect(() => {
     props.socket.on("game-over", handleResultMessage);
 
@@ -42,24 +41,6 @@ export default function Game(props: gameProps) {
     };
   }, []);
 
-  useEffect(() => {
-    props.socket.on("connect", handleSocketConnect);
-    props.socket.on("disconnect", handleSocketDisconnect);
-
-    // Clean up the event listeners on component unmount
-    return () => {
-      props.socket.off("connect", handleSocketConnect);
-      props.socket.off("disconnect", handleSocketDisconnect);
-    };
-  }, [props.socket]);
-
-  function handleSocketConnect() {
-    setConnection(true);
-  }
-
-  function handleSocketDisconnect() {
-    setConnection(false);
-  }
   function newGame() {
     if (FEN !== "start") {
       const confirmNewGame = window.confirm(
@@ -126,7 +107,7 @@ export default function Game(props: gameProps) {
     setpreGame(false);
   };
 
-  return connection ? (
+  return (
     <div className="main-container">
       <div className="pre-game">
         <PreGame
@@ -171,10 +152,6 @@ export default function Game(props: gameProps) {
           </Button>
         )}
       </div>
-    </div>
-  ) : (
-    <div>
-      <LinearProgress />
     </div>
   );
 }
