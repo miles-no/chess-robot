@@ -125,4 +125,9 @@ class Certabo():
         else:
             self.send_leds()
 
+    def stockfish_move(self, best_move, color):
+        prev_fen = self.chessboard.board_fen()
+        self.chessboard.push(best_move)
+        curr_fen = self.chessboard.board_fen()
+        FENs2move(prev_fen, curr_fen, color)
 

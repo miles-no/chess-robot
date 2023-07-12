@@ -443,3 +443,99 @@ def get_moves(board, fen, max_depth =2):
     logging.debug('Unable to detect moves')
     raise InvalidMove()
 
+# convert FEN to 2d list with user playing pieces
+def FEN2board(FEN_string, play_white):
+
+    if play_white:
+        pieces = white_pieces
+    else:
+        pieces = black_pieces
+
+    board = []
+    x, y = 0, 0
+    row = []
+    for c in FEN_string:
+        if c in pieces:
+            row.append(c)
+        elif c == "/":  # new line
+            board.append(row)
+            row = []
+        elif c == " ":
+            break
+        elif c in ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"):
+            for i in range(int(c)):
+                row.append("-")
+        else:
+            row.append("*")
+
+    board.append(row)
+
+    return board
+
+
+def FENs2move(FEN_prev, FEN, play_white):
+    logging.info("---------------------- FENs2move() --------------------")
+    logging.info("FEN_prev=%s FEN=%s", FEN_prev, FEN)
+
+    board_prev = FEN2board(FEN_prev, play_white)
+    board = FEN2board(FEN, play_white)
+
+    #    for i in range(8):
+    #        for j in range(8):
+    #            print board_prev[i][j],
+    #        print
+
+    #    print
+    #    for i in range(8):
+    #        for j in range(8):
+    #            print board[i][j],
+    #        print
+
+    if play_white:
+        pieces = white_pieces
+    else:
+        pieces = black_pieces
+
+    p_from = {}
+    p_to = {}
+    for i in range(8):
+        for j in range(8):
+            if board[i][j] == "-" and board_prev[i][j] in pieces:
+                #                print board_prev[i][j],"from",letter[j]+str(8-i)
+                p_from[board_prev[i][j]] = letter[j] + str(8 - i)
+            if board[i][j] in pieces and board_prev[i][j] not in pieces:
+                #                print board[i][j],"to",letter[j]+str(8-i)
+                p_to[board[i][j]] = letter[j] + str(8 - i)
+
+    move = ""
+
+    # test for conversion
+    if play_white:
+        pawn = "P"
+        row = "7"
+    else:
+        pawn = "p"
+        row = "2"
+
+    if pawn in p_from:
+        logging.info("Movement %s", pawn)
+        if row in p_from[pawn]:
+            logging.info("Found conversion !")
+            for key in p_to:
+                if key != pawn:
+                    move = p_from[pawn] + p_to[key] + key
+                    return move
+
+    if "k" in p_from and "k" in p_to:
+        #        print "Found k"
+        move = p_from["k"] + p_to["k"]
+    elif "K" in p_from and "K" in p_to:
+        #        print "Found K"
+        move = p_from["K"] + p_to["K"]
+    else:
+        for key in p_from:
+            if key in p_to:
+                move = p_from[key] + p_to[key]
+
+    logging.info("------------ move found: %s ------------------", move)
+    return move
