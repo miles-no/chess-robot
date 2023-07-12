@@ -30,7 +30,7 @@ class Certabo():
         self.board_state_usb = ""
         self.move_event = threading.Event()
         self.wait_for_move = False
-        self.pending_moves = []
+        self.pending_move = None
         self.color = True # white pieces start
         self.stockfish_color = None
 
@@ -56,9 +56,9 @@ class Certabo():
         logging.debug('waiting for event signal')
         self.move_event.wait()
         self.move_event.clear()
-        logging.debug(f'event signal received, pending moves: {self.pending_moves}')
+        logging.debug(f'event signal received, pending moves: {self.pending_move}')
         self.wait_for_move = False
-        return self.pending_moves
+        return self.pending_move
     
     def new_game(self):
         self.chessboard = chess.Board()
@@ -102,18 +102,15 @@ class Certabo():
                             if self.wait_for_move:
                                 logging.debug('trying to find user move in usb data')
                                 try:
-                                    self.pending_moves = get_moves(self.chessboard, self.board_state_usb, self.color) # only search one move deep
-                                    print(self.pending_moves)
-                                    if self.pending_moves != [] and self.pending_moves[0] != "Invalid move":
+                                    self.pending_move = get_moves(self.chessboard, self.board_state_usb, self.color) # only search one move deep
+                                    if self.pending_move != None and self.pending_move != "Invalid move":
                                         logging.debug('firing event')
-                                        self.chessboard.push_uci(self.pending_moves[0])
+                                        self.chessboard.push_uci(self.pending_move)
                                         self.move_event.set()
-                                    elif self.pending_moves[0] == "Invalid move":
+                                    elif self.pending_move == "Invalid move":
                                         self.move_event.set()
-                                        print("INVALID MOVEEEEEEEEEEEEEEEEEEE")
                                 except NoMove:
-                                    print("error in get_moves")
-                                    self.pending_moves = []
+                                    self.pending_move = None
 
     def calibrate_from_usb_data(self, usb_data):
         self.calibration_samples.append(usb_data)

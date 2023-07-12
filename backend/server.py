@@ -39,7 +39,7 @@ def startGame(arg):
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
         if mycertabo.color == arg['color']:
             move = mycertabo.get_user_move()
-            if move[0] == "Invalid move":
+            if move == "Invalid move":
                 socket_io.emit("invalid-move")
                 continue
             mycertabo.setColor()
