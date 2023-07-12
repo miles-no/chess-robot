@@ -31,6 +31,8 @@ class Certabo():
         self.move_event = threading.Event()
         self.wait_for_move = False
         self.pending_moves = []
+        self.color = True # white pieces start
+        self.stockfish_color = None
 
         # internal values for CERTABO board
         self.calibration_samples_counter = 0
@@ -100,12 +102,16 @@ class Certabo():
                             if self.wait_for_move:
                                 logging.debug('trying to find user move in usb data')
                                 try:
-                                    self.pending_moves = get_moves(self.chessboard, self.board_state_usb, 1) # only search one move deep
-                                    if self.pending_moves != []:
+                                    self.pending_moves = get_moves(self.chessboard, self.board_state_usb, self.color) # only search one move deep
+                                    print(self.pending_moves)
+                                    if self.pending_moves != [] and self.pending_moves[0] != "Invalid move":
                                         logging.debug('firing event')
                                         self.chessboard.push_uci(self.pending_moves[0])
                                         self.move_event.set()
-                                except:
+                                    elif self.pending_moves[0] == "Invalid move":
+                                        self.move_event.set()
+                                        print("INVALID MOVEEEEEEEEEEEEEEEEEEE")
+                                except NoMove:
                                     print("error in get_moves")
                                     self.pending_moves = []
 
@@ -125,9 +131,22 @@ class Certabo():
         else:
             self.send_leds()
 
-    def stockfish_move(self, best_move, color):
+    def stockfish_move(self, best_move):
         prev_fen = self.chessboard.board_fen()
         self.chessboard.push(best_move)
         curr_fen = self.chessboard.board_fen()
-        FENs2move(prev_fen, curr_fen, color)
+        FENs2move(prev_fen, curr_fen, self.stockfish_color)
 
+
+    # True for white and False for black
+    def setColor(self):
+        if self.color: 
+            self.color = False
+        else:
+            self.color = True
+    
+    def setStockfishColor(self, color):
+        if color: 
+            return False
+        else: 
+            return True

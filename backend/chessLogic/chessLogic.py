@@ -4,7 +4,6 @@ class ChessLogic:
     def __init__(self, STOCKFISH_PATH):
         self.last_move = None
         self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
-        self.color = True
 
     def quitEngine(self):
         self.engine.quit()
@@ -32,19 +31,6 @@ class ChessLogic:
         elif board.outcome().winner == False:
             return "black"
         return None
-    
-    # True for white and False for black
-    def setColor(self):
-        if self.color: 
-            self.color = False
-        else:
-            self.color = True
-    
-    def getStockfishColor(self, color):
-        if color: 
-            return False
-        else: 
-            return True
 
     
 if __name__ == "__main__":
