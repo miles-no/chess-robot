@@ -20,7 +20,6 @@ export default function Game(props: gameProps) {
   const [preGame, setpreGame] = useState<boolean>(true);
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
   const [valid_moves, setValidMoves] = useState<string[]>();
-  const [timer, setTimer] = useState<number>(0);
   const [currentPlayer, setCurrentPlayer] = useState<boolean>(true);
   const [gameInProgress, setGameInProgress] = useState<boolean>(false);
 
@@ -99,7 +98,6 @@ export default function Game(props: gameProps) {
     setColor(selectedSide);
     setpreGame(false);
     if (gameInProgress) {
-      console.log("qksmfklqwemfl");
       const preferences = { skill_level: level, color: selectedSide };
       props.socket.emit("new-game", preferences);
     }
