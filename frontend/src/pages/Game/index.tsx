@@ -16,7 +16,7 @@ export default function Game(props: gameProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [result, setResult] = useState<string>();
   const [winner, setWinner] = useState<string>();
-  const [color, setColor] = useState<string>();
+  const [color, setColor] = useState<boolean>();
   const [preGame, setpreGame] = useState<boolean>(true);
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
   const [valid_moves, setValidMoves] = useState<string[]>();
@@ -64,13 +64,7 @@ export default function Game(props: gameProps) {
 
   function startGame() {
     if (FEN === "start" && props.socket.connected) {
-      let piece_color;
-      if (color === "white") {
-        piece_color = true;
-      } else {
-        piece_color = false;
-      }
-      const preferences = { skill_level: stockfishlevel, color: piece_color };
+      const preferences = { skill_level: stockfishlevel, color: color };
       props.socket.emit("start-game", preferences);
       setGameInProgress(true);
     } else {
@@ -103,7 +97,7 @@ export default function Game(props: gameProps) {
     setOpen(false);
     newGame();
   };
-  const handlePregame = (level: number, selectedSide: string) => {
+  const handlePregame = (level: number, selectedSide: boolean) => {
     setStockfishLevel(level);
     setColor(selectedSide);
     setpreGame(false);
