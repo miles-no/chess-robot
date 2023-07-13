@@ -1,8 +1,9 @@
-import { Button, LinearProgress } from "@mui/material";
+import { Box, Button, LinearProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
 import MyChessboard from "../../Components/Chessboard/Chessboard";
+import GameStatus from "../../Components/GameStatus/GameStatus";
 import { default as PreGame } from "../../Components/PreGame/PreGame";
 import "./index.css";
 interface gameProps {
@@ -18,6 +19,8 @@ export default function Game(props: gameProps) {
   const [preGame, setpreGame] = useState<boolean>(true);
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
   const [valid_moves, setValidMoves] = useState<string[]>();
+  const [timer, setTimer] = useState<number>(0);
+  const [currentPlayer, setCurrentPlayer] = useState<boolean>(true);
   useEffect(() => {
     props.socket.on("game-over", handleResultMessage);
 
@@ -61,6 +64,8 @@ export default function Game(props: gameProps) {
     if (message.fen) {
       setFEN(message.fen);
       setValidMoves([]);
+      setCurrentPlayer(message.color);
+      console.log("COLOR: " + message.color);
     }
   };
   function handleStartGame() {
@@ -131,46 +136,51 @@ export default function Game(props: gameProps) {
         </div>
       ) : (
         <div className="main-container">
-          <div className="alert">
-            {result && (
+          <div className="game">
+            <div className="alert">
+              {result && (
+                <AlertComponent
+                  open={open}
+                  alertTitle={result}
+                  message={"Winner is " + winner}
+                  handleClose={handleClose}
+                  handleOK={handleOK}
+                />
+              )}
+            </div>
+            <div className="unclickable-area">
+              <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
+            </div>
+            {!result && (
               <AlertComponent
-                open={open}
-                alertTitle={result}
-                message={"Winner is " + winner}
+                alertTitle="Start Game"
+                message="Make sure pieces are in starting position"
                 handleClose={handleClose}
-                handleOK={handleOK}
+                handleOK={handleStartGame}
+                open={open}
               />
             )}
-          </div>
-          <div className="unclickable-area">
-            <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
-          </div>
-          {!result && (
-            <AlertComponent
-              alertTitle="Start Game"
-              message="Make sure pieces are in starting position"
-              handleClose={handleClose}
-              handleOK={handleStartGame}
-              open={open}
-            />
-          )}
-          <div className="buttons">
-            {FEN !== "start" ? (
-              <>
-                <Button variant="outlined" onClick={() => newGame()}>
-                  New game
+            <div className="buttons">
+              {FEN !== "start" ? (
+                <>
+                  <Button variant="outlined" onClick={() => newGame()}>
+                    New game
+                  </Button>
+                  <Button variant="outlined" onClick={() => getValidMoves()}>
+                    Get move
+                  </Button>
+                </>
+              ) : (
+                <Button variant="contained" onClick={() => startGame()}>
+                  Start game
                 </Button>
-                <Button variant="outlined" onClick={() => getValidMoves()}>
-                  Get move
-                </Button>
-              </>
-            ) : (
-              <Button variant="contained" onClick={() => startGame()}>
-                Start game
-              </Button>
-            )}
+              )}
+            </div>
+            <div>{valid_moves && valid_moves.map((move) => <p>{move}</p>)}</div>
           </div>
-          <div>{valid_moves && valid_moves.map((move) => <p>{move}</p>)}</div>
+          <div className="game-status">
+            <GameStatus time={timer} player={currentPlayer} />
+          </div>
         </div>
       )}
     </div>

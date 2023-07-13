@@ -5,8 +5,16 @@
 .main-container {
   padding-left: 1em;
   padding-top: 1em;
+  display: flex;
 }
 
 .buttons {
   padding-top: 3em;
+}
+.game {
+  flex: 1;
+}
+
+.game-status {
+  flex: 0;
 }
