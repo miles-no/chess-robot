@@ -17,6 +17,7 @@ export default function Game(props: gameProps) {
   const [color, setColor] = useState<string>();
   const [preGame, setpreGame] = useState<boolean>(true);
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
+  const [valid_moves, setValidMoves] = useState<string[]>();
   useEffect(() => {
     props.socket.on("game-over", handleResultMessage);
 
@@ -36,8 +37,10 @@ export default function Game(props: gameProps) {
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
+    props.socket.on("valid-moves", handleValidMoves);
     return () => {
       props.socket.off("invalid-move", handleInvalidMove);
+      props.socket.off("valid-moves", handleValidMoves);
     };
   }, []);
 
@@ -57,6 +60,7 @@ export default function Game(props: gameProps) {
   const handleFEN = (fen: string) => {
     if (fen) {
       setFEN(fen);
+      setValidMoves([]);
     }
   };
   function handleStartGame() {
@@ -107,6 +111,14 @@ export default function Game(props: gameProps) {
     setpreGame(false);
   };
 
+  const getValidMoves = () => {
+    props.socket.emit("get-valid-moves");
+  };
+
+  const handleValidMoves = (validMoves: string[]) => {
+    setValidMoves(validMoves);
+  };
+
   return (
     <div className="main-container">
       <div className="pre-game">
@@ -145,6 +157,9 @@ export default function Game(props: gameProps) {
             <Button variant="outlined" onClick={() => newGame()}>
               New game
             </Button>
+            <Button variant="outlined" onClick={() => getValidMoves()}>
+              Get move
+            </Button>
           </>
         ) : (
           <Button variant="contained" onClick={() => startGame()}>
@@ -152,6 +167,7 @@ export default function Game(props: gameProps) {
           </Button>
         )}
       </div>
+      <div>{valid_moves && valid_moves.map((move) => <p>{move}</p>)}</div>
     </div>
   );
 }
