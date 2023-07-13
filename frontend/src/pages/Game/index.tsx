@@ -21,31 +21,21 @@ export default function Game(props: gameProps) {
   const [valid_moves, setValidMoves] = useState<string[]>();
   const [timer, setTimer] = useState<number>(0);
   const [currentPlayer, setCurrentPlayer] = useState<boolean>(true);
-  useEffect(() => {
-    props.socket.on("game-over", handleResultMessage);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      props.socket.off("game-over", handleResultMessage);
-    };
-  }, [props.socket]);
-
-  useEffect(() => {
-    props.socket.on("get-fen", handleFEN);
-    // Cleanup the props.socket listener when the component unmounts
-    return () => {
-      props.socket.off("get-fen", handleFEN);
-    };
-  }, [props.socket]);
+  const [gameInProgress, setGameInProgress] = useState<boolean>(false);
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
     props.socket.on("valid-moves", handleValidMoves);
+    props.socket.on("get-fen", handleFEN);
+    props.socket.on("game-over", handleResultMessage);
     return () => {
+      // Cleanup the props.socket listener when the component unmounts
       props.socket.off("invalid-move", handleInvalidMove);
       props.socket.off("valid-moves", handleValidMoves);
+      props.socket.off("get-fen", handleFEN);
+      props.socket.off("game-over", handleResultMessage);
     };
-  }, []);
+  }, [props.socket]);
 
   function newGame() {
     if (FEN !== "start") {
@@ -58,6 +48,7 @@ export default function Game(props: gameProps) {
       props.socket.emit("new-game", "new-game");
       setFEN("start");
       setpreGame(true);
+      setGameInProgress(false);
     }
   }
   const handleFEN = (message: any) => {
@@ -68,29 +59,28 @@ export default function Game(props: gameProps) {
       console.log("COLOR: " + message.color);
     }
   };
-  function handleStartGame() {
-    let piece_color;
-    if (color === "white") {
-      piece_color = true;
-    } else {
-      piece_color = false;
-    }
-    const preferences = { skill_level: stockfishlevel, color: piece_color };
-    if (FEN === "start" && props.socket.connected) {
-      props.socket.emit("start-game", preferences);
-      setOpen(false);
-    } else {
-      alert("Pieces are not in starting position!");
-    }
-  }
+
   function startGame() {
-    setOpen(true);
+    if (FEN === "start" && props.socket.connected) {
+      let piece_color;
+      if (color === "white") {
+        piece_color = true;
+      } else {
+        piece_color = false;
+      }
+      const preferences = { skill_level: stockfishlevel, color: piece_color };
+      props.socket.emit("start-game", preferences);
+      setGameInProgress(true);
+    } else {
+      setOpen(true);
+    }
   }
 
   function handleResultMessage(messageDisctionary: any) {
     if (messageDisctionary.result) {
       setResult(messageDisctionary.result);
       setOpen(true);
+      setGameInProgress(false);
     }
     if (messageDisctionary.winner) {
       setWinner(messageDisctionary.winner);
@@ -105,6 +95,7 @@ export default function Game(props: gameProps) {
     // On closing the alert
     setOpen(false);
   };
+
   const handleOK = () => {
     setResult(undefined);
     setOpen(false);
@@ -156,12 +147,12 @@ export default function Game(props: gameProps) {
                 alertTitle="Start Game"
                 message="Make sure pieces are in starting position"
                 handleClose={handleClose}
-                handleOK={handleStartGame}
+                handleOK={handleOK}
                 open={open}
               />
             )}
             <div className="buttons">
-              {FEN !== "start" ? (
+              {FEN !== "start" && gameInProgress ? (
                 <>
                   <Button variant="outlined" onClick={() => newGame()}>
                     New game
@@ -171,15 +162,19 @@ export default function Game(props: gameProps) {
                   </Button>
                 </>
               ) : (
-                <Button variant="contained" onClick={() => startGame()}>
-                  Start game
-                </Button>
+                !gameInProgress && (
+                  <Button variant="contained" onClick={() => startGame()}>
+                    Start game
+                  </Button>
+                )
               )}
             </div>
             <div>{valid_moves && valid_moves.map((move) => <p>{move}</p>)}</div>
           </div>
           <div className="game-status">
-            <GameStatus time={timer} player={currentPlayer} />
+            {gameInProgress && (
+              <GameStatus time={timer} player={currentPlayer} />
+            )}
           </div>
         </div>
       )}
