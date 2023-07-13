@@ -32,6 +32,14 @@ def newGame(arg):
     print(f'new to-server event: {arg}')
     mycertabo.new_game()
 
+@socket_io.on('get-valid-moves')
+def getValidMoves():
+    legal_moves = list(mycertabo.chessboard.legal_moves)
+    legal_moves_ucis = []
+    for move in legal_moves:
+        legal_moves_ucis.append(move.uci())
+    socket_io.emit('valid-moves', legal_moves_ucis)
+
 @socket_io.on('start-game')
 def startGame(arg):
     mycertabo.setStockfishColor(arg['color'])

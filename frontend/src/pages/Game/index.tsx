@@ -17,6 +17,7 @@ export default function Game(props: gameProps) {
   const [color, setColor] = useState<string>();
   const [preGame, setpreGame] = useState<boolean>(true);
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
+  const [valid_moves, setValidMoves] = useState<string[]>();
   useEffect(() => {
     props.socket.on("game-over", handleResultMessage);
 
@@ -36,8 +37,10 @@ export default function Game(props: gameProps) {
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
+    props.socket.on("valid-moves", handleValidMoves);
     return () => {
       props.socket.off("invalid-move", handleInvalidMove);
+      props.socket.off("valid-moves", handleValidMoves);
     };
   }, []);
 
@@ -57,6 +60,7 @@ export default function Game(props: gameProps) {
   const handleFEN = (message: any) => {
     if (message.fen) {
       setFEN(message.fen);
+      setValidMoves([]);
     }
   };
   function handleStartGame() {
@@ -107,51 +111,68 @@ export default function Game(props: gameProps) {
     setpreGame(false);
   };
 
+  const getValidMoves = () => {
+    props.socket.emit("get-valid-moves");
+  };
+
+  const handleValidMoves = (validMoves: string[]) => {
+    setValidMoves(validMoves);
+  };
+
   return (
-    <div className="main-container">
-      <div className="pre-game">
-        <PreGame
-          open={preGame}
-          stockfishLevel={stockfishlevel}
-          handleOK={handlePregame}
-        />
-      </div>
-      <div className="alert">
-        {result && (
-          <AlertComponent
-            open={open}
-            alertTitle={result}
-            message={"Winner is " + winner}
-            handleClose={handleClose}
-            handleOK={handleOK}
+    <div>
+      {preGame ? (
+        <div className="pre-game">
+          <PreGame
+            open={preGame}
+            stockfishLevel={stockfishlevel}
+            handleOK={handlePregame}
           />
-        )}
-      </div>
-      <div className="unclickable-area">
-        <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
-      </div>
-      {!result && (
-        <AlertComponent
-          alertTitle="Start Game"
-          message="Make sure pieces are in starting position"
-          handleClose={handleClose}
-          handleOK={handleStartGame}
-          open={open}
-        />
+        </div>
+      ) : (
+        <div className="main-container">
+          <div className="alert">
+            {result && (
+              <AlertComponent
+                open={open}
+                alertTitle={result}
+                message={"Winner is " + winner}
+                handleClose={handleClose}
+                handleOK={handleOK}
+              />
+            )}
+          </div>
+          <div className="unclickable-area">
+            <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
+          </div>
+          {!result && (
+            <AlertComponent
+              alertTitle="Start Game"
+              message="Make sure pieces are in starting position"
+              handleClose={handleClose}
+              handleOK={handleStartGame}
+              open={open}
+            />
+          )}
+          <div className="buttons">
+            {FEN !== "start" ? (
+              <>
+                <Button variant="outlined" onClick={() => newGame()}>
+                  New game
+                </Button>
+                <Button variant="outlined" onClick={() => getValidMoves()}>
+                  Get move
+                </Button>
+              </>
+            ) : (
+              <Button variant="contained" onClick={() => startGame()}>
+                Start game
+              </Button>
+            )}
+          </div>
+          <div>{valid_moves && valid_moves.map((move) => <p>{move}</p>)}</div>
+        </div>
       )}
-      <div className="buttons">
-        {FEN !== "start" ? (
-          <>
-            <Button variant="outlined" onClick={() => newGame()}>
-              New game
-            </Button>
-          </>
-        ) : (
-          <Button variant="contained" onClick={() => startGame()}>
-            Start game
-          </Button>
-        )}
-      </div>
     </div>
   );
 }
