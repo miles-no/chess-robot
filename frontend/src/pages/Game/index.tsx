@@ -38,7 +38,7 @@ export default function Game(props: gameProps) {
   }, [props.socket]);
 
   function newGame() {
-    if (FEN !== "start") {
+    if (gameInProgress) {
       const confirmNewGame = window.confirm(
         "Are you sure you want to start a new game? Please adjust the pieces to starting positions!"
       );
@@ -152,7 +152,7 @@ export default function Game(props: gameProps) {
               />
             )}
             <div className="buttons">
-              {FEN !== "start" && gameInProgress ? (
+              {gameInProgress ? (
                 <>
                   <Button variant="outlined" onClick={() => newGame()}>
                     New game
