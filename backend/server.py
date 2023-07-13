@@ -30,9 +30,10 @@ def handle_connect():
 
 @socket_io.on('new-game')
 def newGame(arg):
-    arg = {'color': True, 'skill_level': 1}
+    print(arg)
     mycertabo.new_game()
     setPreferences(arg)
+    print(mycertabo.setStockfishColor)
     message = {"fen": "start", "color": mycertabo.color}
     socket_io.emit("get-fen", message)
    

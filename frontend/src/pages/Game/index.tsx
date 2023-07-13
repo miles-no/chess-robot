@@ -38,7 +38,7 @@ export default function Game(props: gameProps) {
     };
   }, [props.socket]);
 
-  function newGame() {
+  const newGame = async () => {
     if (gameInProgress) {
       const confirmNewGame = window.confirm(
         "Are you sure you want to start a new game? Please adjust the pieces to starting positions!"
@@ -46,12 +46,20 @@ export default function Game(props: gameProps) {
       if (!confirmNewGame) {
         return; // Exit early if the user cancels the new game confirmation
       }
-      props.socket.emit("new-game", "new-game");
-      setFEN("start");
       setpreGame(true);
+      setFEN("start");
       setGameInProgress(false);
+      let piece_color;
+      if (color === "white") {
+        piece_color = true;
+      } else {
+        piece_color = false;
+      }
+      console.log(piece_color);
+      const preferences = { skill_level: stockfishlevel, color: piece_color };
+      props.socket.emit("new-game", preferences);
     }
-  }
+  };
   const handleFEN = (message: any) => {
     if (message.fen) {
       setFEN(message.fen);
@@ -104,6 +112,9 @@ export default function Game(props: gameProps) {
     newGame();
   };
   const handlePregame = (level: number, selectedSide: string) => {
+    console.log("Handle pregame:");
+    console.log(level);
+    console.log(selectedSide);
     setStockfishLevel(level);
     setColor(selectedSide);
     setpreGame(false);
