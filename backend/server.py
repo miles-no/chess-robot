@@ -5,6 +5,7 @@ from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 from certaboHelper.certabo import Certabo
 from initCertabo import InitializeCertabo
+import time
 
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
@@ -53,7 +54,7 @@ def startGame(arg):
             mycertabo.setColor()
         else:
             best_move = chess_logic.getBestMove(mycertabo.chessboard)
-            print(best_move)   
+            time.sleep(2)
             mycertabo.stockfish_move(best_move)
             mycertabo.setColor()
         fen = mycertabo.chessboard.board_fen()
