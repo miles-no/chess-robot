@@ -48,9 +48,6 @@ export default function Game(props: gameProps) {
       }
       setpreGame(true);
       setFEN("start");
-      setGameInProgress(false);
-      const preferences = { skill_level: stockfishlevel, color: color };
-      props.socket.emit("new-game", preferences);
     }
   };
   const handleFEN = (message: any) => {
@@ -59,7 +56,6 @@ export default function Game(props: gameProps) {
       setValidMoves([]);
       setCurrentPlayer(message.color);
       setMoves(message.move);
-      console.log("COLOR: " + message.color);
     }
   };
 
@@ -96,13 +92,18 @@ export default function Game(props: gameProps) {
   const handleOK = () => {
     setResult(undefined);
     setOpen(false);
-    newGame();
   };
 
   const handlePregame = (level: number, selectedSide: boolean) => {
     setStockfishLevel(level);
     setColor(selectedSide);
     setpreGame(false);
+    if (gameInProgress) {
+      console.log("qksmfklqwemfl");
+      const preferences = { skill_level: level, color: selectedSide };
+      props.socket.emit("new-game", preferences);
+    }
+    //  setGameInProgress(true);
   };
 
   const getValidMoves = () => {
