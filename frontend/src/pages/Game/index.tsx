@@ -49,14 +49,7 @@ export default function Game(props: gameProps) {
       setpreGame(true);
       setFEN("start");
       setGameInProgress(false);
-      let piece_color;
-      if (color === "white") {
-        piece_color = true;
-      } else {
-        piece_color = false;
-      }
-      console.log(piece_color);
-      const preferences = { skill_level: stockfishlevel, color: piece_color };
+      const preferences = { skill_level: stockfishlevel, color: color };
       props.socket.emit("new-game", preferences);
     }
   };
