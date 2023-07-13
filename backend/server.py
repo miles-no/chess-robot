@@ -57,7 +57,8 @@ def startGame(arg):
             mycertabo.stockfish_move(best_move)
             mycertabo.setColor()
         fen = mycertabo.chessboard.board_fen()
-        socket_io.emit("get-fen", fen)
+        message = {"fen": fen, "color": mycertabo.color}
+        socket_io.emit("get-fen", message)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
     result = {"result": outcome[0], "winner": outcome[1]}
     socket_io.emit("game-over", result)

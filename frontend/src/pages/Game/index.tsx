@@ -57,9 +57,9 @@ export default function Game(props: gameProps) {
       setpreGame(true);
     }
   }
-  const handleFEN = (fen: string) => {
-    if (fen) {
-      setFEN(fen);
+  const handleFEN = (message: any) => {
+    if (message.fen) {
+      setFEN(message.fen);
       setValidMoves([]);
     }
   };
