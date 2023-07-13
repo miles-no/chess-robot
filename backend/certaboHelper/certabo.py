@@ -25,7 +25,6 @@ class Certabo():
             self.calibration = True
         else:
             self.calibration = False
-        self.rotate180 = False
         self.chessboard = chess.Board(chess.STARTING_FEN)
         self.board_state_usb = ""
         self.move_event = threading.Event()
@@ -87,9 +86,9 @@ class Certabo():
             self.usb_data_history[self.usb_data_history_i] = list(usb_data)[:]
             self.usb_data_history_i += 1
             if self.usb_data_history_filled:
-                self.usb_data_processed = statistic_processing(self.usb_data_history, False)
+                self.usb_data_processed = statistic_processing(self.usb_data_history)
                 if self.usb_data_processed != []:
-                    test_state = usb_data_to_FEN(self.usb_data_processed, self.rotate180)
+                    test_state = usb_data_to_FEN(self.usb_data_processed)
                     if test_state != "":
                         if self.board_state_usb != test_state:
                             new_position = True
@@ -118,7 +117,7 @@ class Certabo():
         self.calibration_samples_counter += 1
         if self.calibration_samples_counter >= 15:
             logging.info( "------- we have collected enough samples for averaging ----")
-            usb_data = statistic_processing_for_calibration( self.calibration_samples, False)
+            usb_data = statistic_processing_for_calibration(self.calibration_samples)
             calibration(usb_data, CALIBRATION_DATA)
             self.calibration = False
             logging.info('calibration ok') 
@@ -129,11 +128,7 @@ class Certabo():
             self.send_leds()
 
     def stockfish_move(self, best_move):
-        prev_fen = self.chessboard.board_fen()
         self.chessboard.push(best_move)
-        curr_fen = self.chessboard.board_fen()
-        FENs2move(prev_fen, curr_fen, self.stockfish_color)
-
 
     # True for white and False for black
     def setColor(self):
