@@ -127,7 +127,7 @@ export default function PreGame(props: alertProps) {
         </Box>
       </Grid>
       <DialogActions>
-        {selectedCard && (
+        {selectedCard !== null && (
           <Button onClick={() => props.handleOK(level, selectedCard)}>
             OK
           </Button>
