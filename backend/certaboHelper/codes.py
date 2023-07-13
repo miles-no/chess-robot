@@ -13,13 +13,10 @@ def cell_codes(n_cell, usb_data):  # n_cell from 0 to 63, 0 at left top
         result.append(usb_data[n_cell * 5 + i])
     return result
 
-
 def compare_cells(x, y):
     if x[0] == y[0] and x[1] == y[1] and x[2] == y[2] and x[3] == y[3] and x[4] == y[4]:
         return True
-    else:
-        return False
-
+    return False
 
 def load_calibration(filename):
     global p, r, n, b, k, q, P, R, N, B, K, Q
@@ -36,18 +33,13 @@ def load_calibration(filename):
         return False
     return True
 
-
-def statistic_processing_for_calibration(samples, show_print):
+def statistic_processing_for_calibration(samples):
     global letters
     result = []
     for n_cell in range(64):
         cells = []
-        if show_print:
-            logging.info("\n    %s   samples:", letter[n_cell % 8] + str(8 - n_cell / 8))
         for usb_data in samples:
             cells.append(cell_codes(n_cell, usb_data))
-            if show_print:
-                logging.info("%s", cell_codes(n_cell, usb_data))
         histograms = []
         for cell in cells:
             histogram = 0
@@ -55,17 +47,11 @@ def statistic_processing_for_calibration(samples, show_print):
                 if compare_cells(cell, c):
                     histogram += 1
             histograms.append(histogram)
-
         max_value = max(histograms)
         max_index = histograms.index(max_value)
-
         for i in cells[max_index]:
             result.append(i)
-        if show_print:
-            logging.info("---final code: %s", " ".join(map(str, result)))
-
     return result
-
 
 def get_name(cell):
     global p, r, n, b, k, q, P, R, N, B, K, Q
@@ -111,20 +97,15 @@ def get_name(cell):
     return c
 
 
-def statistic_processing(samples, show_print):
+def statistic_processing(samples):
     global letters
     result = []
     found_unknown_cell = False
     for n_cell in range(64):
         cells = []
-        if show_print:
-            logging.info("\n    %s    samples:", letter[n_cell % 8] + str(8 - n_cell / 8))
         for usb_data in samples:
             cells.append(cell_codes(n_cell, usb_data))
-            if show_print:
-                logging.info("%s", cell_codes(n_cell, usb_data))
         histograms = []
-
         known_cells = []
         for cell in cells:  # stack of history of cell codes for one cell
             name = get_name(cell)
@@ -134,7 +115,7 @@ def statistic_processing(samples, show_print):
                 cell = 0, 0, 0, 0, 0
             else:            	
                	cell = 0, 0, 0, 0, 0            	    
-               	known_cells.append(cell)	
+                known_cells.append(cell)	
         if len(known_cells) == 0:
             logging.info(
                 "Found only unknown cell codes in cell %s:",
@@ -159,13 +140,8 @@ def statistic_processing(samples, show_print):
         # append cells[max_index] to result
         for i in known_cells[max_index]:
             result.append(i)
-        if show_print:
-            if show_print:
-                logging.info("---final code: %s", " ".join(map(str, result)))
-
     if found_unknown_cell:
         return []
-
     return result
 
 
@@ -177,8 +153,7 @@ def cell_empty(x):
             nzeros += 1
     if nzeros > 2:
         return True
-    else:
-        return False
+    return False
 
 
 def calibration(usb_data, filename):
@@ -314,7 +289,6 @@ def calibration(usb_data, filename):
                         row.append("K")
         logging.info(" ".join(row))
 
-
 letter = "a", "b", "c", "d", "e", "f", "g", "h"
 reversed_letter = tuple(reversed(letter))
 
@@ -328,27 +302,22 @@ def diff2squareset(s1, s2):
     return diffmap
 
 def squareset2ledbytes(squareset):
-    # we pack the uint64 squareset bitmask into a big endian bytearray
     return int(squareset).to_bytes(8, byteorder="big", signed=False)
 
-def usb_data_to_FEN(usb_data, rotate180=False):
+def usb_data_to_FEN(usb_data):
     global letter
-    empty_cell = [0, 0, 0, 0, 0]
     s = ""
     was_unknown_piece = False
     for j in range(8):
-
         c = ""
         empty_cells_counter = 0
         for i in range(8):
             cell = cell_codes(i + j * 8, usb_data)
             c = "unknown"
-
             if cell_empty(cell):
                 c = "-"
                 empty_cells_counter += 1
             else:  # not empty
-
                 for cell_p in p:
                     if compare_cells(cell, cell_p):
                         c = "p"
@@ -385,7 +354,6 @@ def usb_data_to_FEN(usb_data, rotate180=False):
                 for cell_p in K:
                     if compare_cells(cell, cell_p):
                         c = "K"
-
                 if empty_cells_counter > 0 and c != "-":
                     s += str(empty_cells_counter)
                     empty_cells_counter = 0
@@ -398,17 +366,12 @@ def usb_data_to_FEN(usb_data, rotate180=False):
         if empty_cells_counter > 0 and c == "-":
             s += str(empty_cells_counter)
             empty_cells_counter = 0
-
         if j != 7:
             s += r"/"
-
-    if rotate180:
-        s = '/'.join(row[::-1] for row in reversed(s.split('/')))
     s += " w KQkq - 0 1"
     if was_unknown_piece:
         return ""
     return s
-
 
 black_pieces = "r", "b", "k", "n", "p", "q"
 white_pieces = "R", "B", "K", "N", "P", "Q"
@@ -416,6 +379,7 @@ white_pieces = "R", "B", "K", "N", "P", "Q"
 class NoMove(Exception):
     pass
 
+# Get users move from FEN
 def get_moves(board, fen, color):
     board_fen = fen.split()[0]
     if board.board_fen() == board_fen:
@@ -435,101 +399,21 @@ def get_moves(board, fen, color):
     logging.debug('Unable to detect moves')
     raise NoMove()
 
-def FEN2Move(board1, board2, who_moved):
-    nums = {1:"a", 2:"b", 3:"c", 4:"d", 5:"e", 6:"f", 7:"g", 8:"h"}
-    str_board = str(board1).split("\n")
-    str_board2 = str(board2).split("\n")
+# Find the move that was made in string from FEN
+def FEN2Move(board, new_board, white):
+    nums = {1: "a", 2: "b", 3: "c", 4: "d", 5: "e", 6: "f", 7: "g", 8: "h"}
+    board = str(board).split("\n")
+    new_board = str(new_board).split("\n")
     move = ""
     flip = False
-    if who_moved:
-        for i in range(8)[::-1]:
-            for x in range(15)[::-1]:
-                if str_board[i][x] != str_board2[i][x]:
-                    if str_board[i][x] == "." and move == "":
-                        flip = True
-                    move+=str(nums.get(round(x/2)+1))+str(9-(i+1))
-    else:
-        for i in range(8):
-            for x in range(15):
-                if str_board[i][x] != str_board2[i][x]:
-                    if str_board[i][x] == "." and move == "":
-                        flip = True
-                    move+=str(nums.get(round(x/2)+1))+str(9-(i+1))
+    rows = range(8) if white else range(8)[::-1]
+    cols = range(15) if white else range(15)[::-1]
+    for i in rows:
+        for x in cols:
+            if board[i][x] != new_board[i][x]:
+                if board[i][x] == "." and move == "":
+                    flip = True
+                move += str(nums.get(round(x / 2) + 1)) + str(9 - (i + 1))
     if flip:
-        move = move[2]+move[3]+move[0]+move[1]
-    return move
-
-# convert FEN to 2d list with user playing pieces
-def FEN2board(FEN_string, play_white):
-    if play_white:
-        pieces = white_pieces
-    else:
-        pieces = black_pieces
-
-    board = []
-    x, y = 0, 0
-    row = []
-    for c in FEN_string:
-        if c in pieces:
-            row.append(c)
-        elif c == "/":  # new line
-            board.append(row)
-            row = []
-        elif c == " ":
-            break
-        elif c in ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9"):
-            for i in range(int(c)):
-                row.append("-")
-        else:
-            row.append("*")
-    board.append(row)
-    return board
-
-
-def FENs2move(FEN_prev, FEN, play_white):
-    logging.info("FEN_prev=%s FEN=%s", FEN_prev, FEN)
-    board_prev = FEN2board(FEN_prev, play_white)
-    board = FEN2board(FEN, play_white)
-    if play_white:
-        pieces = white_pieces
-    else:
-        pieces = black_pieces
-    p_from = {}
-    p_to = {}
-    for i in range(8):
-        for j in range(8):
-            if board[i][j] == "-" and board_prev[i][j] in pieces:
-                #                print board_prev[i][j],"from",letter[j]+str(8-i)
-                p_from[board_prev[i][j]] = letter[j] + str(8 - i)
-            if board[i][j] in pieces and board_prev[i][j] not in pieces:
-                #                print board[i][j],"to",letter[j]+str(8-i)
-                p_to[board[i][j]] = letter[j] + str(8 - i)
-
-    move = ""
-    # test for conversion
-    if play_white:
-        pawn = "P"
-        row = "7"
-    else:
-        pawn = "p"
-        row = "2"
-    if pawn in p_from:
-        logging.info("Movement %s", pawn)
-        if row in p_from[pawn]:
-            logging.info("Found conversion !")
-            for key in p_to:
-                if key != pawn:
-                    move = p_from[pawn] + p_to[key] + key
-                    return move
-
-    if "k" in p_from and "k" in p_to:
-        #        print "Found k"
-        move = p_from["k"] + p_to["k"]
-    elif "K" in p_from and "K" in p_to:
-        #        print "Found K"
-        move = p_from["K"] + p_to["K"]
-    else:
-        for key in p_from:
-            if key in p_to:
-                move = p_from[key] + p_to[key]
+        move = move[2] + move[3] + move[0] + move[1]
     return move
