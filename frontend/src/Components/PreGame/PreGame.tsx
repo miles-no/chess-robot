@@ -18,12 +18,12 @@ import { useState } from "react";
 interface alertProps {
   open: boolean;
   stockfishLevel: number;
-  handleOK: (level: number, selectedCard: string) => void;
+  handleOK: (level: number, selectedCard: boolean) => void;
 }
 
 export default function PreGame(props: alertProps) {
   const [level, setLevel] = useState(1);
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [selectedCard, setSelectedCard] = useState<boolean | null>(null);
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -62,7 +62,7 @@ export default function PreGame(props: alertProps) {
           >
             <CardActionArea
               onClick={() => {
-                setSelectedCard("white");
+                setSelectedCard(true);
               }}
             >
               <CardMedia
@@ -78,7 +78,7 @@ export default function PreGame(props: alertProps) {
                   variant="h5"
                   component="div"
                   sx={{
-                    color: selectedCard === "white" ? "lightgreen" : "black",
+                    color: selectedCard === true ? "lightgreen" : "black",
                   }}
                 >
                   White
@@ -91,7 +91,7 @@ export default function PreGame(props: alertProps) {
           <Card sx={{ width: 200, backgroundColor: "black", color: "white" }}>
             <CardActionArea
               onClick={() => {
-                setSelectedCard("black");
+                setSelectedCard(false);
               }}
             >
               <CardMedia
@@ -107,7 +107,7 @@ export default function PreGame(props: alertProps) {
                   variant="h5"
                   component="div"
                   sx={{
-                    color: selectedCard === "black" ? "lightgreen" : "white",
+                    color: selectedCard === false ? "lightgreen" : "white",
                   }}
                 >
                   Black
@@ -127,7 +127,7 @@ export default function PreGame(props: alertProps) {
         </Box>
       </Grid>
       <DialogActions>
-        {selectedCard && (
+        {selectedCard !== null && (
           <Button onClick={() => props.handleOK(level, selectedCard)}>
             OK
           </Button>
