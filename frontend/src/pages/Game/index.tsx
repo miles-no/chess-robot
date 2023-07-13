@@ -24,30 +24,18 @@ export default function Game(props: gameProps) {
   const [gameInProgress, setGameInProgress] = useState<boolean>(false);
 
   useEffect(() => {
+    props.socket.on("invalid-move", handleInvalidMove);
+    props.socket.on("valid-moves", handleValidMoves);
+    props.socket.on("get-fen", handleFEN);
     props.socket.on("game-over", handleResultMessage);
-
-    // Clean up the event listener on component unmount
     return () => {
+      // Cleanup the props.socket listener when the component unmounts
+      props.socket.off("invalid-move", handleInvalidMove);
+      props.socket.off("valid-moves", handleValidMoves);
+      props.socket.off("get-fen", handleFEN);
       props.socket.off("game-over", handleResultMessage);
     };
   }, [props.socket]);
-
-  useEffect(() => {
-    props.socket.on("get-fen", handleFEN);
-    // Cleanup the props.socket listener when the component unmounts
-    return () => {
-      props.socket.off("get-fen", handleFEN);
-    };
-  }, [props.socket]);
-
-  useEffect(() => {
-    props.socket.on("invalid-move", handleInvalidMove);
-    props.socket.on("valid-moves", handleValidMoves);
-    return () => {
-      props.socket.off("invalid-move", handleInvalidMove);
-      props.socket.off("valid-moves", handleValidMoves);
-    };
-  }, []);
 
   function newGame() {
     if (FEN !== "start") {
