@@ -19,7 +19,7 @@ CALIBRATION_DATA = os.path.join(CERTABO_DATA_PATH,"calibration.bin")
 os.makedirs(CERTABO_DATA_PATH, exist_ok=True)
 
 class Certabo():
-    def __init__(self, calibrate, **kwargs):
+    def __init__(self, calibrate=False, **kwargs):
         super().__init__(**kwargs)
         if calibrate:
             self.calibration = True
@@ -62,7 +62,7 @@ class Certabo():
     
     def new_game(self):
         self.chessboard = chess.Board()
-        self.mystate = "init"
+        self.color = True
 
     def send_leds(self, message:bytes=(0).to_bytes(8,byteorder='big',signed=False)):
         self.serialthread.send_led(message)
@@ -144,6 +144,6 @@ class Certabo():
     
     def setStockfishColor(self, color):
         if color: 
-            return False
+            self.stockfish_color = False
         else: 
-            return True
+            self.stockfish_color = True

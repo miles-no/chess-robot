@@ -30,9 +30,12 @@ def handle_connect():
 
 @socket_io.on('new-game')
 def newGame(arg):
-    print(f'new to-server event: {arg}')
+    arg = {'color': True, 'skill_level': 1}
     mycertabo.new_game()
-
+    setPreferences(arg)
+    message = {"fen": "start", "color": mycertabo.color}
+    socket_io.emit("get-fen", message)
+   
 @socket_io.on('get-valid-moves')
 def getValidMoves():
     legal_moves = list(mycertabo.chessboard.legal_moves)
@@ -43,19 +46,18 @@ def getValidMoves():
 
 @socket_io.on('start-game')
 def startGame(arg):
-    mycertabo.setStockfishColor(arg['color'])
-    chess_logic.setSkillLevel(arg['skill_level'])
+    setPreferences(arg)
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
-        if mycertabo.color == arg['color']:
+        if mycertabo.color == mycertabo.stockfish_color:
+            best_move = chess_logic.getBestMove(mycertabo.chessboard)
+            time.sleep(2)
+            mycertabo.stockfish_move(best_move)
+            mycertabo.setColor()
+        else:
             move = mycertabo.get_user_move()
             if move == "Invalid move":
                 socket_io.emit("invalid-move")
                 continue
-            mycertabo.setColor()
-        else:
-            best_move = chess_logic.getBestMove(mycertabo.chessboard)
-            time.sleep(2)
-            mycertabo.stockfish_move(best_move)
             mycertabo.setColor()
         fen = mycertabo.chessboard.board_fen()
         message = {"fen": fen, "color": mycertabo.color}
@@ -64,6 +66,10 @@ def startGame(arg):
     result = {"result": outcome[0], "winner": outcome[1]}
     socket_io.emit("game-over", result)
     print("Game over")
+
+def setPreferences(arg):
+    mycertabo.setStockfishColor(arg['color'])
+    chess_logic.setSkillLevel(arg['skill_level'])
 
 if __name__ == '__main__':
     socket_io.run(app, port=5000)
