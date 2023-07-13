@@ -1,4 +1,4 @@
-import { Box, Button, LinearProgress } from "@mui/material";
+import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
@@ -12,6 +12,7 @@ interface gameProps {
 
 export default function Game(props: gameProps) {
   const [FEN, setFEN] = useState<string>("start");
+  const [moves, setMoves] = useState<string[]>();
   const [open, setOpen] = useState<boolean>(false);
   const [result, setResult] = useState<string>();
   const [winner, setWinner] = useState<string>();
@@ -56,6 +57,7 @@ export default function Game(props: gameProps) {
       setFEN(message.fen);
       setValidMoves([]);
       setCurrentPlayer(message.color);
+      setMoves(message.move);
       console.log("COLOR: " + message.color);
     }
   };
@@ -173,7 +175,7 @@ export default function Game(props: gameProps) {
           </div>
           <div className="game-status">
             {gameInProgress && (
-              <GameStatus time={timer} player={currentPlayer} />
+              <GameStatus moves={moves} player={currentPlayer} />
             )}
           </div>
         </div>
