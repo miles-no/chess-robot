@@ -22,6 +22,7 @@ export default function Game(props: gameProps) {
   const [valid_moves, setValidMoves] = useState<string[]>();
   const [currentPlayer, setCurrentPlayer] = useState<boolean>(true);
   const [gameInProgress, setGameInProgress] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
@@ -79,6 +80,9 @@ export default function Game(props: gameProps) {
     if (messageDisctionary.winner) {
       setWinner(messageDisctionary.winner);
     }
+    if (messageDisctionary.score) {
+      setScore(messageDisctionary.score);
+    }
   }
 
   const handleInvalidMove = () => {
@@ -127,7 +131,7 @@ export default function Game(props: gameProps) {
                 <AlertComponent
                   open={open}
                   alertTitle={result}
-                  message={"Winner is " + winner}
+                  message={"Winner is " + winner + ". Your score is " + score}
                   handleOK={handleOK}
                 />
               )}

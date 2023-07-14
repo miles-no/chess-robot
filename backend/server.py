@@ -62,10 +62,10 @@ def startGame(arg):
             mycertabo.setColor()
         emitFen(move)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
-    print("Score: ", score)
-    result = {"result": outcome[0], "winner": outcome[1]}
-    socket_io.emit("game-over", result)
     score = chess_logic.getScore(mycertabo.chessboard, mycertabo.stockfish_color)
+    print("Score: ", score)
+    result = {"result": outcome[0], "winner": outcome[1], "score": score}
+    socket_io.emit("game-over", result)
     print("Game over")
 
 def setPreferences(arg):
