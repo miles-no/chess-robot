@@ -214,45 +214,12 @@ def calibration(usb_data, filename):
         row = []
         for i in range(8):
             cell = cell_codes(i + j * 8, usb_data)
-            if cell_empty(cell):
-                row.append("-")
-            else:  # not empty
-                for cell_p in p:
-                    if compare_cells(cell, cell_p):
-                        row.append("p")
-                for cell_p in P:
-                    if compare_cells(cell, cell_p):
-                        row.append("P")
-                for cell_p in r:
-                    if compare_cells(cell, cell_p):
-                        row.append("r")
-                for cell_p in R:
-                    if compare_cells(cell, cell_p):
-                        row.append("R")
-                for cell_p in n:
-                    if compare_cells(cell, cell_p):
-                        row.append("n")
-                for cell_p in N:
-                    if compare_cells(cell, cell_p):
-                        row.append("N")
-                for cell_p in b:
-                    if compare_cells(cell, cell_p):
-                        row.append("b")
-                for cell_p in B:
-                    if compare_cells(cell, cell_p):
-                        row.append("B")
-                for cell_p in q:
-                    if compare_cells(cell, cell_p):
-                        row.append("q")
-                for cell_p in Q:
-                    if compare_cells(cell, cell_p):
-                        row.append("Q")
-                for cell_p in k:
-                    if compare_cells(cell, cell_p):
-                        row.append("k")
-                for cell_p in K:
-                    if compare_cells(cell, cell_p):
-                        row.append("K")
+            symbol_mappings = {
+            "p": p, "r": r, "n": n, "b": b, "k": k, "q": q,
+            "P": P, "R": R, "N": N, "B": B, "K": K, "Q": Q
+            }
+            symbol = next((symbol for symbol, cell_list in symbol_mappings.items() if any(compare_cells(cell, cell_p) for cell_p in cell_list)), "-")
+            row.append(symbol)
         logging.info(" ".join(row))
 
 letter = "a", "b", "c", "d", "e", "f", "g", "h"
