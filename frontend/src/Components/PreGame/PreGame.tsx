@@ -13,8 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-//import blackKing from "../../../public/assets/images/king_b";
-// import whiteKing from "../../../public/assets/images/king_w";
+
 interface alertProps {
   open: boolean;
   stockfishLevel: number;
@@ -42,22 +41,31 @@ export default function PreGame(props: alertProps) {
         },
       }}
     >
-      <DialogTitle id="alert-dialog-title">
+      <DialogTitle
+        id="alert-dialog-title"
+        sx={{ textAlign: "center", padding: "2em 0 0 0" }}
+      >
         Select your preferred options
       </DialogTitle>
       <Grid
         sx={{
-          padding: "3em",
+          padding: "2em",
           margin: "0 auto",
           display: "flex",
+          alignContent: "center",
+          justifyContent: "center",
+          width: "100%",
         }}
         container
-        spacing={2}
+        spacing={0}
       >
-        <Grid item>
+        <Grid item sx={{ padding: "1em" }}>
           <Card
             sx={{
               width: 200,
+              textAlign: "center",
+              border: "3px",
+              borderRadius: "16px",
             }}
           >
             <CardActionArea
@@ -66,10 +74,10 @@ export default function PreGame(props: alertProps) {
               }}
             >
               <CardMedia
-                sx={{ padding: "0 2em 2em 0em", objectFit: "contain" }}
+                sx={{ padding: "2em 2em 0em 0em", objectFit: "contain" }}
                 component="img"
                 height="100"
-                //image={whiteKing}
+                image="assets/images/king_w.png"
                 alt="White piece"
               />
               <CardContent>
@@ -87,18 +95,25 @@ export default function PreGame(props: alertProps) {
             </CardActionArea>
           </Card>
         </Grid>
-        <Grid item>
-          <Card sx={{ width: 200, backgroundColor: "black", color: "white" }}>
+        <Grid item sx={{ padding: "1em" }}>
+          <Card
+            sx={{
+              width: 200,
+              textAlign: "center",
+              border: "3px",
+              borderRadius: "16px",
+            }}
+          >
             <CardActionArea
               onClick={() => {
                 setSelectedCard(false);
               }}
             >
               <CardMedia
-                sx={{ padding: "0 2em 2em 0em", objectFit: "contain" }}
+                sx={{ padding: "2em 2em 0em 0em", objectFit: "contain" }}
                 component="img"
                 height="100"
-                //image={blackKing}
+                image="assets/images/king_b.png"
                 alt="black piece"
               />
               <CardContent>
@@ -107,7 +122,7 @@ export default function PreGame(props: alertProps) {
                   variant="h5"
                   component="div"
                   sx={{
-                    color: selectedCard === false ? "lightgreen" : "white",
+                    color: selectedCard === false ? "lightgreen" : "black",
                   }}
                 >
                   Black
@@ -117,7 +132,9 @@ export default function PreGame(props: alertProps) {
           </Card>
         </Grid>
         <Box sx={{ paddingTop: "1em" }}>
-          <Typography>Set stockfish level(1-20)</Typography>
+          <Typography sx={{ textAlign: "center" }}>
+            Set stockfish level (1-20)
+          </Typography>
           <TextField
             value={level}
             type="number"
