@@ -14,9 +14,7 @@ def cell_codes(n_cell, usb_data):  # n_cell from 0 to 63, 0 at left top
     return result
 
 def compare_cells(x, y):
-    if x[0] == y[0] and x[1] == y[1] and x[2] == y[2] and x[3] == y[3] and x[4] == y[4]:
-        return True
-    return False
+    return all(x[i] == y[i] for i in range(5))
 
 def load_calibration(filename):
     global p, r, n, b, k, q, P, R, N, B, K, Q
@@ -55,47 +53,15 @@ def statistic_processing_for_calibration(samples):
 
 def get_name(cell):
     global p, r, n, b, k, q, P, R, N, B, K, Q
-    c = ""
-    if cell_empty(cell):
-        c = "-"
-    for cell_p in p:
-        if compare_cells(cell, cell_p):
-            c = "p"
-    for cell_p in P:
-        if compare_cells(cell, cell_p):
-            c = "P"
-    for cell_p in r:
-        if compare_cells(cell, cell_p):
-            c = "r"
-    for cell_p in R:
-        if compare_cells(cell, cell_p):
-            c = "R"
-    for cell_p in n:
-        if compare_cells(cell, cell_p):
-            c = "n"
-    for cell_p in N:
-        if compare_cells(cell, cell_p):
-            c = "N"
-    for cell_p in b:
-        if compare_cells(cell, cell_p):
-            c = "b"
-    for cell_p in B:
-        if compare_cells(cell, cell_p):
-            c = "B"
-    for cell_p in q:
-        if compare_cells(cell, cell_p):
-            c = "q"
-    for cell_p in Q:
-        if compare_cells(cell, cell_p):
-            c = "Q"
-    for cell_p in k:
-        if compare_cells(cell, cell_p):
-            c = "k"
-    for cell_p in K:
-        if compare_cells(cell, cell_p):
-            c = "K"
-    return c
-
+    mappings = {
+        "p": p, "r": r, "n": n, "b": b, "k": k, "q": q,
+        "P": P, "R": R, "N": N, "B": B, "K": K, "Q": Q
+    }
+    for symbol, cell_list in mappings.items():
+        for cell_p in cell_list:
+            if compare_cells(cell, cell_p):
+                return symbol
+    return "-" if cell_empty(cell) else ""
 
 def statistic_processing(samples):
     global letters
@@ -248,45 +214,12 @@ def calibration(usb_data, filename):
         row = []
         for i in range(8):
             cell = cell_codes(i + j * 8, usb_data)
-            if cell_empty(cell):
-                row.append("-")
-            else:  # not empty
-                for cell_p in p:
-                    if compare_cells(cell, cell_p):
-                        row.append("p")
-                for cell_p in P:
-                    if compare_cells(cell, cell_p):
-                        row.append("P")
-                for cell_p in r:
-                    if compare_cells(cell, cell_p):
-                        row.append("r")
-                for cell_p in R:
-                    if compare_cells(cell, cell_p):
-                        row.append("R")
-                for cell_p in n:
-                    if compare_cells(cell, cell_p):
-                        row.append("n")
-                for cell_p in N:
-                    if compare_cells(cell, cell_p):
-                        row.append("N")
-                for cell_p in b:
-                    if compare_cells(cell, cell_p):
-                        row.append("b")
-                for cell_p in B:
-                    if compare_cells(cell, cell_p):
-                        row.append("B")
-                for cell_p in q:
-                    if compare_cells(cell, cell_p):
-                        row.append("q")
-                for cell_p in Q:
-                    if compare_cells(cell, cell_p):
-                        row.append("Q")
-                for cell_p in k:
-                    if compare_cells(cell, cell_p):
-                        row.append("k")
-                for cell_p in K:
-                    if compare_cells(cell, cell_p):
-                        row.append("K")
+            symbol_mappings = {
+            "p": p, "r": r, "n": n, "b": b, "k": k, "q": q,
+            "P": P, "R": R, "N": N, "B": B, "K": K, "Q": Q
+            }
+            symbol = next((symbol for symbol, cell_list in symbol_mappings.items() if any(compare_cells(cell, cell_p) for cell_p in cell_list)), "-")
+            row.append(symbol)
         logging.info(" ".join(row))
 
 letter = "a", "b", "c", "d", "e", "f", "g", "h"
@@ -318,42 +251,14 @@ def usb_data_to_FEN(usb_data):
                 c = "-"
                 empty_cells_counter += 1
             else:  # not empty
-                for cell_p in p:
-                    if compare_cells(cell, cell_p):
-                        c = "p"
-                for cell_p in P:
-                    if compare_cells(cell, cell_p):
-                        c = "P"
-                for cell_p in r:
-                    if compare_cells(cell, cell_p):
-                        c = "r"
-                for cell_p in R:
-                    if compare_cells(cell, cell_p):
-                        c = "R"
-                for cell_p in n:
-                    if compare_cells(cell, cell_p):
-                        c = "n"
-                for cell_p in N:
-                    if compare_cells(cell, cell_p):
-                        c = "N"
-                for cell_p in b:
-                    if compare_cells(cell, cell_p):
-                        c = "b"
-                for cell_p in B:
-                    if compare_cells(cell, cell_p):
-                        c = "B"
-                for cell_p in q:
-                    if compare_cells(cell, cell_p):
-                        c = "q"
-                for cell_p in Q:
-                    if compare_cells(cell, cell_p):
-                        c = "Q"
-                for cell_p in k:
-                    if compare_cells(cell, cell_p):
-                        c = "k"
-                for cell_p in K:
-                    if compare_cells(cell, cell_p):
-                        c = "K"
+                mapping = {
+                    "p": p, "r": r, "n": n, "b": b, "k": k, "q": q,
+                    "P": P, "R": R, "N": N, "B": B, "K": K, "Q": Q
+                }
+                for symbol, cell_list in mapping.items():
+                    for cell_p in cell_list:
+                        if compare_cells(cell, cell_p):
+                            c = symbol
                 if empty_cells_counter > 0 and c != "-":
                     s += str(empty_cells_counter)
                     empty_cells_counter = 0

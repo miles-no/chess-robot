@@ -31,7 +31,6 @@ def handle_connect():
 
 @socket_io.on('new-game')
 def newGame(arg):
-    print(arg)
     setPreferences(arg)
     message = {"fen": "start", "color": True}
     socket_io.emit("get-fen", message)
