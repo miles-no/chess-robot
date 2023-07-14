@@ -42,16 +42,21 @@ class ChessLogic:
         return None
     
     def getScore(self, board, stockfish):
-        if board.outcome().winner == stockfish:
+        if board.is_checkmate() and board.outcome().winner == stockfish:
             return 0
         score = 0
         for piece in self.piece_range:
             score += len(board.pieces(piece, board.outcome().winner))*self.piece_range[piece]
-        return score*100/self.skill_level
+        if score != 0:
+            score = score*100/self.skill_level
+            if not board.is_checkmate():
+                score /= 3
+        return score
 
     
 if __name__ == "__main__":
-    STOCKFISH_PATH = "/opt/homebrew/opt/stockfish/bin/stockfish"
-    chess_logic = ChessLogic(STOCKFISH_PATH)
-    score = chess_logic.getScore(chess.Board(), True)
-    print(score)
+    # STOCKFISH_PATH = "/opt/homebrew/opt/stockfish/bin/stockfish"
+    # chess_logic = ChessLogic(STOCKFISH_PATH)
+    # score = chess_logic.getScore(chess.Board(), True)
+    # print(score)
+    print(len(chess.Board().piece_map()))

@@ -130,15 +130,8 @@ class Certabo():
     def stockfish_move(self, best_move):
         self.chessboard.push(best_move)
 
-    # True for white and False for black
     def setColor(self):
-        if self.color: 
-            self.color = False
-        else:
-            self.color = True
+        self.color = not self.color
     
     def setStockfishColor(self, color):
-        if color: 
-            self.stockfish_color = False
-        else: 
-            self.stockfish_color = True
+        self.stockfish_color = False if color else True
