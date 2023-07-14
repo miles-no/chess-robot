@@ -8,7 +8,7 @@ class ChessLogic:
     def quitEngine(self):
         self.engine.quit()
     
-    def setSkillLevel(self, skill_level=1):
+    def setSkillLevel(self, skill_level):
         self.engine.configure({"Skill Level": skill_level})
 
     # Returns move in 'chess.Move' format
