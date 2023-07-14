@@ -53,47 +53,15 @@ def statistic_processing_for_calibration(samples):
 
 def get_name(cell):
     global p, r, n, b, k, q, P, R, N, B, K, Q
-    c = ""
-    if cell_empty(cell):
-        c = "-"
-    for cell_p in p:
-        if compare_cells(cell, cell_p):
-            c = "p"
-    for cell_p in P:
-        if compare_cells(cell, cell_p):
-            c = "P"
-    for cell_p in r:
-        if compare_cells(cell, cell_p):
-            c = "r"
-    for cell_p in R:
-        if compare_cells(cell, cell_p):
-            c = "R"
-    for cell_p in n:
-        if compare_cells(cell, cell_p):
-            c = "n"
-    for cell_p in N:
-        if compare_cells(cell, cell_p):
-            c = "N"
-    for cell_p in b:
-        if compare_cells(cell, cell_p):
-            c = "b"
-    for cell_p in B:
-        if compare_cells(cell, cell_p):
-            c = "B"
-    for cell_p in q:
-        if compare_cells(cell, cell_p):
-            c = "q"
-    for cell_p in Q:
-        if compare_cells(cell, cell_p):
-            c = "Q"
-    for cell_p in k:
-        if compare_cells(cell, cell_p):
-            c = "k"
-    for cell_p in K:
-        if compare_cells(cell, cell_p):
-            c = "K"
-    return c
-
+    mappings = {
+        "p": p, "r": r, "n": n, "b": b, "k": k, "q": q,
+        "P": P, "R": R, "N": N, "B": B, "K": K, "Q": Q
+    }
+    for symbol, cell_list in mappings.items():
+        for cell_p in cell_list:
+            if compare_cells(cell, cell_p):
+                return symbol
+    return "-" if cell_empty(cell) else ""
 
 def statistic_processing(samples):
     global letters
