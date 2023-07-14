@@ -85,11 +85,6 @@ export default function Game(props: gameProps) {
     alert("Invalid move!");
   };
 
-  const handleClose = () => {
-    // On closing the alert
-    setOpen(false);
-  };
-
   const handleOK = () => {
     setResult(undefined);
     setOpen(false);
@@ -133,7 +128,6 @@ export default function Game(props: gameProps) {
                   open={open}
                   alertTitle={result}
                   message={"Winner is " + winner}
-                  handleClose={handleClose}
                   handleOK={handleOK}
                 />
               )}
@@ -145,7 +139,6 @@ export default function Game(props: gameProps) {
               <AlertComponent
                 alertTitle="Start Game"
                 message="Make sure pieces are in starting position"
-                handleClose={handleClose}
                 handleOK={handleOK}
                 open={open}
               />
