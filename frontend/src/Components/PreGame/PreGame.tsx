@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 interface alertProps {
   open: boolean;
@@ -27,6 +27,58 @@ export default function PreGame(props: alertProps) {
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
   };
+
+  const handleLevelChange = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = Number(e.target.value);
+
+    if (value < 1) {
+      value = 1;
+    } else if (value > 20) {
+      value = 20;
+    }
+
+    setLevel(value);
+  };
+  const handleCardClick = (value: boolean) => {
+    setSelectedCard(value);
+  };
+  const renderCard = (
+    image: string,
+    altText: string,
+    cardText: string,
+    value: boolean
+  ) => (
+    <Card
+      sx={{
+        width: 200,
+        textAlign: "center",
+        border: "3px",
+        borderRadius: "16px",
+      }}
+    >
+      <CardActionArea onClick={() => handleCardClick(value)}>
+        <CardMedia
+          sx={{ padding: "2em 2em 0em 0em", objectFit: "contain" }}
+          component="img"
+          height="100"
+          image={image}
+          alt={altText}
+        />
+        <CardContent>
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="div"
+            sx={{
+              color: selectedCard === value ? "lightgreen" : "black",
+            }}
+          >
+            {cardText}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  );
 
   return (
     <Dialog
@@ -60,76 +112,15 @@ export default function PreGame(props: alertProps) {
         spacing={0}
       >
         <Grid item sx={{ padding: "1em" }}>
-          <Card
-            sx={{
-              width: 200,
-              textAlign: "center",
-              border: "3px",
-              borderRadius: "16px",
-            }}
-          >
-            <CardActionArea
-              onClick={() => {
-                setSelectedCard(true);
-              }}
-            >
-              <CardMedia
-                sx={{ padding: "2em 2em 0em 0em", objectFit: "contain" }}
-                component="img"
-                height="100"
-                image="assets/images/king_w.png"
-                alt="White piece"
-              />
-              <CardContent>
-                <Typography
-                  gutterBottom
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: selectedCard === true ? "lightgreen" : "black",
-                  }}
-                >
-                  White
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
+          {renderCard("assets/images/king_w.png", "White piece", "White", true)}
         </Grid>
         <Grid item sx={{ padding: "1em" }}>
-          <Card
-            sx={{
-              width: 200,
-              textAlign: "center",
-              border: "3px",
-              borderRadius: "16px",
-            }}
-          >
-            <CardActionArea
-              onClick={() => {
-                setSelectedCard(false);
-              }}
-            >
-              <CardMedia
-                sx={{ padding: "2em 2em 0em 0em", objectFit: "contain" }}
-                component="img"
-                height="100"
-                image="assets/images/king_b.png"
-                alt="black piece"
-              />
-              <CardContent>
-                <Typography
-                  gutterBottom
-                  variant="h5"
-                  component="div"
-                  sx={{
-                    color: selectedCard === false ? "lightgreen" : "black",
-                  }}
-                >
-                  Black
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
+          {renderCard(
+            "assets/images/king_b.png",
+            "Black piece",
+            "Black",
+            false
+          )}
         </Grid>
         <Box sx={{ paddingTop: "1em" }}>
           <Typography sx={{ textAlign: "center" }}>
@@ -139,7 +130,7 @@ export default function PreGame(props: alertProps) {
             value={level}
             type="number"
             inputProps={{ min: 1, max: 20 }}
-            onChange={(e) => setLevel(Number(e.target.value))}
+            onChange={handleLevelChange}
           />
         </Box>
       </Grid>
