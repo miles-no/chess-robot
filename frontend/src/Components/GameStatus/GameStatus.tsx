@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 interface gameStatusProps {
   player: boolean | undefined;
-  moves: string | undefined;
+  moves: string[] | undefined;
 }
 export default function GameStatus(props: gameStatusProps) {
   return (
@@ -35,10 +35,10 @@ export default function GameStatus(props: gameStatusProps) {
         ) : (
           <Typography variant="h5">Turn: Black</Typography>
         )}
-        {/* {props.moves &&
+        {props.moves &&
           props.moves.map((move) => (
             <Typography variant="h6">{move}</Typography>
-          ))} */}
+          ))}
       </Box>
     </Box>
   );

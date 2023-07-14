@@ -12,7 +12,7 @@ interface gameProps {
 
 export default function Game(props: gameProps) {
   const [FEN, setFEN] = useState<string>("start");
-  const [moves, setMoves] = useState<string>();
+  const [moves, setMoves] = useState<string[]>();
   const [open, setOpen] = useState<boolean>(false);
   const [result, setResult] = useState<string>();
   const [winner, setWinner] = useState<string>();
@@ -54,7 +54,9 @@ export default function Game(props: gameProps) {
       setFEN(message.fen);
       setValidMoves([]);
       setCurrentPlayer(message.color);
-      setMoves(message.move);
+      setMoves((prevMoves) =>
+        prevMoves ? [...prevMoves, message.move] : [message.move]
+      );
     }
   };
 
