@@ -21,10 +21,7 @@ os.makedirs(CERTABO_DATA_PATH, exist_ok=True)
 class Certabo():
     def __init__(self, calibrate=False, **kwargs):
         super().__init__(**kwargs)
-        if calibrate:
-            self.calibration = True
-        else:
-            self.calibration = False
+        self.calibration = True if calibrate else False
         self.chessboard = chess.Board(chess.STARTING_FEN)
         self.board_state_usb = ""
         self.move_event = threading.Event()
@@ -90,10 +87,7 @@ class Certabo():
                 if self.usb_data_processed != []:
                     test_state = usb_data_to_FEN(self.usb_data_processed)
                     if test_state != "":
-                        if self.board_state_usb != test_state:
-                            new_position = True
-                        else:
-                            new_position = False
+                        new_position = True if self.board_state_usb != test_state else False
                         self.board_state_usb = test_state
                         self.diff_leds()
                         if new_position:

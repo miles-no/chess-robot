@@ -14,9 +14,7 @@ def cell_codes(n_cell, usb_data):  # n_cell from 0 to 63, 0 at left top
     return result
 
 def compare_cells(x, y):
-    if x[0] == y[0] and x[1] == y[1] and x[2] == y[2] and x[3] == y[3] and x[4] == y[4]:
-        return True
-    return False
+    return all(x[i] == y[i] for i in range(5))
 
 def load_calibration(filename):
     global p, r, n, b, k, q, P, R, N, B, K, Q
