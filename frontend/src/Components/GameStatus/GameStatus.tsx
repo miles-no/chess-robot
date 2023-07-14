@@ -35,8 +35,10 @@ export default function GameStatus(props: gameStatusProps) {
           <Typography variant="h5">Turn: Black</Typography>
         )}
         {props.moves &&
-          props.moves.map((move) => (
-            <Typography variant="h6">{move}</Typography>
+          props.moves.map((move, index) => (
+            <Typography key={index} variant="h6">
+              {move}
+            </Typography>
           ))}
       </Box>
     </Box>
