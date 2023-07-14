@@ -251,42 +251,14 @@ def usb_data_to_FEN(usb_data):
                 c = "-"
                 empty_cells_counter += 1
             else:  # not empty
-                for cell_p in p:
-                    if compare_cells(cell, cell_p):
-                        c = "p"
-                for cell_p in P:
-                    if compare_cells(cell, cell_p):
-                        c = "P"
-                for cell_p in r:
-                    if compare_cells(cell, cell_p):
-                        c = "r"
-                for cell_p in R:
-                    if compare_cells(cell, cell_p):
-                        c = "R"
-                for cell_p in n:
-                    if compare_cells(cell, cell_p):
-                        c = "n"
-                for cell_p in N:
-                    if compare_cells(cell, cell_p):
-                        c = "N"
-                for cell_p in b:
-                    if compare_cells(cell, cell_p):
-                        c = "b"
-                for cell_p in B:
-                    if compare_cells(cell, cell_p):
-                        c = "B"
-                for cell_p in q:
-                    if compare_cells(cell, cell_p):
-                        c = "q"
-                for cell_p in Q:
-                    if compare_cells(cell, cell_p):
-                        c = "Q"
-                for cell_p in k:
-                    if compare_cells(cell, cell_p):
-                        c = "k"
-                for cell_p in K:
-                    if compare_cells(cell, cell_p):
-                        c = "K"
+                mapping = {
+                    "p": p, "r": r, "n": n, "b": b, "k": k, "q": q,
+                    "P": P, "R": R, "N": N, "B": B, "K": K, "Q": Q
+                }
+                for symbol, cell_list in mapping.items():
+                    for cell_p in cell_list:
+                        if compare_cells(cell, cell_p):
+                            c = symbol
                 if empty_cells_counter > 0 and c != "-":
                     s += str(empty_cells_counter)
                     empty_cells_counter = 0
