@@ -10,6 +10,7 @@ import time
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
 
+new_game = False
 chess_logic = ChessLogic(STOCKFISH_PATH)
 
 calibrate = False 
@@ -31,11 +32,13 @@ def handle_connect():
 @socket_io.on('new-game')
 def newGame(arg):
     print(arg)
-    mycertabo.new_game()
     setPreferences(arg)
-    print(mycertabo.setStockfishColor)
-    message = {"fen": "start", "color": mycertabo.color}
+    message = {"fen": "start", "color": True}
     socket_io.emit("get-fen", message)
+    mycertabo.new_game()
+    if mycertabo.color == mycertabo.stockfish_color:
+        handleStockfishMove()
+        emitFen()
    
 @socket_io.on('get-valid-moves')
 def getValidMoves():
@@ -50,19 +53,14 @@ def startGame(arg):
     setPreferences(arg)
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
         if mycertabo.color == mycertabo.stockfish_color:
-            best_move = chess_logic.getBestMove(mycertabo.chessboard)
-            time.sleep(2)
-            mycertabo.stockfish_move(best_move)
-            mycertabo.setColor()
+            handleStockfishMove()
         else:
             move = mycertabo.get_user_move()
             if move == "Invalid move":
                 socket_io.emit("invalid-move")
                 continue
             mycertabo.setColor()
-        fen = mycertabo.chessboard.board_fen()
-        message = {"fen": fen, "color": mycertabo.color}
-        socket_io.emit("get-fen", message)
+        emitFen()
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
     result = {"result": outcome[0], "winner": outcome[1]}
     socket_io.emit("game-over", result)
@@ -71,6 +69,17 @@ def startGame(arg):
 def setPreferences(arg):
     mycertabo.setStockfishColor(arg['color'])
     chess_logic.setSkillLevel(arg['skill_level'])
+
+def handleStockfishMove():
+    best_move = chess_logic.getBestMove(mycertabo.chessboard)
+    time.sleep(2)
+    mycertabo.stockfish_move(best_move)
+    mycertabo.setColor()
+
+def emitFen():
+    fen = mycertabo.chessboard.board_fen()
+    message = {"fen": fen, "color": mycertabo.color}
+    socket_io.emit("get-fen", message)
 
 if __name__ == '__main__':
     socket_io.run(app, port=5000)
