@@ -1,5 +1,4 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
 
 interface gameStatusProps {
   player: boolean | undefined;
