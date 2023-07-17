@@ -15,7 +15,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/game" element={<Game socket={socket} />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route
+              path="/leaderboard"
+              element={<Leaderboard socket={socket} />}
+            />
           </Routes>
         </div>
       </BrowserRouter>
