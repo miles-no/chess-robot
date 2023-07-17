@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 interface gameStatusProps {
   player: boolean | undefined;
   moves: string[] | undefined;
+  title: string;
 }
 export default function GameStatus(props: gameStatusProps) {
   return (
@@ -27,9 +28,11 @@ export default function GameStatus(props: gameStatusProps) {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          GAME
+          {props.title}
         </Typography>
-        {props.player ? (
+        {props.player === undefined ? (
+          <Typography variant="h5"></Typography>
+        ) : props.player ? (
           <Typography variant="h5">Turn: White</Typography>
         ) : (
           <Typography variant="h5">Turn: Black</Typography>
