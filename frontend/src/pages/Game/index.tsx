@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
@@ -106,7 +106,7 @@ export default function Game(props: gameProps) {
       const preferences = { skill_level: level, color: selectedSide };
       props.socket.emit("new-game", preferences);
     }
-    //  setGameInProgress(true);
+    //setGameInProgress(true);
   };
 
   const getValidMoves = () => {
@@ -116,21 +116,20 @@ export default function Game(props: gameProps) {
   const handleValidMoves = (validMoves: string[]) => {
     setValidMoves(validMoves);
   };
-
   return (
-    <div>
+    <Box>
       {preGame ? (
-        <div className="pre-game">
+        <Box className="pre-game">
           <PreGame
             open={preGame}
             stockfishLevel={stockfishlevel}
             handleOK={handlePregame}
           />
-        </div>
+        </Box>
       ) : (
-        <div className="main-container">
-          <div className="game">
-            <div className="alert">
+        <Box className="main-container">
+          <Box className="game">
+            <Box className="alert">
               {result && (
                 <AlertComponent
                   open={open}
@@ -139,10 +138,10 @@ export default function Game(props: gameProps) {
                   handleOK={handleOK}
                 />
               )}
-            </div>
-            <div className="unclickable-area">
+            </Box>
+            <Box className="unclickable-area">
               <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
-            </div>
+            </Box>
             {!result && (
               <AlertComponent
                 alertTitle="Start Game"
@@ -151,7 +150,7 @@ export default function Game(props: gameProps) {
                 open={open}
               />
             )}
-            <div className="buttons">
+            <Box className="buttons">
               {gameInProgress ? (
                 <>
                   <Button variant="outlined" onClick={() => newGame()}>
@@ -168,16 +167,24 @@ export default function Game(props: gameProps) {
                   </Button>
                 )
               )}
-            </div>
-            <div>{valid_moves && valid_moves.map((move) => <p>{move}</p>)}</div>
-          </div>
-          <div className="game-status">
-            {gameInProgress && (
-              <GameStatus moves={moves} player={currentPlayer} />
+            </Box>
+          </Box>
+          <Box className="valid-moves">
+            {valid_moves && valid_moves.length > 0 && (
+              <GameStatus
+                title="Available moves"
+                moves={valid_moves}
+                player={undefined}
+              />
             )}
-          </div>
-        </div>
+          </Box>
+          <Box className="game-status">
+            {gameInProgress && (
+              <GameStatus title="GAME" moves={moves} player={currentPlayer} />
+            )}
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }

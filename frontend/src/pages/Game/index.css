@@ -10,10 +10,18 @@
 .buttons {
   padding-top: 3em;
 }
+
 .game {
-  flex: 1;
+  flex: 2;
+  padding: 1em;
 }
 
 .game-status {
-  flex: 0;
+  flex: 1;
+  padding: 1em;
+}
+
+.valid-moves {
+  flex: 1;
+  padding: 1em;
 }
