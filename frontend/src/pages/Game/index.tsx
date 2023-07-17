@@ -63,7 +63,11 @@ export default function Game(props: gameProps) {
 
   function startGame() {
     if (FEN === "start" && props.socket.connected) {
-      const preferences = { skill_level: stockfishlevel, color: color };
+      const preferences = {
+        skill_level: stockfishlevel,
+        color: color,
+        name: "test",
+      };
       props.socket.emit("start-game", preferences);
       setGameInProgress(true);
     } else {
