@@ -5,6 +5,7 @@ from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 from certaboHelper.certabo import Certabo
 from initCertabo import InitializeCertabo
+from database.db_func import get_leaderboard
 import time
 
 app = Flask(__name__)
@@ -69,11 +70,7 @@ def startGame(arg):
 
 @socket_io.on('get-leaderboard')
 def getLeaderboard():
-    data = [
-    { "name": "Player 1", "score": 100 },
-    { "name": "Player 2", "score": 200 },
-    { "name": "Player 3", "score": 300 },
-    ]
+    data = get_leaderboard()
     socket_io.emit("leaderboard", data)
 
 def setPreferences(arg):
