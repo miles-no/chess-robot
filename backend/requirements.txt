@@ -19,6 +19,7 @@ ndjson==0.3.1
 numpy==1.25.0
 opencv-python==4.7.0.72
 Pillow==10.0.0
+psycopg2==2.9.6
 pyserial==3.5
 python-chess==1.999
 python-engineio==4.4.1

@@ -5,6 +5,7 @@ from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 from certaboHelper.certabo import Certabo
 from initCertabo import InitializeCertabo
+from database.db_func import get_leaderboard, add_player
 import time
 
 app = Flask(__name__)
@@ -50,6 +51,7 @@ def getValidMoves():
 @socket_io.on('start-game')
 def startGame(arg):
     setPreferences(arg)
+    name = arg['name']
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
         if mycertabo.color == mycertabo.stockfish_color:
             move = handleStockfishMove()
@@ -65,15 +67,12 @@ def startGame(arg):
     print("Score: ", score)
     result = {"result": outcome[0], "winner": outcome[1], "score": score}
     socket_io.emit("game-over", result)
+    add_player(name, score)
     print("Game over")
 
 @socket_io.on('get-leaderboard')
 def getLeaderboard():
-    data = [
-    { "name": "Player 1", "score": 100 },
-    { "name": "Player 2", "score": 200 },
-    { "name": "Player 3", "score": 300 },
-    ]
+    data = get_leaderboard()
     socket_io.emit("leaderboard", data)
 
 def setPreferences(arg):
