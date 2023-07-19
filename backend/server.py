@@ -86,6 +86,8 @@ def setPreferences(arg):
 def handleStockfishMove():
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
     time.sleep(2)
+    if mycertabo.chessboard.is_capture(best_move):
+        cr.move_taken(best_move.uci()[2:], str(mycertabo.chessboard.piece_at(best_move.to_square)).lower())
     mycertabo.stockfish_move(best_move)
     piece = str(mycertabo.chessboard.piece_at(chess.parse_square(best_move.uci()[2:])))
     cr.doMove(best_move.uci(), piece.lower())
