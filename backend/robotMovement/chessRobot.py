@@ -14,7 +14,7 @@ class ChessRobot:
             "k": 67 #king
         }
         self.parser = ConfigParser()
-        self.parser.read('robot.conf')
+        self.parser.read('robotMovement/robot.conf')
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
         self.initialize()
     
