@@ -1,5 +1,3 @@
-import string
-
 class ChessCoordinates():
     def __init__(self):
         self.tile = 36
@@ -17,7 +15,7 @@ class ChessCoordinates():
             y = self.y_coordinates["a"] - y*self.tile
         else:
             y = self.y_coordinates["h"] + y*self.tile
-        print(y, x)
+        return x, y
         
 if __name__ == "__main__":
     cc = ChessCoordinates()
