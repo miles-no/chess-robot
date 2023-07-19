@@ -6,7 +6,9 @@ from chessLogic.chessLogic import ChessLogic
 from certaboHelper.certabo import Certabo
 from initCertabo import InitializeCertabo
 from database.db_func import get_leaderboard, add_player
+from robotMovement.chessRobot import ChessRobot
 import time
+import chess
 
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
@@ -23,6 +25,8 @@ if args.calibrate:
 
 InitializeCertabo()
 mycertabo = Certabo(calibrate)
+
+cr = ChessRobot()
 
 # SocketIO to handle new connections
 # Prints for every new connection
@@ -83,6 +87,8 @@ def handleStockfishMove():
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
     time.sleep(2)
     mycertabo.stockfish_move(best_move)
+    piece = mycertabo.chessboard.piece_at(chess.parse_square(best_move.uci()[2:]))
+    cr.doMove(best_move.uci(), piece.lower())
     mycertabo.setColor()
     return best_move.uci()
 

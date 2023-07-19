@@ -1,17 +1,17 @@
 import time
 from xarm.wrapper import XArmAPI
 from configparser import ConfigParser
-from chessCoordinates import ChessCoordinates
+from robotMovement.chessCoordinates import ChessCoordinates
 
 class ChessRobot:
     def __init__(self):
         self.piece_height = {
-            1: 25, #pawn
-            2: 40, #knight
-            3: 38, #bishop
-            4: 35, #rook
-            5: 55, #queen
-            6: 67 #king
+            "p": 25, #pawn
+            "n": 40, #knight
+            "b": 38, #bishop
+            "r": 35, #rook
+            "q": 55, #queen
+            "k": 67 #king
         }
         self.parser = ConfigParser()
         self.parser.read('robot.conf')
@@ -63,7 +63,6 @@ class ChessRobot:
 
 
 if __name__ == "__main__":
-    piece = 5
     cr = ChessRobot()
-    cr.doMove("d1h5", 5)
+    cr.doMove("d1h5", "q")
 
