@@ -5,20 +5,10 @@ import time
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
 from xarm.wrapper import XArmAPI
-
-#IP of the xarm
-ip = "#"
-if len(sys.argv) >= 2: 
-    ip = sys.argv[1]
-else:
-    try:
-        from configparser import ConfigParser
-        parser = ConfigParser()
-        parser.read('../robot.conf')
-        ip = parser.get('xArm', 'ip')
-    except:
-        ip = ip
-
+from configparser import ConfigParser
+parser = ConfigParser()
+parser.read('robot.conf')
+ip = parser.get('xArm', 'ip')
 
 #Initialize robot
 arm = XArmAPI(ip)
