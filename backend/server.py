@@ -87,7 +87,7 @@ def handleStockfishMove():
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
     time.sleep(2)
     mycertabo.stockfish_move(best_move)
-    piece = mycertabo.chessboard.piece_at(chess.parse_square(best_move.uci()[2:]))
+    piece = str(mycertabo.chessboard.piece_at(chess.parse_square(best_move.uci()[2:])))
     cr.doMove(best_move.uci(), piece.lower())
     mycertabo.setColor()
     return best_move.uci()
