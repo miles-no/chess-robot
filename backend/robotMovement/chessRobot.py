@@ -17,11 +17,13 @@ class ChessRobot:
         self.parser.read('robotMovement/robot.conf')
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
         self.initialize()
+        self.taken = []
     
     def initialize(self):
         self.arm.motion_enable(enable=True)
         self.arm.set_mode(0)
         self.arm.set_state(state=0)
+        self.arm.set_collision_sensitivity(5)
         time.sleep(2)
         self.arm.reset(wait=True)
 
@@ -45,14 +47,13 @@ class ChessRobot:
         self.moving(x, y, 150)
         self.moving(100, 0, 150)
 
-        self.arm.reset(wait=True)
-
     def doMove(self, move, piece):
         cc = ChessCoordinates()
         move_from, move_to = move[:len(move)//2], move[len(move)//2:]
         x_from, y_from = cc.chess_to_robot(move_from)
         x_to, y_to = cc.chess_to_robot(move_to)
         self.movePiece(x_from, y_from, x_to, y_to, piece)
+        self.arm.reset(wait=True)
     
     def moving(self, x, y, z):
         self.arm.set_position(x=x, y=y, z=z, roll=-180, pitch=0, yaw=0,speed=50, wait=True)
@@ -60,6 +61,13 @@ class ChessRobot:
     
     def disconnect(self):
         self.arm.disconnect()
+
+    def move_taken(self, move_from, piece):
+        cc = ChessCoordinates()
+        x_from, y_from = cc.chess_to_robot(move_from)
+        self.taken.append(piece)
+        print(self.taken)
+        self.movePiece(x_from, y_from, 130+len(self.taken)*40, 160, piece)
 
 
 if __name__ == "__main__":
