@@ -23,12 +23,14 @@ export default function Game(props: gameProps) {
   const [currentPlayer, setCurrentPlayer] = useState<boolean>(true);
   const [gameInProgress, setGameInProgress] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
+  const [promotion, setPromotion] = useState<string>("");
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
     props.socket.on("valid-moves", handleValidMoves);
     props.socket.on("get-fen", handleFEN);
     props.socket.on("game-over", handleResultMessage);
+    props.socket.on("promotion", handlePromotion);
     return () => {
       // Cleanup the props.socket listener when the component unmounts
       props.socket.off("invalid-move", handleInvalidMove);
@@ -58,6 +60,13 @@ export default function Game(props: gameProps) {
       setMoves((prevMoves) =>
         prevMoves ? [...prevMoves, message.move] : [message.move]
       );
+    }
+  };
+
+  const handlePromotion = (promotion: string) => {
+    if (promotion) {
+      setPromotion(promotion);
+      setOpen(true);
     }
   };
 
@@ -129,6 +138,18 @@ export default function Game(props: gameProps) {
       ) : (
         <Box className="main-container">
           <Box className="game">
+            {promotion && (
+              <AlertComponent
+                open={open}
+                alertTitle="Promotion!"
+                message={
+                  "Please place promoted piece: " +
+                  promotion +
+                  " in the correct position"
+                }
+                handleOK={handleOK}
+              />
+            )}
             <Box className="alert">
               {result && (
                 <AlertComponent
@@ -142,7 +163,7 @@ export default function Game(props: gameProps) {
             <Box className="unclickable-area">
               <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
             </Box>
-            {!result && (
+            {!result && !gameInProgress && (
               <AlertComponent
                 alertTitle="Start Game"
                 message="Make sure pieces are in starting position"
