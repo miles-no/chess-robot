@@ -103,7 +103,7 @@ def handleStockfishMove():
         promotion = chess_logic.pieces[best_move[-1]]
         best_move = best_move[:-1]
         best_move = best_move[:len(best_move)//2]
-        cr.move_taken(best_move, piece)
+        cr.move_taken(best_move, "p")
         cr.reset()
         socket_io.emit("promotion", promotion)
     else:
