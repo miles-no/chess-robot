@@ -5,12 +5,21 @@ class ChessLogic:
         self.last_move = None
         self.engine = chess.engine.SimpleEngine.popen_uci(STOCKFISH_PATH)
         self.skill_level = 1
+        self.last_move = None
         self.piece_range = {
             1: 1, #pawn
             2: 3, #knight
             3: 3, #bishop
             4: 5, #rook
             5: 9 #queen
+        }
+        self.pieces = {
+            "p": "Pawn",
+            "n": "Knight",
+            "b": "Bishop",
+            "r": "Rook",
+            "q": "Queen",
+            "k": "King"
         }
 
     def quitEngine(self):
@@ -24,6 +33,7 @@ class ChessLogic:
     def getBestMove(self, board):
         result = self.engine.play(board, chess.engine.Limit(time=0.3))
         best_move = result.move
+        self.last_move = best_move
         return best_move
     
     def getOutcome(self, board):
@@ -52,11 +62,29 @@ class ChessLogic:
             if not board.is_checkmate():
                 score /= 3
         return score
-
     
-if __name__ == "__main__":
-    # STOCKFISH_PATH = "/opt/homebrew/opt/stockfish/bin/stockfish"
-    # chess_logic = ChessLogic(STOCKFISH_PATH)
-    # score = chess_logic.getScore(chess.Board(), True)
-    # print(score)
-    print(len(chess.Board().piece_map()))
+    def checkCastling(self):
+        if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.G1:
+            rookMove = "h1f1"
+            return rookMove
+        if self.last_move and self.last_move.from_square == chess.E1 and self.last_move.to_square == chess.C1:
+            rookMove = "a1d1"
+            return rookMove
+        if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.G8:
+            rookMove="h8f8"
+            return rookMove
+        if self.last_move and self.last_move.from_square == chess.E8 and self.last_move.to_square == chess.C8:
+            rookMove = "a8d8"
+            return rookMove
+        return False
+    
+    def checkPassant(self, move, board):
+        if board.has_legal_en_passant() and board.is_capture(move) and board.piece_at(move.to_square) is None:
+            return True
+        return False
+    
+    def checkPromotion(self):
+        if self.last_move and self.last_move.promotion:
+            return True
+        return False
+

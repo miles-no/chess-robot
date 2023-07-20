@@ -28,24 +28,24 @@ class ChessRobot:
         self.arm.reset(wait=True)
 
     def movePiece(self, start_x, start_y, x, y, piece):
-        self.moving(100, 0, 150, 80)
-        self.moving(start_x, start_y, 150, 80)
+        self.moving(100, 0, 150, 100)
+        self.moving(start_x, start_y, 150, 100)
         self.moving(start_x, start_y, self.piece_height[piece])
         
-        self.arm.close_lite6_gripper()
         time.sleep(1)
+        self.arm.close_lite6_gripper()
 
-        self.moving(start_x, start_y, 150)
-        self.moving(x, y, 150, 80)
+        self.moving(start_x, start_y, 150, 80)
+        self.moving(x, y, 150, 100)
         self.moving(x, y, self.piece_height[piece])
-    
+
+        time.sleep(1)
         self.arm.open_lite6_gripper()
         time.sleep(1)
         self.arm.stop_lite6_gripper()
-        time.sleep(1)
 
-        self.moving(x, y, 150)
-        self.moving(100, 0, 150, 80)
+        self.moving(x, y, 150, 80)
+        self.moving(100, 0, 150, 100)
 
     def doMove(self, move, piece):
         cc = ChessCoordinates()
@@ -56,11 +56,14 @@ class ChessRobot:
         self.arm.reset(wait=True)
     
     def moving(self, x, y, z, speed=50):
-        self.arm.set_position(x=x, y=y, z=z, roll=-180, pitch=0, yaw=0,speed=speed, wait=True)
         time.sleep(1)
+        self.arm.set_position(x=x, y=y, z=z, roll=-180, pitch=0, yaw=0,speed=speed, wait=True)
     
     def disconnect(self):
         self.arm.disconnect()
+
+    def reset(self):
+        self.arm.reset(wait=True)
 
     # Move the piece that have been taken outside 
     def move_taken(self, move_from, piece):

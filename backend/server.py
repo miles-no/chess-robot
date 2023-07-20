@@ -86,13 +86,35 @@ def setPreferences(arg):
 def handleStockfishMove():
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
     time.sleep(2)
-    if mycertabo.chessboard.is_capture(best_move):
+    # Check passant
+    if chess_logic.checkPassant(best_move, mycertabo.chessboard):
+        piece_to_remove = best_move.uci()[2]+best_move.uci()[1]
+        cr.move_taken(piece_to_remove, "p")
+    # Check if piece is taken
+    elif mycertabo.chessboard.is_capture(best_move):
         cr.move_taken(best_move.uci()[2:], str(mycertabo.chessboard.piece_at(best_move.to_square)).lower())
+
     mycertabo.stockfish_move(best_move)
-    piece = str(mycertabo.chessboard.piece_at(chess.parse_square(best_move.uci()[2:])))
-    cr.doMove(best_move.uci(), piece.lower())
+    best_move = best_move.uci()
+    piece = str(mycertabo.chessboard.piece_at(chess.parse_square(best_move[2:4]))).lower()
+
+    # Check promotion
+    if chess_logic.checkPromotion():
+        promotion = chess_logic.pieces[best_move[-1]]
+        best_move = best_move[:-1]
+        best_move = best_move[:len(best_move)//2]
+        cr.move_taken(best_move, piece)
+        cr.reset()
+        socket_io.emit("promotion", promotion)
+    else:
+        # Check castling
+        castling = chess_logic.checkCastling()
+        if castling:
+            cr.doMove(castling, "r")    
+        cr.doMove(best_move, piece)
+        
     mycertabo.setColor()
-    return best_move.uci()
+    return best_move
 
 def emitFen(move):
     fen = mycertabo.chessboard.board_fen()
