@@ -1,20 +1,20 @@
 import time
 from xarm.wrapper import XArmAPI
 from configparser import ConfigParser
-from robotMovement.chessCoordinates import ChessCoordinates
+from chessCoordinates import ChessCoordinates
 
 class ChessRobot:
     def __init__(self):
         self.piece_height = {
             "p": 25, #pawn
-            "n": 40, #knight
+            "n": 38, #knight
             "b": 38, #bishop
             "r": 35, #rook
             "q": 55, #queen
             "k": 67 #king
         }
         self.parser = ConfigParser()
-        self.parser.read('robotMovement/robot.conf')
+        self.parser.read('robot.conf')
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
         self.initialize()
         self.taken = []
@@ -81,5 +81,5 @@ class ChessRobot:
 
 if __name__ == "__main__":
     cr = ChessRobot()
-    cr.doMove("d1h5", "q")
+    cr.doMove("a1a3", "n")
 
