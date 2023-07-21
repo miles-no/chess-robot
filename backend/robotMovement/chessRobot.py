@@ -23,7 +23,7 @@ class ChessRobot:
         self.arm.motion_enable(enable=True)
         self.arm.set_mode(0)
         self.arm.set_state(state=0)
-        self.arm.set_collision_sensitivity(5)
+        self.arm.set_collision_sensitivity(3)
         time.sleep(2)
         self.arm.reset(wait=True)
 
@@ -34,7 +34,7 @@ class ChessRobot:
         
         time.sleep(1)
         self.arm.close_lite6_gripper()
-
+        
         self.moving(start_x, start_y, 150, 80)
         self.moving(x, y, 150, 100)
         self.moving(x, y, self.piece_height[piece])
@@ -81,5 +81,17 @@ class ChessRobot:
 
 if __name__ == "__main__":
     cr = ChessRobot()
-    cr.doMove("a1a3", "n")
+    cr.doMove("a1a3", "p")
+    cr.doMove("a3e4", "p")
+    cr.doMove("e4g6", "p")
+    cr.doMove("g6a1", "p")
+
+    
+
+
+
+
+
+
+
 
