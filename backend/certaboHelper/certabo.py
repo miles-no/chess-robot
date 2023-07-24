@@ -123,6 +123,7 @@ class Certabo():
 
     def stockfish_move(self, best_move):
         self.chessboard.push(best_move)
+        king_position = chess.square_name(self.chessboard.king(chess.WHITE))
 
     def setColor(self):
         self.color = not self.color
