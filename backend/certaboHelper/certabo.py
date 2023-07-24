@@ -123,10 +123,36 @@ class Certabo():
 
     def stockfish_move(self, best_move):
         self.chessboard.push(best_move)
-        king_position = chess.square_name(self.chessboard.king(chess.WHITE))
 
     def setColor(self):
         self.color = not self.color
     
     def setStockfishColor(self, color):
         self.stockfish_color = False if color else True
+
+    def check_king_position(self, move):
+        king_position = chess.square_name(self.chessboard.king(chess.WHITE))
+        print(king_position)
+        move_from, move_to = move[:len(move)//2], move[len(move)//2:]
+        print(move_from, move_to)
+        king_letter, king_number = king_position[:len(king_position)//2], int(king_position[len(king_position)//2:])
+        king_letter_numb = ord(king_letter)-97
+        print(king_letter)
+        print(king_letter_numb)
+
+        move_from_letter, move_from_number = move_from[:len(move_from)//2], int(move_from[len(move_from)//2:])
+        move_from_letter_numb = ord(move_from_letter)-97
+        print(move_from_letter)
+        print(move_from_letter_numb)
+
+
+        move_to_letter, move_to_number = move_to[:len(move_to)//2], int(move_to[len(move_to)//2:])
+        move_to_letter_numb = ord(move_to_letter)-97
+        print(move_to_letter)
+        print(move_to_letter_numb)
+
+        if king_number == move_from_number or king_number == move_to_number:
+            if king_letter_numb + 1 == move_from_letter_numb or king_letter_numb + 1 == move_to_letter_numb or king_letter_numb - 1 == move_from_letter_numb or king_letter_numb - 1 == move_to_letter_numb:
+                print("equal")
+                return True
+           

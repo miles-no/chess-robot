@@ -96,6 +96,10 @@ def handleStockfishMove():
 
     mycertabo.stockfish_move(best_move)
     best_move = best_move.uci()
+
+    if mycertabo.check_king_position(best_move):
+        cr.rotate_robot()
+
     piece = str(mycertabo.chessboard.piece_at(chess.parse_square(best_move[2:4]))).lower()
 
     # Check promotion
