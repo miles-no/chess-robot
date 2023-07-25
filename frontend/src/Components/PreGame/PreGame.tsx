@@ -140,8 +140,12 @@ export default function PreGame(props: alertProps) {
             <Typography sx={{ textAlign: "center", color: "orange" }}>
               Medium
             </Typography>
-          ) : (
+          ) : level === 20 ? (
             <Typography sx={{ textAlign: "center", color: "red" }}>
+              Hardest
+            </Typography>
+          ) : (
+            <Typography sx={{ textAlign: "center", color: "#ff4500" }}>
               Hard
             </Typography>
           )}
