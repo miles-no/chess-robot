@@ -130,6 +130,12 @@ class Certabo():
     def setStockfishColor(self, color):
         self.stockfish_color = False if color else True
 
-    def check_king_position(self):
-        return chess.square_name(self.chessboard.king(chess.WHITE))
-        
+    def get_qk_positions(self):
+        positions = []
+        for square in self.chessboard.pieces(chess.QUEEN, chess.WHITE):
+            positions.append(chess.square_name(square))
+        for square in self.chessboard.pieces(chess.QUEEN, chess.BLACK):
+            positions.append(chess.square_name(square))
+        positions.append(chess.square_name(self.chessboard.king(chess.WHITE)))
+        positions.append(chess.square_name(self.chessboard.king(chess.BLACK)))
+        return positions

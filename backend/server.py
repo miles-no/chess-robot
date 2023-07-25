@@ -89,15 +89,15 @@ def handleStockfishMove():
     # Check passant
     if chess_logic.checkPassant(best_move, mycertabo.chessboard):
         piece_to_remove = best_move.uci()[2]+best_move.uci()[1]
-        cr.move_taken(piece_to_remove, "p")
+        cr.move_taken(piece_to_remove, "p", best_move.uci())
     # Check if piece is taken
     elif mycertabo.chessboard.is_capture(best_move):
-        cr.move_taken(best_move.uci()[2:], str(mycertabo.chessboard.piece_at(best_move.to_square)).lower())
+        cr.move_taken(best_move.uci()[2:], str(mycertabo.chessboard.piece_at(best_move.to_square)).lower(), best_move.uci())
 
     mycertabo.stockfish_move(best_move)
     best_move = best_move.uci()
 
-    king_position = mycertabo.check_king_position()
+    kq_position = mycertabo.get_qk_positions()
 
     piece = str(mycertabo.chessboard.piece_at(chess.parse_square(best_move[2:4]))).lower()
 
@@ -105,17 +105,16 @@ def handleStockfishMove():
     if chess_logic.checkPromotion():
         promotion = chess_logic.pieces[best_move[-1]]
         best_move = best_move[:-1]
-        best_move = best_move[:len(best_move)//2]
-        cr.move_taken(best_move, "p")
-        cr.reset()
+        prom_move = best_move[:len(best_move)//2]
+        cr.move_taken(prom_move, "p", best_move)
         socket_io.emit("promotion", promotion)
     else:
         # Check castling
         castling = chess_logic.checkCastling()
         if castling:
             cr.doMove(castling, "r")    
-        cr.doMove(best_move, piece, king_position)
-        
+        cr.doMove(best_move, piece, kq_position)
+    cr.reset()
     mycertabo.setColor()
     return best_move
 
