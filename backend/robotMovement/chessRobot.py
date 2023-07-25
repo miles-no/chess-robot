@@ -19,6 +19,7 @@ class ChessRobot:
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
         self.initialize()
         self.taken = []
+        self.cc = ChessCoordinates()
     
     def initialize(self):
         self.arm.motion_enable(enable=True)
@@ -28,11 +29,10 @@ class ChessRobot:
         time.sleep(2)
         self.arm.reset(wait=True)
 
-    def movePiece(self, start_x, start_y, x, y, piece, king_position=False):
+    def movePiece(self, start_x, start_y, x, y, piece, move, king_position=None):
         self.moving(100, 0, 150)
 
-        if king_position:
-            print("King on the side")
+        if self.cc.king_on_side_lift(king_position, move):
             self.moving(start_x, start_y, 150, yaw=90)
             self.moving(start_x, start_y, self.piece_height[piece], 80, yaw=90)
         else:
@@ -41,10 +41,14 @@ class ChessRobot:
         
         self.arm.close_lite6_gripper()
         time.sleep(1)
-
         self.moving(start_x, start_y, 150)
-        self.moving(x, y, 150)
-        self.moving(x, y, self.piece_height[piece], 80)
+
+        if self.cc.king_on_side_down(king_position, move):
+            self.moving(x, y, 150, yaw=90)
+            self.moving(x, y, self.piece_height[piece], 80, yaw=90)
+        else:
+            self.moving(x, y, 150)
+            self.moving(x, y, self.piece_height[piece], 80)
 
         self.arm.open_lite6_gripper()
         time.sleep(1)
@@ -53,12 +57,11 @@ class ChessRobot:
         self.moving(x, y, 150)
         self.moving(100, 0, 150)
 
-    def doMove(self, move, piece, king_position=False):
-        cc = ChessCoordinates()
+    def doMove(self, move, piece, king_position=None):
         move_from, move_to = move[:len(move)//2], move[len(move)//2:]
-        x_from, y_from = cc.chess_to_robot(move_from)
-        x_to, y_to = cc.chess_to_robot(move_to)
-        self.movePiece(x_from, y_from, x_to, y_to, piece, king_position)
+        x_from, y_from = self.cc.chess_to_robot(move_from)
+        x_to, y_to = self.cc.chess_to_robot(move_to)
+        self.movePiece(x_from, y_from, x_to, y_to, piece, move, king_position)
         self.arm.reset(wait=True)
     
     def moving(self, x, y, z, speed=100, yaw=0):
@@ -72,8 +75,7 @@ class ChessRobot:
 
     # Move the piece that have been taken outside 
     def move_taken(self, move_from, piece):
-        cc = ChessCoordinates()
-        x_from, y_from = cc.chess_to_robot(move_from)
+        x_from, y_from = self.cc.chess_to_robot(move_from)
         self.taken.append(piece)
         if len(self.taken) < 7:
             x = 130 + (len(self.taken)-1)*40
@@ -87,13 +89,4 @@ class ChessRobot:
 if __name__ == "__main__":
     cr = ChessRobot()
     cr.doMove("e2e4", "p")
-    cr.doMove("f1d3", "b", True)
-    
-
-
-
-
-
-
-
-
+    cr.doMove("f1d3", "b", "e1")
