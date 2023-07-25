@@ -131,7 +131,20 @@ export default function PreGame(props: alertProps) {
             type="number"
             inputProps={{ min: 1, max: 20 }}
             onChange={handleLevelChange}
-          />
+          ></TextField>
+          {level <= 8 ? (
+            <Typography sx={{ textAlign: "center", color: "green" }}>
+              Easy
+            </Typography>
+          ) : level <= 15 && level > 8 ? (
+            <Typography sx={{ textAlign: "center", color: "orange" }}>
+              Medium
+            </Typography>
+          ) : (
+            <Typography sx={{ textAlign: "center", color: "red" }}>
+              Hard
+            </Typography>
+          )}
         </Box>
       </Grid>
       <DialogActions>
