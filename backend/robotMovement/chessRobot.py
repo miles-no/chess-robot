@@ -29,49 +29,40 @@ class ChessRobot:
         self.arm.reset(wait=True)
 
     def movePiece(self, start_x, start_y, x, y, piece, king_position=False):
-        self.moving(100, 0, 150, 100)
-        self.moving(start_x, start_y, 150, 100)
+        self.moving(100, 0, 150)
+
         if king_position:
             print("King on the side")
-            self.rotate_robot()
-        self.moving(start_x, start_y, self.piece_height[piece])
+            self.moving(start_x, start_y, 150, yaw=90)
+            self.moving(start_x, start_y, self.piece_height[piece], 80, yaw=90)
+        else:
+            self.moving(start_x, start_y, 150)
+            self.moving(start_x, start_y, self.piece_height[piece], 80)
         
-        time.sleep(1)
         self.arm.close_lite6_gripper()
-        
-        self.moving(start_x, start_y, 150, 80)
-        self.moving(x, y, 150, 100)
-        self.moving(x, y, self.piece_height[piece])
-
         time.sleep(1)
+
+        self.moving(start_x, start_y, 150)
+        self.moving(x, y, 150)
+        self.moving(x, y, self.piece_height[piece], 80)
+
         self.arm.open_lite6_gripper()
         time.sleep(1)
         self.arm.stop_lite6_gripper()
 
-        self.moving(x, y, 150, 80)
-        self.moving(100, 0, 150, 100)
+        self.moving(x, y, 150)
+        self.moving(100, 0, 150)
 
     def doMove(self, move, piece, king_position=False):
         cc = ChessCoordinates()
         move_from, move_to = move[:len(move)//2], move[len(move)//2:]
-        start_x, start_y = cc.chess_to_robot(move_from)
-        #x_to, y_to = cc.chess_to_robot(move_to)
-        self.arm.set_position(x=100, y=0, z=150, roll=-180, pitch=0, yaw=0,speed=100, wait=True)
-        self.arm.set_position(x=start_x, y=start_y, z=150, roll=-180, pitch=0, yaw=0,speed=100, wait=True)
-        self.arm.set_position(x=start_x, y=start_y, z=150, roll=-180, pitch=0, yaw=0,speed=50, wait=True)
-
-
-        #self.arm.set_servo_angle(servo_id=6, angle=90, is_radian=False, wait=True)
- 
-        self.arm.set_position(x=start_x, y=start_y, z=self.piece_height[piece], roll=-180, pitch=0, yaw=0, speed=80, wait=True)
+        x_from, y_from = cc.chess_to_robot(move_from)
+        x_to, y_to = cc.chess_to_robot(move_to)
+        self.movePiece(x_from, y_from, x_to, y_to, piece, king_position)
+        self.arm.reset(wait=True)
     
-
-        # self.movePiece(x_from, y_from, x_to, y_to, piece, king_position)
-        # self.arm.reset(wait=True)
-    
-    def moving(self, x, y, z, speed=50):
-        time.sleep(1)
-        self.arm.set_position(x=x, y=y, z=z, roll=-180, pitch=0, yaw=0,speed=speed, wait=True)
+    def moving(self, x, y, z, speed=100, yaw=0):
+        self.arm.set_position(x=x, y=y, z=z, roll=-180, pitch=0, yaw=yaw, speed=speed, wait=True)
     
     def disconnect(self):
         self.arm.disconnect()
@@ -91,15 +82,11 @@ class ChessRobot:
             x = 130 + (len(self.taken)-7)*40
             y = -162
         self.movePiece(x_from, y_from, x, y, piece)
-    
-    def rotate_robot(self):
-        self.arm.set_servo_angle(servo_id=6, angle=90, is_radian=False, wait=False)
-        # self.arm.set_position(x=200, y=0, z=200, roll=-180, pitch=0, yaw=0,speed=80, wait=True
 
 
 if __name__ == "__main__":
     cr = ChessRobot()
-    #cr.doMove("e2e4", "p")
+    cr.doMove("e2e4", "p")
     cr.doMove("f1d3", "b", True)
     
 
