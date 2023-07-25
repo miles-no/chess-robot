@@ -123,10 +123,13 @@ class Certabo():
 
     def stockfish_move(self, best_move):
         self.chessboard.push(best_move)
-        king_position = chess.square_name(self.chessboard.king(chess.WHITE))
 
     def setColor(self):
         self.color = not self.color
     
     def setStockfishColor(self, color):
         self.stockfish_color = False if color else True
+
+    def check_king_position(self):
+        return chess.square_name(self.chessboard.king(chess.WHITE))
+        

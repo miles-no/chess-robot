@@ -96,6 +96,9 @@ def handleStockfishMove():
 
     mycertabo.stockfish_move(best_move)
     best_move = best_move.uci()
+
+    king_position = mycertabo.check_king_position()
+
     piece = str(mycertabo.chessboard.piece_at(chess.parse_square(best_move[2:4]))).lower()
 
     # Check promotion
@@ -111,7 +114,7 @@ def handleStockfishMove():
         castling = chess_logic.checkCastling()
         if castling:
             cr.doMove(castling, "r")    
-        cr.doMove(best_move, piece)
+        cr.doMove(best_move, piece, king_position)
         
     mycertabo.setColor()
     return best_move
