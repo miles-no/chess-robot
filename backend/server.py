@@ -47,9 +47,11 @@ def newGame(arg):
 @socket_io.on('get-valid-moves')
 def getValidMoves():
     legal_moves = list(mycertabo.chessboard.legal_moves)
-    legal_moves_ucis = []
+    best_move = chess_logic.getBestMove(mycertabo.chessboard)
+    legal_moves_ucis = [best_move.uci()]
     for move in legal_moves:
-        legal_moves_ucis.append(move.uci())
+        if best_move != move:
+            legal_moves_ucis.append(move.uci())
     socket_io.emit('valid-moves', legal_moves_ucis)
 
 @socket_io.on('start-game')
