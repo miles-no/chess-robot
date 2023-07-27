@@ -21,6 +21,7 @@ class ChessLogic:
             "q": "Queen",
             "k": "King"
         }
+        self.player = ""
 
     def quitEngine(self):
         self.engine.quit()
@@ -88,3 +89,5 @@ class ChessLogic:
             return True
         return False
 
+    def setPlayer(self, name):
+        self.player = name

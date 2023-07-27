@@ -17,12 +17,13 @@ import { ChangeEvent, useState } from "react";
 interface alertProps {
   open: boolean;
   stockfishLevel: number;
-  handleOK: (level: number, selectedCard: boolean) => void;
+  handleOK: (level: number, selectedCard: boolean, name: string) => void;
 }
 
 export default function PreGame(props: alertProps) {
   const [level, setLevel] = useState(1);
   const [selectedCard, setSelectedCard] = useState<boolean | null>(null);
+  const [name, setName] = useState<string>("");
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -101,7 +102,7 @@ export default function PreGame(props: alertProps) {
       </DialogTitle>
       <Grid
         sx={{
-          padding: "2em",
+          padding: "1em 2em 2em 2em",
           margin: "0 auto",
           display: "flex",
           alignContent: "center",
@@ -111,6 +112,21 @@ export default function PreGame(props: alertProps) {
         container
         spacing={0}
       >
+        <Box
+          sx={{
+            width: "100%",
+            textAlign: "center",
+          }}
+        >
+          <Typography sx={{ textAlign: "center" }}>Enter your name</Typography>
+          <TextField
+            id="outlined-controlled"
+            value={name}
+            onChange={(event) => {
+              setName(event.target.value);
+            }}
+          />
+        </Box>
         <Grid item sx={{ padding: "1em" }}>
           {renderCard("assets/images/king_w.png", "White piece", "White", true)}
         </Grid>
@@ -153,7 +169,7 @@ export default function PreGame(props: alertProps) {
       </Grid>
       <DialogActions>
         {selectedCard !== null && (
-          <Button onClick={() => props.handleOK(level, selectedCard)}>
+          <Button onClick={() => props.handleOK(level, selectedCard, name)}>
             OK
           </Button>
         )}
