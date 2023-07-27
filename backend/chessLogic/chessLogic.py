@@ -22,6 +22,7 @@ class ChessLogic:
             "k": "King"
         }
         self.player = ""
+        self.reduction = 0
 
     def quitEngine(self):
         self.engine.quit()
@@ -62,6 +63,7 @@ class ChessLogic:
             score = score*100/self.skill_level
             if not board.is_checkmate():
                 score /= 3
+            score -= self.reduction
         return score
     
     def checkCastling(self):
