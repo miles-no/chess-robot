@@ -102,7 +102,7 @@ export default function PreGame(props: alertProps) {
       </DialogTitle>
       <Grid
         sx={{
-          padding: "1em 2em 2em 2em",
+          padding: "1em 2em 0em 2em",
           margin: "0 auto",
           display: "flex",
           alignContent: "center",
