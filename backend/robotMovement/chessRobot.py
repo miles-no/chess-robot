@@ -66,11 +66,11 @@ class ChessRobot:
     def move_taken(self, move_from, piece):
         x_from, y_from = self.cc.chess_to_robot(move_from)
         self.taken.append(piece)
-        if len(self.taken) < 7:
+        if len(self.taken) < 8:
             x = 130 + (len(self.taken)-1)*40
             y = 160
         else:
-            x = 130 + (len(self.taken)-7)*40
+            x = 130 + (len(self.taken)-8)*40
             y = -162
         self.movePiece(x_from, y_from, x, y, piece)
 
