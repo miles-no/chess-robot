@@ -6,7 +6,9 @@ table_players = (
     CREATE TABLE players (
         id SERIAL PRIMARY KEY,
         username VARCHAR(50) NOT NULL,
-        score INTEGER
+        score INTEGER,
+        date TEXT,
+        level INTEGER
     )
     """
 )
@@ -44,4 +46,5 @@ def create_table(table):
             conn.close()
 
 if __name__ == '__main__':
+    create_table("DROP TABLE players")
     create_table(table_players)

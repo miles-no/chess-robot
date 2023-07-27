@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import "./LeaderboardTable.css";
 
 interface LeaderboardTableProps {
-  data?: { name: string; score: number }[];
+  data?: { name: string; score: number; date: string; level: number }[];
 }
 
 export default function LeaderboardTable(props: LeaderboardTableProps) {
@@ -19,7 +19,9 @@ export default function LeaderboardTable(props: LeaderboardTableProps) {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell>Date</TableCell>
                 <TableCell>Player</TableCell>
+                <TableCell>Level</TableCell>
                 <TableCell>Score</TableCell>
               </TableRow>
             </TableHead>
@@ -27,9 +29,11 @@ export default function LeaderboardTable(props: LeaderboardTableProps) {
               {props.data.map((value, key) => {
                 return (
                   <TableRow key={key}>
+                    <TableCell>{value.date}</TableCell>
                     <TableCell component="th" scope="row">
                       {value.name}
                     </TableCell>
+                    <TableCell>{value.level}</TableCell>
                     <TableCell>{value.score}</TableCell>
                   </TableRow>
                 );
