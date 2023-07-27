@@ -53,6 +53,7 @@ def getValidMoves():
     for move in legal_moves:
         if best_move != move:
             legal_moves_ucis.append(move.uci())
+    chess_logic.reduction += 100
     socket_io.emit('valid-moves', legal_moves_ucis)
 
 @socket_io.on('start-game')
