@@ -9,6 +9,7 @@ from database.db_func import get_leaderboard, add_player
 from robotMovement.chessRobot import ChessRobot
 import time
 import chess
+from datetime import datetime
 
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
@@ -72,7 +73,7 @@ def startGame(arg):
     print("Score: ", score)
     result = {"result": outcome[0], "winner": outcome[1], "score": score}
     socket_io.emit("game-over", result)
-    add_player(chess_logic.player, score)
+    add_player(chess_logic.player, score, datetime.now().strftime("%d/%m/%Y %H:%M"), chess_logic.skill_level)
     print("Game over")
 
 @socket_io.on('get-leaderboard')
