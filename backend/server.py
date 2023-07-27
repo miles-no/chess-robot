@@ -57,7 +57,6 @@ def getValidMoves():
 @socket_io.on('start-game')
 def startGame(arg):
     setPreferences(arg)
-    name = arg['name']
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
         if mycertabo.color == mycertabo.stockfish_color:
             move = handleStockfishMove()
@@ -73,7 +72,7 @@ def startGame(arg):
     print("Score: ", score)
     result = {"result": outcome[0], "winner": outcome[1], "score": score}
     socket_io.emit("game-over", result)
-    add_player(name, score)
+    add_player(chess_logic.player, score)
     print("Game over")
 
 @socket_io.on('get-leaderboard')
@@ -84,6 +83,7 @@ def getLeaderboard():
 def setPreferences(arg):
     mycertabo.setStockfishColor(arg['color'])
     chess_logic.setSkillLevel(arg['skill_level'])
+    chess_logic.setPlayer(arg['name'])
 
 def handleStockfishMove():
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
