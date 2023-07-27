@@ -102,7 +102,7 @@ export default function PreGame(props: alertProps) {
       </DialogTitle>
       <Grid
         sx={{
-          padding: "2em",
+          padding: "1em 2em 2em 2em",
           margin: "0 auto",
           display: "flex",
           alignContent: "center",
@@ -112,6 +112,21 @@ export default function PreGame(props: alertProps) {
         container
         spacing={0}
       >
+        <Box
+          sx={{
+            width: "100%",
+            textAlign: "center",
+          }}
+        >
+          <Typography sx={{ textAlign: "center" }}>Enter your name</Typography>
+          <TextField
+            id="outlined-controlled"
+            value={name}
+            onChange={(event) => {
+              setName(event.target.value);
+            }}
+          />
+        </Box>
         <Grid item sx={{ padding: "1em" }}>
           {renderCard("assets/images/king_w.png", "White piece", "White", true)}
         </Grid>
@@ -152,14 +167,6 @@ export default function PreGame(props: alertProps) {
           )}
         </Box>
       </Grid>
-      <TextField
-        id="outlined-controlled"
-        label="Enter your name"
-        value={name}
-        onChange={(event) => {
-          setName(event.target.value);
-        }}
-      />
       <DialogActions>
         {selectedCard !== null && (
           <Button onClick={() => props.handleOK(level, selectedCard, name)}>
