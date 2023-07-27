@@ -1,7 +1,7 @@
 import time
 from xarm.wrapper import XArmAPI
 from configparser import ConfigParser
-from chessCoordinates import ChessCoordinates
+from robotMovement.chessCoordinates import ChessCoordinates
 
 class ChessRobot:
     def __init__(self):
@@ -14,7 +14,7 @@ class ChessRobot:
             "k": 103 #king
         }
         self.parser = ConfigParser()
-        self.parser.read('robot.conf')
+        self.parser.read('robotMovement/robot.conf')
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
         self.initialize()
         self.taken = []
