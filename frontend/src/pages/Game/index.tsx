@@ -166,8 +166,10 @@ export default function Game(props: gameProps) {
                 />
               )}
             </Box>
-            <Box className="unclickable-area">
-              <MyChessboard boardWidth={600} socket={props.socket} FEN={FEN} />
+            <Box className="chessboard-box">
+              <Box className="unclickable-area">
+                <MyChessboard socket={props.socket} FEN={FEN} />
+              </Box>
             </Box>
             {!result && !gameInProgress && (
               <AlertComponent

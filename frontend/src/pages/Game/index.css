@@ -5,23 +5,34 @@
 .main-container {
   padding: 1em;
   display: flex;
+  flex-wrap: wrap;
+  width: "96%";
+  justify-content: space-between;
 }
 
 .buttons {
   padding-top: 3em;
 }
 
-.game {
-  flex: 2;
-  padding: 1em;
-}
-
 .game-status {
-  flex: 1;
   padding: 1em;
+  width: 350px;
+  max-width: 350px;
 }
 
 .valid-moves {
-  flex: 1;
   padding: 1em;
+  width: 350px;
+  max-width: 350px;
+}
+
+.chessboard-box {
+  flex: 1;
+  width: 600px;
+}
+
+@media only screen and (max-width: 650px) {
+  .chessboard-box {
+    width: 350px;
+  }
 }
