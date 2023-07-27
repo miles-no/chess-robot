@@ -10,30 +10,6 @@ class ChessCoordinates():
         y = self.a_position["y"] - y*self.tile
         return x, y
     
-    # queen or king on the side
-    def kq_on_side_lift(self, kq_position, move):
-        if kq_position != None:
-            for key in kq_position:
-                LNking, Nking = self.split_strings(kq_position[key])
-                move_from, _ = move[:len(move)//2], move[len(move)//2:]
-                LNfrom, Nfrom = self.split_strings(move_from)
-
-                if Nking == Nfrom and LNking-1 == LNfrom or Nking == Nfrom and LNking+1 == LNfrom:
-                    print("King or queen is on the side when picking up")
-                    return True, key
-
-    # queen or king on the side
-    def kq_on_side_down(self, kq_position, move):
-        if kq_position != None:
-            for key in kq_position:
-                LNking, Nking = self.split_strings(kq_position[key])
-                _, move_to = move[:len(move)//2], move[len(move)//2:]
-                LNto, Nto = self.split_strings(move_to)
-
-                if Nking == Nto and LNking-1 == LNto or Nking == Nto and LNking+1 == LNto:
-                    print("King or queen is on the side when putting down")
-                    return True, key
-    
     def split_strings(self, string):
         letter, number = string[:len(string)//2], int(string[len(string)//2:])
         l2n = ord(letter)-97
