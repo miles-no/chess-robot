@@ -90,7 +90,7 @@ export default function PreGame(props: alertProps) {
       disableEscapeKeyDown
       PaperProps={{
         sx: {
-          overflow: "hidden",
+          overflow: "auto",
         },
       }}
     >
