@@ -6,11 +6,11 @@ from robotMovement.chessCoordinates import ChessCoordinates
 class ChessRobot:
     def __init__(self):
         self.piece_height = {
-            "p": 67, #pawn
-            "n": 85, #knight
+            "p": 74, #pawn
+            "n": 81, #knight
             "b": 83, #bishop
             "r": 87, #rook
-            "q": 95, #queen
+            "q": 100, #queen
             "k": 103 #king
         }
         self.parser = ConfigParser()
@@ -77,6 +77,29 @@ class ChessRobot:
 
 if __name__ == "__main__":
     cr = ChessRobot()
-    cr.doMove("a1a3", "r")
+    cr.doMove("b1a3", "n")
+    cr.doMove("c1g5", "b")
+    cr.doMove("b2b4", "p")
+    cr.doMove("d1d6", "q")
+    cr.doMove("c2c4", "p")
+    cr.doMove("a1a2", "r")
+    cr.doMove("f1f3", "p")
+    cr.doMove("e1f1", "k")
+    cr.doMove("g5f6", "b")
+    cr.doMove("f1f2", "k")
+    cr.doMove("a3b5", "n")
+    cr.doMove("a2a6", "r")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
