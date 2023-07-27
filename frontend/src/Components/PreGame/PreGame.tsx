@@ -17,12 +17,13 @@ import { ChangeEvent, useState } from "react";
 interface alertProps {
   open: boolean;
   stockfishLevel: number;
-  handleOK: (level: number, selectedCard: boolean) => void;
+  handleOK: (level: number, selectedCard: boolean, name: string) => void;
 }
 
 export default function PreGame(props: alertProps) {
   const [level, setLevel] = useState(1);
   const [selectedCard, setSelectedCard] = useState<boolean | null>(null);
+  const [name, setName] = useState<string>("");
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -151,9 +152,17 @@ export default function PreGame(props: alertProps) {
           )}
         </Box>
       </Grid>
+      <TextField
+        id="outlined-controlled"
+        label="Enter your name"
+        value={name}
+        onChange={(event) => {
+          setName(event.target.value);
+        }}
+      />
       <DialogActions>
         {selectedCard !== null && (
-          <Button onClick={() => props.handleOK(level, selectedCard)}>
+          <Button onClick={() => props.handleOK(level, selectedCard, name)}>
             OK
           </Button>
         )}

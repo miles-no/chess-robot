@@ -24,6 +24,7 @@ export default function Game(props: gameProps) {
   const [gameInProgress, setGameInProgress] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [promotion, setPromotion] = useState<string>("");
+  const [player, setPlayer] = useState<string>();
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
@@ -75,7 +76,7 @@ export default function Game(props: gameProps) {
       const preferences = {
         skill_level: stockfishlevel,
         color: color,
-        name: "test",
+        name: player,
       };
       props.socket.emit("start-game", preferences);
       setGameInProgress(true);
@@ -107,9 +108,14 @@ export default function Game(props: gameProps) {
     setOpen(false);
   };
 
-  const handlePregame = (level: number, selectedSide: boolean) => {
+  const handlePregame = (
+    level: number,
+    selectedSide: boolean,
+    name: string
+  ) => {
     setStockfishLevel(level);
     setColor(selectedSide);
+    setPlayer(name);
     setpreGame(false);
     if (gameInProgress) {
       const preferences = { skill_level: level, color: selectedSide };
