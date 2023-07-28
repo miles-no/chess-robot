@@ -1,0 +1,39 @@
+.main-container {
+  margin: auto;
+  padding: 2em;
+}
+
+h1 {
+  width: 100%;
+  text-align: center;
+}
+
+.home-buttons {
+  padding-top: 1em;
+  display: flex;
+  justify-content: space-between;
+  width: 400px;
+  margin: auto;
+  flex-wrap: wrap;
+}
+
+.home-buttons Button:hover {
+  border-color: black;
+  color: black;
+  background-color: #bebdb8;
+}
+
+.home-buttons Button {
+  border-color: black;
+  color: black;
+  width: 190px;
+  margin: auto;
+  margin-bottom: 1em;
+}
+
+.textfield {
+  text-align: center;
+  width: 100%;
+  margin: auto;
+  padding: 0 10% 0 10%;
+}

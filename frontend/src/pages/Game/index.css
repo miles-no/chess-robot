@@ -11,19 +11,24 @@
 }
 
 .buttons {
-  padding-top: 3em;
+  padding-top: 1.5em;
+  padding-bottom: 2em;
 }
 
 .game-status {
-  padding: 1em;
+  padding: 0 1em 1em 1em;
   width: 350px;
   max-width: 350px;
 }
 
 .valid-moves {
-  padding: 1em;
+  padding: 0 1em 1em 1em;
   width: 350px;
   max-width: 350px;
+}
+
+.valid-moves h4 {
+  margin: 0;
 }
 
 .chessboard-box {
@@ -31,8 +36,56 @@
   width: 600px;
 }
 
+.start-button Button {
+  width: 150px;
+}
+
+.start-button Button:hover {
+  background-color: #bebdb8;
+  color: black;
+}
+
+.game-button Button {
+  border-color: black;
+  color: black;
+  width: 150px;
+  margin: 0 1em 0 0;
+}
+
+.game-button Button:hover {
+  border-color: black;
+  color: black;
+  background-color: #bebdb8;
+}
+
+.game-button {
+  width: 400px;
+}
+
 @media only screen and (max-width: 650px) {
   .chessboard-box {
+    width: 350px;
+  }
+  .game-status {
+    padding: 0;
+    margin-top: 1em;
+  }
+  .valid-moves {
+    margin-top: 1em;
+    padding: 0;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+  }
+
+  .game-button Button {
+    width: 350px;
+    margin: 0 0 1em 0;
+  }
+
+  .start-button Button {
     width: 350px;
   }
 }

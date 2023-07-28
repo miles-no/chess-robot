@@ -182,18 +182,34 @@ export default function Game(props: gameProps) {
             <Box className="buttons">
               {gameInProgress ? (
                 <>
-                  <Button variant="outlined" onClick={() => newGame()}>
-                    New game
-                  </Button>
-                  <Button variant="outlined" onClick={() => getValidMoves()}>
-                    Get move
-                  </Button>
+                  <div className="game-button">
+                    <Button
+                      variant="outlined"
+                      onClick={() => newGame()}
+                      className="new-button"
+                    >
+                      New game
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      onClick={() => getValidMoves()}
+                      className="moves-button"
+                    >
+                      Get move
+                    </Button>
+                  </div>
                 </>
               ) : (
                 !gameInProgress && (
-                  <Button variant="contained" onClick={() => startGame()}>
-                    Start game
-                  </Button>
+                  <div className="start-button">
+                    <Button
+                      variant="contained"
+                      onClick={() => startGame()}
+                      sx={{ backgroundColor: "black" }}
+                    >
+                      Start game
+                    </Button>
+                  </div>
                 )
               )}
             </Box>
