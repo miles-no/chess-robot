@@ -10,7 +10,7 @@ export default function GameStatus(props: gameStatusProps) {
     <Box
       sx={{
         padding: "0.02em",
-        width: "30em",
+        width: "350px",
       }}
     >
       <Box
@@ -25,6 +25,7 @@ export default function GameStatus(props: gameStatusProps) {
           fontSize: "24px",
           fontWeight: "bold",
           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+          padding: "1em",
         }}
       >
         <Typography variant="h4" gutterBottom>
