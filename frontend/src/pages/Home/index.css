@@ -17,12 +17,18 @@ h1 {
   flex-wrap: wrap;
 }
 
-.home-button {
+.home-buttons Button:hover {
+  border-color: black;
+  color: black;
+  background-color: #bebdb8;
+}
+
+.home-buttons Button {
+  border-color: black;
+  color: black;
   width: 190px;
   margin: auto;
   margin-bottom: 1em;
-  border-color: black;
-  color: black;
 }
 
 .textfield {

@@ -26,14 +26,10 @@ export default function Home() {
         <p>Good Luck!</p>
       </div>
       <div className="home-buttons">
-        <Button variant="outlined" onClick={startGame} className="home-button">
+        <Button variant="outlined" onClick={startGame}>
           Start Game
         </Button>
-        <Button
-          variant="outlined"
-          onClick={viewLeaderboard}
-          className="home-button"
-        >
+        <Button variant="outlined" onClick={viewLeaderboard}>
           View Leaderboard
         </Button>
       </div>

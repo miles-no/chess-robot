@@ -31,6 +31,22 @@
   width: 600px;
 }
 
+.start-button Button:hover {
+  background-color: #bebdb8;
+  color: black;
+}
+
+.game-button Button {
+  border-color: black;
+  color: black;
+}
+
+.game-button Button:hover {
+  border-color: black;
+  color: black;
+  background-color: #bebdb8;
+}
+
 @media only screen and (max-width: 650px) {
   .chessboard-box {
     width: 350px;
