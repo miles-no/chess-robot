@@ -10,3 +10,13 @@
     width: 95%;
   }
 }
+@media screen and (max-width: 600px) {
+  .leaderboardTable {
+    width: 350px;
+  }
+
+  td,
+  th {
+    width: 50px;
+  }
+}

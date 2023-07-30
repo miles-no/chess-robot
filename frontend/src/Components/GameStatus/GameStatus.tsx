@@ -10,7 +10,7 @@ export default function GameStatus(props: gameStatusProps) {
     <Box
       sx={{
         padding: "0.02em",
-        width: "350px",
+        width: "100%",
       }}
     >
       <Box

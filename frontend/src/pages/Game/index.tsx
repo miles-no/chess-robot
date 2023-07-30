@@ -214,20 +214,20 @@ export default function Game(props: gameProps) {
               )}
             </Box>
           </Box>
-          <Box className="valid-moves">
-            {valid_moves && valid_moves.length > 0 && (
-              <GameStatus
-                title="Available moves"
-                moves={valid_moves}
-                player={undefined}
-              />
-            )}
-          </Box>
           <Box className="game-status">
             {gameInProgress && (
               <GameStatus title="GAME" moves={moves} player={currentPlayer} />
             )}
           </Box>
+          {valid_moves && valid_moves.length > 0 && (
+            <Box className="valid-moves">
+              <GameStatus
+                title="Available moves"
+                moves={valid_moves}
+                player={undefined}
+              />
+            </Box>
+          )}
         </Box>
       )}
     </Box>
