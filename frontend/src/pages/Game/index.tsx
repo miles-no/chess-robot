@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
@@ -25,6 +25,7 @@ export default function Game(props: gameProps) {
   const [score, setScore] = useState<number>(0);
   const [promotion, setPromotion] = useState<string>("");
   const [player, setPlayer] = useState<string>();
+  const [wait, setWait] = useState<boolean>(false);
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
@@ -32,12 +33,14 @@ export default function Game(props: gameProps) {
     props.socket.on("get-fen", handleFEN);
     props.socket.on("game-over", handleResultMessage);
     props.socket.on("promotion", handlePromotion);
+    props.socket.on("wait", handleWait);
     return () => {
       // Cleanup the props.socket listener when the component unmounts
       props.socket.off("invalid-move", handleInvalidMove);
       props.socket.off("valid-moves", handleValidMoves);
       props.socket.off("get-fen", handleFEN);
       props.socket.off("game-over", handleResultMessage);
+      props.socket.off("wait", handleWait);
     };
   }, [props.socket]);
 
@@ -58,10 +61,14 @@ export default function Game(props: gameProps) {
       setFEN(message.fen);
       setValidMoves([]);
       setCurrentPlayer(message.color);
-      setMoves((prevMoves) =>
-        prevMoves ? [...prevMoves, message.move] : [message.move]
-      );
+      setMoves(message.moves);
+      setWait(false);
     }
+  };
+
+  const handleWait = (moves: string[]) => {
+    setWait(true);
+    setMoves(moves);
   };
 
   const handlePromotion = (promotion: string) => {
@@ -118,7 +125,11 @@ export default function Game(props: gameProps) {
     setPlayer(name);
     setpreGame(false);
     if (gameInProgress) {
-      const preferences = { skill_level: level, color: selectedSide };
+      const preferences = {
+        skill_level: level,
+        color: selectedSide,
+        name: player,
+      };
       props.socket.emit("new-game", preferences);
     }
     //setGameInProgress(true);
@@ -180,43 +191,49 @@ export default function Game(props: gameProps) {
               />
             )}
             <Box className="buttons">
-              {gameInProgress ? (
-                <>
-                  <div className="game-button">
-                    <Button
-                      variant="outlined"
-                      onClick={() => newGame()}
-                      className="new-button"
-                    >
-                      New game
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => getValidMoves()}
-                      className="moves-button"
-                    >
-                      Get move
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                !gameInProgress && (
-                  <div className="start-button">
-                    <Button
-                      variant="contained"
-                      onClick={() => startGame()}
-                      sx={{ backgroundColor: "black" }}
-                    >
-                      Start game
-                    </Button>
-                  </div>
-                )
-              )}
+              {!wait &&
+                (gameInProgress ? (
+                  <>
+                    <div className="game-button">
+                      <Button
+                        variant="outlined"
+                        onClick={() => newGame()}
+                        className="new-button"
+                      >
+                        New game
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={() => getValidMoves()}
+                        className="moves-button"
+                      >
+                        Get move
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  !gameInProgress && (
+                    <div className="start-button">
+                      <Button
+                        variant="contained"
+                        onClick={() => startGame()}
+                        sx={{ backgroundColor: "black" }}
+                      >
+                        Start game
+                      </Button>
+                    </div>
+                  )
+                ))}
             </Box>
           </Box>
           <Box className="game-status">
             {gameInProgress && (
-              <GameStatus title="GAME" moves={moves} player={currentPlayer} />
+              <GameStatus
+                title="GAME"
+                moves={moves}
+                player={currentPlayer}
+                wait={wait}
+              />
             )}
           </Box>
           {valid_moves && valid_moves.length > 0 && (
@@ -225,6 +242,7 @@ export default function Game(props: gameProps) {
                 title="Available moves"
                 moves={valid_moves}
                 player={undefined}
+                wait={wait}
               />
             </Box>
           )}

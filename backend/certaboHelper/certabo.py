@@ -21,7 +21,7 @@ os.makedirs(CERTABO_DATA_PATH, exist_ok=True)
 class Certabo():
     def __init__(self, calibrate=False, **kwargs):
         super().__init__(**kwargs)
-        self.calibration = True if calibrate else False
+        self.calibration = calibrate
         self.chessboard = chess.Board(chess.STARTING_FEN)
         self.board_state_usb = ""
         self.move_event = threading.Event()
@@ -29,6 +29,7 @@ class Certabo():
         self.pending_move = None
         self.color = True # white pieces start
         self.stockfish_color = None
+        self.moves = []
 
         # internal values for CERTABO board
         self.calibration_samples_counter = 0
