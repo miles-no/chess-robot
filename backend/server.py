@@ -14,7 +14,6 @@ from datetime import datetime
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
 
-new_game = False
 chess_logic = ChessLogic(STOCKFISH_PATH)
 
 calibrate = False 
@@ -37,6 +36,10 @@ def handle_connect():
 
 @socket_io.on('new-game')
 def newGame(arg):
+    mycertabo.moves = []
+    socket_io.emit("wait", mycertabo.moves)
+    mycertabo.calibration = True
+    time.sleep(15)
     setPreferences(arg)
     message = {"fen": "start", "color": True}
     socket_io.emit("get-fen", message)
@@ -121,8 +124,9 @@ def handleStockfishMove():
     return best_move
 
 def emitFen(move):
+    mycertabo.moves.append(move)
     fen = mycertabo.chessboard.board_fen()
-    message = {"fen": fen, "color": mycertabo.color, 'move': move}
+    message = {"fen": fen, "color": mycertabo.color, 'moves': mycertabo.moves}
     socket_io.emit("get-fen", message)
 
 if __name__ == '__main__':
