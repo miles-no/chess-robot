@@ -288,19 +288,19 @@ class NoMove(Exception):
 def get_moves(board, fen, color):
     board_fen = fen.split()[0]
     if board.board_fen() == board_fen:
-        return None
+        return None, None
     copy_board = board.copy()
     moves = list(board.generate_legal_moves())
     for move in moves:
         copy_board.push(move)
         if board_fen == copy_board.board_fen():
             logging.debug('Single move detected - {}'.format(move.uci()))
-            return move.uci()
+            return move.uci(), "Valid"
         copy_board.pop()
     else:
         move = FEN2Move(board, chess.Board(fen), color)
         if move != "" and chess.Move.from_uci(move) not in board.legal_moves:
-            return "Invalid move"
+            return move, "Invalid move"
     logging.debug('Unable to detect moves')
     raise NoMove()
 

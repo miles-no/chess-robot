@@ -23,6 +23,7 @@ class ChessLogic:
         }
         self.player = ""
         self.reduction = 0
+        self.game_status = False
 
     def quitEngine(self):
         self.engine.quit()

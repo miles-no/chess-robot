@@ -32,21 +32,17 @@ cr = ChessRobot()
 # Prints for every new connection
 @socket_io.on('connect')
 def handle_connect():
-    print('new connection')
+    print(mycertabo.chessboard)
 
 @socket_io.on('new-game')
 def newGame(arg):
-    mycertabo.moves = []
-    socket_io.emit("wait", mycertabo.moves)
-    mycertabo.calibration = True
-    time.sleep(15)
-    setPreferences(arg)
-    message = {"fen": "start", "color": True}
-    socket_io.emit("get-fen", message)
     mycertabo.new_game()
-    if mycertabo.color == mycertabo.stockfish_color:
-        move = handleStockfishMove()
-        emitFen(move)
+    mycertabo.moves = []
+    startGame(arg)
+
+@socket_io.on('stop-game')
+def stopGame():
+    chess_logic.game_status = False
    
 @socket_io.on('get-valid-moves')
 def getValidMoves():
@@ -62,23 +58,37 @@ def getValidMoves():
 @socket_io.on('start-game')
 def startGame(arg):
     setPreferences(arg)
+    socket_io.emit("wait", mycertabo.moves)
+    mycertabo.calibration = True
+    time.sleep(15)
+    emitFen()
+    chess_logic.game_status = True
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
+        if not chess_logic.game_status:
+            break
         if mycertabo.color == mycertabo.stockfish_color:
             move = handleStockfishMove()
         else:
             move = mycertabo.get_user_move()
-            if move == "Invalid move":
-                socket_io.emit("invalid-move")
-                continue
+            if move[1] == "Invalid move":
+                if chess_logic.game_status:
+                    socket_io.emit("invalid-move")
+                    continue
+                else:
+                    break
             mycertabo.setColor()
-        emitFen(move)
+            move = move[0]
+        doMove(move)
+        print(mycertabo.chessboard)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
-    score = chess_logic.getScore(mycertabo.chessboard, mycertabo.stockfish_color)
-    print("Score: ", score)
-    result = {"result": outcome[0], "winner": outcome[1], "score": score}
-    socket_io.emit("game-over", result)
-    add_player(chess_logic.player, score, datetime.now().strftime("%d/%m/%Y %H:%M"), chess_logic.skill_level)
-    print("Game over")
+    if outcome != None:
+        score = chess_logic.getScore(mycertabo.chessboard, mycertabo.stockfish_color)
+        print("Score: ", score)
+        result = {"result": outcome[0], "winner": outcome[1], "score": score}
+        socket_io.emit("game-over", result)
+        add_player(chess_logic.player, score, datetime.now().strftime("%d/%m/%Y %H:%M"), chess_logic.skill_level)
+        print("Game over")
+        chess_logic.game_status = False
 
 @socket_io.on('get-leaderboard')
 def getLeaderboard():
@@ -123,8 +133,11 @@ def handleStockfishMove():
     mycertabo.setColor()
     return best_move
 
-def emitFen(move):
+def doMove(move):
     mycertabo.moves.append(move)
+    emitFen()
+
+def emitFen():
     fen = mycertabo.chessboard.board_fen()
     message = {"fen": fen, "color": mycertabo.color, 'moves': mycertabo.moves}
     socket_io.emit("get-fen", message)

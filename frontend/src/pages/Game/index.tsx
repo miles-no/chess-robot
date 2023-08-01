@@ -47,11 +47,13 @@ export default function Game(props: gameProps) {
   const newGame = async () => {
     if (gameInProgress) {
       const confirmNewGame = window.confirm(
-        "Are you sure you want to start a new game? Please adjust the pieces to starting positions!"
+        "Are you sure you want to start a new game?"
       );
       if (!confirmNewGame) {
         return; // Exit early if the user cancels the new game confirmation
       }
+      props.socket.emit("stop-game");
+      window.confirm("Please adjust the pieces to starting positions!");
       setpreGame(true);
       setFEN("start");
     }
@@ -79,7 +81,7 @@ export default function Game(props: gameProps) {
   };
 
   function startGame() {
-    if (FEN === "start" && props.socket.connected) {
+    if (props.socket.connected) {
       const preferences = {
         skill_level: stockfishlevel,
         color: color,
