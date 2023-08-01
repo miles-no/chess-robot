@@ -1,9 +1,20 @@
 import { Avatar, Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
+import { Socket } from "socket.io-client";
 
-export default function Header() {
+interface headerProps {
+  socket: Socket;
+}
+
+export default function Header(props: headerProps) {
   const navigate = useNavigate();
+
+  const handleHome = () => {
+    props.socket.emit("stop-game");
+    navigate("");
+  };
+
   return (
     <Box
       id="main-container"
@@ -29,7 +40,7 @@ export default function Header() {
         }}
       >
         <Button
-          onClick={() => navigate("")}
+          onClick={handleHome}
           sx={{
             width: "10em",
             height: "auto",

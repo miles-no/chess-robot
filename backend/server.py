@@ -38,17 +38,7 @@ def handle_connect():
 def newGame(arg):
     mycertabo.new_game()
     mycertabo.moves = []
-    
-    socket_io.emit("wait", mycertabo.moves)
-    mycertabo.calibration = True
-    time.sleep(15)
-    emitFen()
     startGame(arg)
-    # setPreferences(arg)
-   
-    # if mycertabo.color == mycertabo.stockfish_color:
-    #     move = handleStockfishMove()
-    #     doMove(move)
 
 @socket_io.on('stop-game')
 def stopGame():
@@ -68,15 +58,20 @@ def getValidMoves():
 @socket_io.on('start-game')
 def startGame(arg):
     setPreferences(arg)
+    socket_io.emit("wait", mycertabo.moves)
+    mycertabo.calibration = True
+    time.sleep(15)
+    emitFen()
     chess_logic.game_status = True
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
+        if not chess_logic.game_status:
+            break
         if mycertabo.color == mycertabo.stockfish_color:
             move = handleStockfishMove()
         else:
             move = mycertabo.get_user_move()
             if move[1] == "Invalid move":
                 if chess_logic.game_status:
-                    print(move[0])
                     socket_io.emit("invalid-move")
                     continue
                 else:
