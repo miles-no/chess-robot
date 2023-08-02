@@ -2,6 +2,7 @@ import { Avatar, Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
+import { useGameContext } from "../../pages/Game/GameContext";
 
 interface headerProps {
   socket: Socket;
@@ -9,10 +10,21 @@ interface headerProps {
 
 export default function Header(props: headerProps) {
   const navigate = useNavigate();
-
+  const { gameInProgress, setGameInProgress } = useGameContext();
   const handleHome = () => {
-    props.socket.emit("stop-game");
-    navigate("");
+    if (gameInProgress) {
+      const confirmation = window.confirm(
+        "Are you sure you want to terminate game and go home?"
+      );
+      if (confirmation) {
+        props.socket.emit("stop-game");
+        navigate("");
+        setGameInProgress(false);
+      }
+      return;
+    } else {
+      navigate("");
+    }
   };
 
   return (
