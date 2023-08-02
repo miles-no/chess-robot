@@ -24,6 +24,8 @@ export default function PreGame(props: alertProps) {
   const [level, setLevel] = useState(1);
   const [selectedCard, setSelectedCard] = useState<boolean | null>(null);
   const [name, setName] = useState<string>("");
+  const [submitted, setSubmitted] =
+    useState(false); /*Field to indicate name is empty on submission */
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -118,13 +120,17 @@ export default function PreGame(props: alertProps) {
             textAlign: "center",
           }}
         >
-          <Typography sx={{ textAlign: "center" }}>Enter your name</Typography>
           <TextField
+            label="Enter your name"
             id="outlined-controlled"
             value={name}
             onChange={(event) => {
               setName(event.target.value);
             }}
+            error={submitted && name.trim() === ""}
+            helperText={
+              submitted && name.trim() === "" ? "Name cannot be empty" : ""
+            }
           />
         </Box>
         <Grid item sx={{ padding: "1em" }}>
@@ -143,9 +149,9 @@ export default function PreGame(props: alertProps) {
             Set stockfish level (1-20)
           </Typography>
           <TextField
+            sx={{ width: "100%" }}
             value={level}
             type="number"
-            inputProps={{ min: 1, max: 20 }}
             onChange={handleLevelChange}
           ></TextField>
           {level <= 8 ? (
@@ -169,7 +175,16 @@ export default function PreGame(props: alertProps) {
       </Grid>
       <DialogActions>
         {selectedCard !== null && (
-          <Button onClick={() => props.handleOK(level, selectedCard, name)}>
+          <Button
+            onClick={() => {
+              setSubmitted(true);
+
+              if (name.trim() !== "" && /^[A-Za-z\s]+$/.test(name)) {
+                /*Name to only include alphabetic characters*/
+                props.handleOK(level, selectedCard, name);
+              }
+            }}
+          >
             OK
           </Button>
         )}
