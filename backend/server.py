@@ -32,12 +32,14 @@ cr = ChessRobot()
 # Prints for every new connection
 @socket_io.on('connect')
 def handle_connect():
-    print(mycertabo.chessboard)
+    print("New connection")
 
 @socket_io.on('new-game')
 def newGame(arg):
-    mycertabo.new_game()
     mycertabo.moves = []
+    mycertabo.new_game()
+    mycertabo.color = True
+    emitFen()
     startGame(arg)
 
 @socket_io.on('stop-game')
@@ -58,10 +60,6 @@ def getValidMoves():
 @socket_io.on('start-game')
 def startGame(arg):
     setPreferences(arg)
-    socket_io.emit("wait", mycertabo.moves)
-    mycertabo.calibration = True
-    time.sleep(15)
-    emitFen()
     chess_logic.game_status = True
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
         if not chess_logic.game_status:
@@ -79,7 +77,6 @@ def startGame(arg):
             mycertabo.setColor()
             move = move[0]
         doMove(move)
-        print(mycertabo.chessboard)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
     if outcome != None:
         score = chess_logic.getScore(mycertabo.chessboard, mycertabo.stockfish_color)
