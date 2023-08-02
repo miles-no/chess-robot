@@ -5,6 +5,7 @@ import AlertComponent from "../../Components/Alert/Notification";
 import MyChessboard from "../../Components/Chessboard/Chessboard";
 import GameStatus from "../../Components/GameStatus/GameStatus";
 import { default as PreGame } from "../../Components/PreGame/PreGame";
+import { useGameContext } from "./GameContext";
 import "./index.css";
 interface gameProps {
   socket: Socket;
@@ -21,7 +22,7 @@ export default function Game(props: gameProps) {
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
   const [valid_moves, setValidMoves] = useState<string[]>();
   const [currentPlayer, setCurrentPlayer] = useState<boolean>(true);
-  const [gameInProgress, setGameInProgress] = useState<boolean>(false);
+  const { gameInProgress, setGameInProgress } = useGameContext();
   const [score, setScore] = useState<number>(0);
   const [promotion, setPromotion] = useState<string>("");
   const [player, setPlayer] = useState<string>();
