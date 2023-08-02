@@ -33,10 +33,6 @@
   padding: 0 0.5em 0 0;
 }
 
-.start-button Button {
-  width: 150px;
-}
-
 .start-button Button:hover,
 .game-button Button:hover {
   background-color: #bebdb8;
@@ -59,26 +55,32 @@
 }
 
 @media only screen and (max-width: 650px) {
+  .main-container {
+    max-width: 90%;
+  }
+  .game {
+    max-width: 90%;
+  }
   .chessboard-box {
-    width: 350px;
+    width: 100%;
   }
   .game-status,
   .valid-moves {
-    padding: 0.5em 0 0.5em 0.5em;
     width: 100%;
   }
 
   .buttons {
     display: flex;
     justify-content: center;
+    max-width: 100%;
   }
 
   .game-button Button {
-    width: 350px;
+    width: 50%;
     margin: 0 0 1em 0;
   }
 
   .start-button Button {
-    width: 350px;
+    width: 100%;
   }
 }

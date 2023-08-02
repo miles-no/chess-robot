@@ -27,7 +27,7 @@ export default function Home() {
       </div>
       <div className="home-buttons">
         <Button variant="outlined" onClick={startGame}>
-          Start Game
+          Play
         </Button>
         <Button variant="outlined" onClick={viewLeaderboard}>
           View Leaderboard
