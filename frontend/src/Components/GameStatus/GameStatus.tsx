@@ -4,7 +4,6 @@ interface gameStatusProps {
   player: boolean | undefined;
   moves: string[] | undefined;
   title: string;
-  wait: boolean;
 }
 export default function GameStatus(props: gameStatusProps) {
   return (
@@ -32,9 +31,7 @@ export default function GameStatus(props: gameStatusProps) {
         <Typography variant="h4" gutterBottom>
           {props.title}
         </Typography>
-        {props.wait ? (
-          <Typography variant="h5">Please wait...</Typography>
-        ) : props.player === undefined ? (
+        {props.player === undefined ? (
           <Typography variant="h5"></Typography>
         ) : props.player ? (
           <Typography variant="h5">Turn: White</Typography>
