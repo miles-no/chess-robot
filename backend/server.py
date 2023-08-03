@@ -48,6 +48,9 @@ def stopGame():
 @socket_io.on('get-valid-moves')
 def getValidMoves():
     legal_moves = list(mycertabo.chessboard.legal_moves)
+    if len(legal_moves) == 0:
+        socket_io.emit('valid-moves', [])
+        return
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
     legal_moves_ucis = [best_move.uci()]
     for move in legal_moves:
