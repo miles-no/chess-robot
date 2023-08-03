@@ -45,7 +45,7 @@ export default function Game(props: gameProps) {
   useEffect(() => {
     console.log("useEffect", result);
   }, [result]);
-        
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
 
@@ -53,7 +53,7 @@ export default function Game(props: gameProps) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-  
+
   const newGame = async () => {
     if (gameState) {
       const confirmNewGame = window.confirm(
@@ -117,21 +117,8 @@ export default function Game(props: gameProps) {
   };
 
   const handleOK = () => {
-    console.log(result);
-    if (result) {
-      console.log("result is true");
-    }
     setResult(undefined);
     setOpen(false);
-    if (result !== undefined) {
-      console.log("result is still true");
-    } else {
-      console.log("result is false");
-    }
-
-    if (result === undefined) {
-      console.log("result is undefined");
-    }
   };
 
   const handlePregame = (
@@ -268,9 +255,8 @@ export default function Game(props: gameProps) {
                 open={open}
               />
             )}
-
             <Box className="buttons">{getButton()}</Box>
-
+          </Box>
           <Box className="game-status">
             {[
               [GameState.inProgress, GameState.hasEnded].includes(gameState),
