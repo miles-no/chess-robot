@@ -258,9 +258,7 @@ export default function Game(props: gameProps) {
             <Box className="buttons">{getButton()}</Box>
           </Box>
           <Box className="game-status">
-            {[
-              [GameState.inProgress, GameState.hasEnded].includes(gameState),
-            ] && (
+            {[GameState.inProgress, GameState.hasEnded].includes(gameState) && (
               <GameStatus title="GAME" moves={moves} player={currentPlayer} />
             )}
           </Box>
