@@ -38,7 +38,6 @@ def handle_connect():
 def newGame(arg):
     mycertabo.moves = []
     mycertabo.new_game()
-    mycertabo.color = True
     emitFen()
     startGame(arg)
 
