@@ -127,9 +127,15 @@ export default function PreGame(props: alertProps) {
             onChange={(event) => {
               setName(event.target.value);
             }}
-            error={submitted && name.trim() === ""}
+            error={
+              submitted && (name.trim() === "" || !/^[A-Za-z\s]+$/.test(name))
+            }
             helperText={
-              submitted && name.trim() === "" ? "Name cannot be empty" : ""
+              submitted && name.trim() === ""
+                ? "Name cannot be empty"
+                : submitted && !/^[A-Za-z\s]+$/.test(name)
+                ? "Name should only include alphabetic characters"
+                : ""
             }
           />
         </Box>
