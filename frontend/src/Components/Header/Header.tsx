@@ -11,7 +11,7 @@ interface headerProps {
 
 export default function Header(props: headerProps) {
   const navigate = useNavigate();
-  const { gameState, setGameState } = useGameContext();
+  const { gameState } = useGameContext();
   const [disabled, setDisabled] = useState(false);
   const handleHome = () => {
     if (gameState === GameState.inProgress) {

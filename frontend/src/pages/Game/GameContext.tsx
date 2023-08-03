@@ -1,5 +1,4 @@
 import React, { ReactNode, createContext, useContext, useState } from "react";
-import Game from ".";
 export enum GameState {
   notStarted = 0,
   inProgress = 1,
