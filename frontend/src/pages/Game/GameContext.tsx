@@ -1,8 +1,14 @@
 import React, { ReactNode, createContext, useContext, useState } from "react";
+import Game from ".";
+export enum GameState {
+  notStarted = 0,
+  inProgress = 1,
+  hasEnded = 2,
+}
 
 interface GameContextType {
-  gameInProgress: boolean;
-  setGameInProgress: React.Dispatch<React.SetStateAction<boolean>>;
+  gameState: GameState;
+  setGameState: React.Dispatch<React.SetStateAction<GameState>>;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -12,11 +18,11 @@ interface GameProviderProps {
 }
 
 export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
-  const [gameInProgress, setGameInProgress] = useState<boolean>(false);
+  const [gameState, setGameState] = useState<GameState>(GameState.notStarted);
 
   const contextValue: GameContextType = {
-    gameInProgress,
-    setGameInProgress,
+    gameState,
+    setGameState,
   };
 
   return (

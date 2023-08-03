@@ -5,7 +5,7 @@ import AlertComponent from "../../Components/Alert/Notification";
 import MyChessboard from "../../Components/Chessboard/Chessboard";
 import GameStatus from "../../Components/GameStatus/GameStatus";
 import { default as PreGame } from "../../Components/PreGame/PreGame";
-import { useGameContext } from "./GameContext";
+import { useGameContext, GameState } from "./GameContext";
 import "./index.css";
 interface gameProps {
   socket: Socket;
@@ -22,7 +22,7 @@ export default function Game(props: gameProps) {
   const [stockfishlevel, setStockfishLevel] = useState<number>(0);
   const [valid_moves, setValidMoves] = useState<string[]>();
   const [currentPlayer, setCurrentPlayer] = useState<boolean>(true);
-  const { gameInProgress, setGameInProgress } = useGameContext();
+  const { gameState, setGameState } = useGameContext();
   const [score, setScore] = useState<number>(0);
   const [promotion, setPromotion] = useState<string>("");
   const [player, setPlayer] = useState<string>();
@@ -43,15 +43,19 @@ export default function Game(props: gameProps) {
   }, [props.socket]);
 
   useEffect(() => {
+    console.log("useEffect", result);
+  }, [result]);
+        
+  useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
+  
   const newGame = async () => {
-    if (gameInProgress) {
+    if (gameState) {
       const confirmNewGame = window.confirm(
         "Are you sure you want to start a new game?"
       );
@@ -88,23 +92,23 @@ export default function Game(props: gameProps) {
         name: player,
       };
       props.socket.emit("start-game", preferences);
-      setGameInProgress(true);
+      setGameState(GameState.inProgress);
     } else {
       setOpen(true);
     }
   }
 
-  function handleResultMessage(messageDisctionary: any) {
-    if (messageDisctionary.result) {
-      setResult(messageDisctionary.result);
+  function handleResultMessage(messageDictionary: any) {
+    if (messageDictionary.result) {
+      setResult(messageDictionary.result);
       setOpen(true);
-      setGameInProgress(false);
+      setGameState(GameState.hasEnded);
     }
-    if (messageDisctionary.winner) {
-      setWinner(messageDisctionary.winner);
+    if (messageDictionary.winner) {
+      setWinner(messageDictionary.winner);
     }
-    if (messageDisctionary.score) {
-      setScore(messageDisctionary.score);
+    if (messageDictionary.score) {
+      setScore(messageDictionary.score);
     }
   }
 
@@ -113,8 +117,21 @@ export default function Game(props: gameProps) {
   };
 
   const handleOK = () => {
+    console.log(result);
+    if (result) {
+      console.log("result is true");
+    }
     setResult(undefined);
     setOpen(false);
+    if (result !== undefined) {
+      console.log("result is still true");
+    } else {
+      console.log("result is false");
+    }
+
+    if (result === undefined) {
+      console.log("result is undefined");
+    }
   };
 
   const handlePregame = (
@@ -126,7 +143,7 @@ export default function Game(props: gameProps) {
     setColor(selectedSide);
     setPlayer(name);
     setpreGame(false);
-    if (gameInProgress) {
+    if (gameState) {
       const preferences = {
         skill_level: level,
         color: selectedSide,
@@ -134,11 +151,62 @@ export default function Game(props: gameProps) {
       };
       props.socket.emit("new-game", preferences);
     }
-    //setGameInProgress(true);
+    if (gameState === GameState.hasEnded) {
+      setGameState(GameState.inProgress);
+    }
   };
 
   const getValidMoves = () => {
     props.socket.emit("get-valid-moves");
+  };
+
+  const getButton = () => {
+    switch (gameState) {
+      case GameState.hasEnded:
+        return (
+          <div className="game-button">
+            <Button
+              variant="outlined"
+              onClick={() => newGame()}
+              className="new-button"
+            >
+              New game
+            </Button>
+          </div>
+        );
+      case GameState.inProgress:
+        return (
+          <div className="game-button">
+            <Button
+              variant="outlined"
+              onClick={() => newGame()}
+              className="new-button"
+            >
+              New game
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => getValidMoves()}
+              className="moves-button"
+            >
+              Get move
+            </Button>
+          </div>
+        );
+      case GameState.notStarted:
+        return (
+          <div className="start-button">
+            <Button
+              variant="contained"
+              onClick={() => startGame()}
+              sx={{ backgroundColor: "black" }}
+              onKeyDown={handleKeyDown}
+            >
+              Start game
+            </Button>
+          </div>
+        );
+    }
   };
 
   const handleValidMoves = (validMoves: string[]) => {
@@ -192,7 +260,7 @@ export default function Game(props: gameProps) {
                 <MyChessboard socket={props.socket} FEN={FEN} />
               </Box>
             </Box>
-            {!result && !gameInProgress && (
+            {result === undefined && !gameState && (
               <AlertComponent
                 alertTitle="Start Game"
                 message="Make sure pieces are in starting position"
@@ -200,44 +268,13 @@ export default function Game(props: gameProps) {
                 open={open}
               />
             )}
-            <Box className="buttons">
-              {gameInProgress ? (
-                <>
-                  <div className="game-button">
-                    <Button
-                      variant="outlined"
-                      onClick={() => newGame()}
-                      className="new-button"
-                    >
-                      New game
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      onClick={() => getValidMoves()}
-                      className="moves-button"
-                    >
-                      Get move
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                !gameInProgress && (
-                  <div className="start-button">
-                    <Button
-                      variant="contained"
-                      onClick={() => startGame()}
-                      onKeyDown={handleKeyDown}
-                      sx={{ backgroundColor: "black" }}
-                    >
-                      Start game
-                    </Button>
-                  </div>
-                )
-              )}
-            </Box>
-          </Box>
+
+            <Box className="buttons">{getButton()}</Box>
+
           <Box className="game-status">
-            {gameInProgress && (
+            {[
+              [GameState.inProgress, GameState.hasEnded].includes(gameState),
+            ] && (
               <GameStatus title="GAME" moves={moves} player={currentPlayer} />
             )}
           </Box>
