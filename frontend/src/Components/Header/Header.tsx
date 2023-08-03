@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { useGameContext } from "../../pages/Game/GameContext";
+import { useState } from "react";
 
 interface headerProps {
   socket: Socket;
@@ -11,17 +12,10 @@ interface headerProps {
 export default function Header(props: headerProps) {
   const navigate = useNavigate();
   const { gameInProgress, setGameInProgress } = useGameContext();
+  const [disabled, setDisabled] = useState(false);
   const handleHome = () => {
     if (gameInProgress) {
-      const confirmation = window.confirm(
-        "Are you sure you want to terminate game and go home?"
-      );
-      if (confirmation) {
-        props.socket.emit("stop-game");
-        navigate("");
-        setGameInProgress(false);
-      }
-      return;
+      setDisabled(true);
     } else {
       navigate("");
     }
@@ -57,6 +51,7 @@ export default function Header(props: headerProps) {
             width: "10em",
             height: "auto",
           }}
+          disabled={disabled}
           startIcon={
             <Avatar
               src="https://www.miles.no/wp-content/uploads/2020/11/miles_logo_red_rgb.jpg"
