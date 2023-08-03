@@ -2,7 +2,7 @@ import { Avatar, Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import { useGameContext } from "../../pages/Game/GameContext";
+import { GameState, useGameContext } from "../../pages/Game/GameContext";
 import { useState } from "react";
 
 interface headerProps {
@@ -11,10 +11,10 @@ interface headerProps {
 
 export default function Header(props: headerProps) {
   const navigate = useNavigate();
-  const { gameInProgress, setGameInProgress } = useGameContext();
+  const { gameState, setGameState } = useGameContext();
   const [disabled, setDisabled] = useState(false);
   const handleHome = () => {
-    if (gameInProgress) {
+    if (gameState === GameState.inProgress) {
       setDisabled(true);
     } else {
       navigate("");
