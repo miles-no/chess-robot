@@ -42,6 +42,14 @@ export default function Game(props: gameProps) {
     };
   }, [props.socket]);
 
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const newGame = async () => {
     if (gameInProgress) {
       const confirmNewGame = window.confirm(
@@ -136,6 +144,14 @@ export default function Game(props: gameProps) {
   const handleValidMoves = (validMoves: string[]) => {
     setValidMoves(validMoves);
   };
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      startGame();
+    }
+  };
+
   return (
     <Box>
       {preGame ? (
@@ -210,6 +226,7 @@ export default function Game(props: gameProps) {
                     <Button
                       variant="contained"
                       onClick={() => startGame()}
+                      onKeyDown={handleKeyDown}
                       sx={{ backgroundColor: "black" }}
                     >
                       Start game
