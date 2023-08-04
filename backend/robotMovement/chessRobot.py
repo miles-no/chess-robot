@@ -1,13 +1,13 @@
 import time
 from xarm.wrapper import XArmAPI
 from configparser import ConfigParser
-from robotMovement.chessCoordinates import ChessCoordinates
+from chessCoordinates import ChessCoordinates
 
 class ChessRobot:
     def __init__(self):
         self.piece_height = 45
         self.parser = ConfigParser()
-        self.parser.read('robotMovement/robot.conf')
+        self.parser.read('robot.conf')
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
         self.initialize()
         self.taken = []
@@ -22,24 +22,24 @@ class ChessRobot:
         self.arm.reset(wait=True)
 
     def movePiece(self, start_x, start_y, x, y):
-        self.moving(100, 0, 200)
+        self.moving(100, 0, 110)
 
-        self.moving(start_x, start_y, 200)
+        self.moving(start_x, start_y, 110)
         self.moving(start_x, start_y, 80, 80)
         self.moving(start_x, start_y, self.piece_height, 30)
         
         self.arm.close_lite6_gripper()
         time.sleep(1)
-        self.moving(start_x, start_y, 200)
+        self.moving(start_x, start_y, 110)
 
-        self.moving(x, y, 200)
+        self.moving(x, y, 110)
         self.moving(x, y, self.piece_height, 80)
         
         self.arm.open_lite6_gripper()
         time.sleep(1)
         self.arm.stop_lite6_gripper()
-        self.moving(x, y, 200)
-        self.moving(100, 0, 200)
+        self.moving(x, y, 110)
+        self.moving(100, 0, 110)
 
     def doMove(self, move):
         move_from, move_to = move[:len(move)//2], move[len(move)//2:]
@@ -71,7 +71,7 @@ class ChessRobot:
 
 if __name__ == "__main__":
     cr = ChessRobot()
-    cr.doMove("e1a3", "p")
+    cr.doMove("a8a6")
     # cr.doMove("b1a3", "n")
     # cr.doMove("c1g5", "b")
     # cr.doMove("b2b4", "p")
