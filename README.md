@@ -13,13 +13,19 @@ cd ..
 
 ## Backend
 
-Require Python and pip installed
+Require `Python` and `pip`
 
-Install pip: `python install pip`
+Install pip:
 
-`cd backend`
+```
+python install pip
+```
 
 ### Create a Virtual Python Environment
+
+```
+cd backend
+```
 
 **Windows:**
 
@@ -29,7 +35,11 @@ python -m virtualenv --python C:\Path\To\Python\python.exe venv
 .\venv\Scripts\activate
 ```
 
-To deactivate: `venv\scripts\deactivate`
+To deactivate:
+
+```
+venv\scripts\deactivate
+```
 
 **MAC:**
 
@@ -39,11 +49,19 @@ virtualenv venv
 source venv/bin/activate
 ```
 
-To deactivate: `deactivate`
+To deactivate:
+
+```
+deactivate
+```
 
 ### Install requirements
 
-`pip install -r requirements.txt`
+```
+pip install -r requirements.txt
+```
+
+### Database setup
 
 # Start application
 
