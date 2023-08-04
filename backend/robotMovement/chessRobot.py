@@ -5,14 +5,7 @@ from robotMovement.chessCoordinates import ChessCoordinates
 
 class ChessRobot:
     def __init__(self):
-        self.piece_height = {
-            "p": 73, #pawn
-            "n": 81, #knight
-            "b": 83, #bishop
-            "r": 87, #rook
-            "q": 100, #queen
-            "k": 103 #king
-        }
+        self.piece_height = 45
         self.parser = ConfigParser()
         self.parser.read('robotMovement/robot.conf')
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
@@ -28,18 +21,19 @@ class ChessRobot:
         time.sleep(2)
         self.arm.reset(wait=True)
 
-    def movePiece(self, start_x, start_y, x, y, piece):
+    def movePiece(self, start_x, start_y, x, y):
         self.moving(100, 0, 200)
 
         self.moving(start_x, start_y, 200)
-        self.moving(start_x, start_y, self.piece_height[piece], 80)
+        self.moving(start_x, start_y, 80, 80)
+        self.moving(start_x, start_y, self.piece_height, 30)
         
         self.arm.close_lite6_gripper()
         time.sleep(1)
         self.moving(start_x, start_y, 200)
 
         self.moving(x, y, 200)
-        self.moving(x, y, self.piece_height[piece], 80)
+        self.moving(x, y, self.piece_height, 80)
         
         self.arm.open_lite6_gripper()
         time.sleep(1)
@@ -47,11 +41,11 @@ class ChessRobot:
         self.moving(x, y, 200)
         self.moving(100, 0, 200)
 
-    def doMove(self, move, piece):
+    def doMove(self, move):
         move_from, move_to = move[:len(move)//2], move[len(move)//2:]
         x_from, y_from = self.cc.chess_to_robot(move_from)
         x_to, y_to = self.cc.chess_to_robot(move_to)
-        self.movePiece(x_from, y_from, x_to, y_to, piece)
+        self.movePiece(x_from, y_from, x_to, y_to)
 
     def moving(self, x, y, z, speed=100, yaw=0):
         self.arm.set_position(x=x, y=y, z=z, roll=-180, pitch=0, yaw=yaw, speed=speed, wait=True)
@@ -72,12 +66,12 @@ class ChessRobot:
         else:
             x = 130 + (len(self.taken)-8)*40
             y = -162
-        self.movePiece(x_from, y_from, x, y, piece)
+        self.movePiece(x_from, y_from, x, y)
 
 
 if __name__ == "__main__":
     cr = ChessRobot()
-    cr.doMove("a1a3", "p")
+    cr.doMove("e1a3", "p")
     # cr.doMove("b1a3", "n")
     # cr.doMove("c1g5", "b")
     # cr.doMove("b2b4", "p")
