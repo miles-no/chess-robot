@@ -47,7 +47,7 @@ class ChessRobot:
         x_to, y_to = self.cc.chess_to_robot(move_to)
         self.movePiece(x_from, y_from, x_to, y_to)
 
-    def moving(self, x, y, z, speed=100, yaw=0):
+    def moving(self, x, y, z, speed=110, yaw=0):
         self.arm.set_position(x=x, y=y, z=z, roll=-180, pitch=0, yaw=yaw, speed=speed, wait=True)
     
     def disconnect(self):
