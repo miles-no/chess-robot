@@ -146,7 +146,15 @@ password = password
 
 ### Board setup
 
-Run the script and follow the instructions in the terminal
+Download Certabo board drivers from: https://www.certabo.com/download/
+
+Follow the instructions provided on the download page.
+
+For **Mac**, download `Certabo software - MAC OSx`.
+
+For **Windows**, download `Certabo software – PC 4.1 – 64 bit`.
+
+Within the `chess-robot` project folder in `/backend`, run the script and follow the instructions in the terminal
 
 ```
 python setup.py
