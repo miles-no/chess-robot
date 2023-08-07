@@ -63,6 +63,16 @@ pip install -r requirements.txt
 
 ### Database setup
 
+Require `postgresql@14`
+
+### Board setup
+
+Run the script and follow the instructions in the terminal
+
+```
+python setup.py
+```
+
 # Start application
 
 Open two terminals, one for backend and one for frontend.
