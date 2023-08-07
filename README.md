@@ -134,6 +134,16 @@ psql postgres -c "CREATE DATABASE databasename;"
 psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE databasename TO username;"
 ```
 
+Create `database.ini` in `/backend/database` with the following content:
+
+```
+[postgresql]
+host = localhost
+database = databasename
+user = username
+password = password
+```
+
 ### Board setup
 
 Run the script and follow the instructions in the terminal
