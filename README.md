@@ -65,6 +65,43 @@ pip install -r requirements.txt
 
 Require `postgresql@14`
 
+**Start postgres on MAC:**
+
+```
+brew services start postgresql@14
+```
+
+Check status
+
+```
+brew services
+```
+
+If error, check process for default port for postgresql, and terminate if in use, or change default port.
+And then restart service.
+
+```
+brew services restart postgresql@14
+```
+
+**Start postgres on Windows:**
+
+```
+net start postgresql-x64-14
+```
+
+**To setup database for MAC and Windows**
+
+```
+createuser username --createdb
+
+psql postgres -c "CREATE ROLE username WITH LOGIN PASSWORD 'password'; ALTER ROLE username CREATEDB;"
+
+psql postgres -c "CREATE DATABASE databasename;"
+
+psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE databasename TO username;"
+```
+
 ### Board setup
 
 Run the script and follow the instructions in the terminal
