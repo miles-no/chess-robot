@@ -61,6 +61,38 @@ deactivate
 pip install -r requirements.txt
 ```
 
+### Stockfish setup
+
+Require `Stockfish`
+
+**Installation for MAC:**
+
+```
+brew install stockfish
+```
+
+**Installation for Windows 64-bit:**
+
+Install Stockfish for Windows 64-bit: https://stockfishchess.org/download/windows/
+
+**Assign Stockfish Path:**
+
+Create `config.py` in `/backend`.
+
+Assign variable `STOCKFISH_PATH` to Stockfish installation location.
+
+**Default path for MAC:**
+
+`STOCKFISH_PATH = "/usr/local/opt/stockfish/bin/stockfish"`
+
+or
+
+`STOCKFISH_PATH = "/opt/homebrew/opt/stockfish/bin/stockfish"`
+
+**Default path for Windows:**
+
+Default path for Windows will be `stockfish-windows-x86-64.exe` location
+
 ### Database setup
 
 Require `postgresql@14`
@@ -100,6 +132,16 @@ psql postgres -c "CREATE ROLE username WITH LOGIN PASSWORD 'password'; ALTER ROL
 psql postgres -c "CREATE DATABASE databasename;"
 
 psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE databasename TO username;"
+```
+
+Create `database.ini` in `/backend/database` with the following content:
+
+```
+[postgresql]
+host = localhost
+database = databasename
+user = username
+password = password
 ```
 
 ### Board setup
