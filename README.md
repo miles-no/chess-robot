@@ -78,6 +78,7 @@ brew services
 ```
 
 If error, check process for default port for postgresql, and terminate if in use, or change default port.
+And then restart service.
 
 ```
 brew services restart postgresql@14
