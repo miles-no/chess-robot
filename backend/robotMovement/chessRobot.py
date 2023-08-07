@@ -7,7 +7,7 @@ class ChessRobot:
     def __init__(self):
         self.piece_height = 45
         self.parser = ConfigParser()
-        self.parser.read('robotMovement.robot.conf')
+        self.parser.read('robotMovement/robot.conf')
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
         self.initialize()
         self.taken = []
