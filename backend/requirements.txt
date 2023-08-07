@@ -30,7 +30,6 @@ python-engineio==4.4.1
 python-socketio==5.8.0
 PyYAML==6.0.1
 requests==2.21.0
-serial==0.0.97
 stockfish==3.28.0
 urllib3==1.24.3
 websockets==11.0.3

@@ -8,7 +8,6 @@ from certaboHelper.initCertabo import InitializeCertabo
 from database.db_func import get_leaderboard, add_player
 from robotMovement.chessRobot import ChessRobot
 import time
-import chess
 from datetime import datetime
 
 app = Flask(__name__)
