@@ -72,16 +72,23 @@ brew install stockfish
 ```
 
 **Installation for Windows 64-bit:**
+
 Install Stockfish for Windows 64-bit: https://stockfishchess.org/download/windows/
 
 Create `config.py` in `/backend`.
+
 Assign variable STOCKFISH_PATH to Stockfish installation location.
+
 **Default path for MAC:**
+
 `STOCKFISH_PATH = "/usr/local/opt/stockfish/bin/stockfish"`
+
 or
+
 `STOCKFISH_PATH = "/opt/homebrew/opt/stockfish/bin/stockfish"`
 
 **Default path for Windows:**
+
 Default path for Windows will be `stockfish-windows-x86-64.exe` location
 
 ### Database setup
