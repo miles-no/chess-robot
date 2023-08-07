@@ -4,7 +4,7 @@ from flask_socketio import SocketIO
 from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 from certaboHelper.certabo import Certabo
-from initCertabo import InitializeCertabo
+from certaboHelper.initCertabo import InitializeCertabo
 from database.db_func import get_leaderboard, add_player
 from robotMovement.chessRobot import ChessRobot
 import time
@@ -16,20 +16,8 @@ socket_io = SocketIO(app, cors_allowed_origins="*")
 
 chess_logic = ChessLogic(STOCKFISH_PATH)
 
-calibrate = False
-new_setup = True 
-parser = ArgumentParser()
-parser.add_argument('--calibrate', action="store_true")
-parser.add_argument('--addpiece', action="store_true")
-args = parser.parse_args()
-if args.calibrate:
-    calibrate = args.calibrate
-if args.addpiece:
-    new_setup = False
-    calibrate = True
-
 InitializeCertabo()
-mycertabo = Certabo(calibrate, new_setup)
+mycertabo = Certabo()
 
 cr = ChessRobot()
 
