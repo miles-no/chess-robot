@@ -16,15 +16,20 @@ socket_io = SocketIO(app, cors_allowed_origins="*")
 
 chess_logic = ChessLogic(STOCKFISH_PATH)
 
-calibrate = False 
+calibrate = False
+new_setup = True 
 parser = ArgumentParser()
 parser.add_argument('--calibrate', action="store_true")
+parser.add_argument('--addpiece', action="store_true")
 args = parser.parse_args()
 if args.calibrate:
     calibrate = args.calibrate
+if args.addpiece:
+    new_setup = False
+    calibrate = True
 
 InitializeCertabo()
-mycertabo = Certabo(calibrate)
+mycertabo = Certabo(calibrate, new_setup)
 
 cr = ChessRobot()
 

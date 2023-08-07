@@ -19,9 +19,10 @@ CALIBRATION_DATA = os.path.join(CERTABO_DATA_PATH,"calibration.bin")
 os.makedirs(CERTABO_DATA_PATH, exist_ok=True)
 
 class Certabo():
-    def __init__(self, calibrate=False, **kwargs):
+    def __init__(self, calibrate=False, new_setup=True, **kwargs):
         super().__init__(**kwargs)
         self.calibration = calibrate
+        self.new_setup = new_setup
         self.chessboard = chess.Board(chess.STARTING_FEN)
         self.board_state_usb = ""
         self.move_event = threading.Event()
@@ -115,7 +116,7 @@ class Certabo():
         if self.calibration_samples_counter >= 15:
             logging.info( "------- we have collected enough samples for averaging ----")
             usb_data = statistic_processing_for_calibration(self.calibration_samples)
-            calibration(usb_data, CALIBRATION_DATA)
+            calibration(usb_data, self.new_setup, CALIBRATION_DATA)
             self.calibration = False
             logging.info('calibration ok') 
             self.send_leds()
