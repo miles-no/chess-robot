@@ -67,16 +67,16 @@ pip install -r requirements.txt
 
 Open two terminals, one for backend and one for frontend.
 
-In frontend terminal:
-
-```
-cd frontend
-npm start
-```
-
 In backend terminal:
 
 ```
 cd backend
 python server.py
+```
+
+In frontend terminal:
+
+```
+cd frontend
+npm start
 ```
