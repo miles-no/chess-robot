@@ -118,7 +118,8 @@ class Certabo():
             usb_data = statistic_processing_for_calibration(self.calibration_samples)
             calibration(usb_data, self.new_setup, CALIBRATION_DATA)
             self.calibration = False
-            logging.info('calibration ok') 
+            logging.info('calibration ok')
+            logging.info('please wait') 
             self.send_leds()
         elif self.calibration_samples_counter %2:
             self.send_leds(b'\xff\xff\x00\x00\x00\x00\xff\xff')
