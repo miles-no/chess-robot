@@ -29,25 +29,13 @@ python install pip
 cd backend
 ```
 
-**Windows:**
-
-```
-pip install virtualenv
-python -m virtualenv --python C:\Path\To\Python\python.exe venv
-.\venv\Scripts\activate
-```
-
-To deactivate:
-
-```
-venv\scripts\deactivate
-```
-
 **MAC:**
 
 ```
 pip install virtualenv
 ```
+
+Create:
 
 ```
 virtualenv venv
@@ -59,14 +47,18 @@ or
 python -m virtualenv venv
 ```
 
+Activate it:
+
 ```
 source venv/bin/activate
 ```
 
-To deactivate:
+**Windows:**
 
 ```
-deactivate
+pip install virtualenv
+python -m virtualenv --python C:\Path\To\Python\python.exe venv
+.\venv\Scripts\activate
 ```
 
 ### Install requirements
@@ -178,16 +170,51 @@ python setup.py
 
 Open two terminals, one for backend and one for frontend.
 
-In backend terminal:
+**In backend terminal:**
 
 ```
 cd backend
+```
+
+Activate virtualenv
+
+```
 python server.py
 ```
 
-In frontend terminal:
+**In frontend terminal:**
 
 ```
 cd frontend
 npm start
+```
+
+# Other information
+
+### Deactivate virtualenv
+
+**MAC:**
+
+```
+deactivate
+```
+
+**Windows**
+
+```
+venv\scripts\deactivate
+```
+
+### Stop postgres server
+
+**MAC:**
+
+```
+brew services stop postgresql@14
+```
+
+**Windows:**
+
+```
+net stop postgresql-x64-14
 ```
