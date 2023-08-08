@@ -158,12 +158,6 @@ user = username
 password = password
 ```
 
-### Install xArm-Python-SDK
-
-```
-python setup.py install
-```
-
 ### Board setup
 
 Download Certabo board drivers from: https://www.certabo.com/download/
@@ -177,7 +171,7 @@ For **Windows**, download `Certabo software – PC 4.1 – 64 bit`.
 Within the `chess-robot` project folder in `/backend`, run the script and follow the instructions in the terminal
 
 ```
-python initialize.py
+python setup.py
 ```
 
 # Start application
