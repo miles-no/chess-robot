@@ -1,56 +1,42 @@
-#!/usr/bin/env python3
-# Software License Agreement (BSD License)
-#
-# Copyright (c) 2017, UFactory, Inc.
-# All rights reserved.
-#
-# Author: Vinman <vinman.wen@ufactory.cc>
+import multiprocessing
+import time
+from database.db_init import *
+from certaboHelper.initCertabo import InitializeCertabo
+from certaboHelper.certabo import Certabo
 
-import os
-from distutils.util import convert_path
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from distutils.core import setup
+# Main calibration of the Certabo board
+def calibration():
+    InitializeCertabo()
+    calibrate = True
+    new_setup = True    
+    Certabo(calibrate, new_setup)
+    time.sleep(7)
+    print("Certabo calibration finished")
 
-    def find_packages(base_path='.'):
-        base_path = convert_path(base_path)
-        found = []
-        for root, dirs, files in os.walk(base_path, followlinks=True):
-            dirs[:] = [d for d in dirs if d[0] != '.' and d not in ('ez_setup', '__pycache__')]
-            relpath = os.path.relpath(root, base_path)
-            parent = relpath.replace(os.sep, '.').lstrip('.')
-            if relpath != '.' and parent not in found:
-                # foo.bar package but no foo package, skip
-                continue
-            for dir in dirs:
-                if os.path.isfile(os.path.join(root, dir, '__init__.py')):
-                    package = '.'.join((parent, dir)) if parent else dir
-                    found.append(package)
-        return found
+def main():
+    # Create table in database if it doesn't exist
+    create_table(table_players)
 
-main_ns = {}
-ver_path = convert_path('xarm/version.py')
-with open(os.path.join(os.getcwd(), ver_path)) as ver_file:
-    exec(ver_file.read(), main_ns)
+    inp = input("Place pieces to initial positions, and press enter...")
+    if inp == "":
+        # Multiprocessing added for Certabo board calibration
+        # Serialreader only reads one port at a time, so we need to run it in a separate process.
+        process = multiprocessing.Process(target=calibration)
+        process.start()
 
-version = main_ns['__version__']
+    # Promotion pieces are added to the board, and the calibration process starts again.
+    process.join()
+    inp = input("Add pieces for promotion on the board, and press enter...")
+    
+    if inp == "":
+        print("Calibrating new pieces...")
+        calibrate = True
+        new_setup = False
+        Certabo(calibrate, new_setup)
+        # Sleep needed for calibration to finish
+        time.sleep(7)
+        print("Success! New pieces added")
 
-# long_description = open('README.rst').read()
-long_description = 'long description for xArm-Python-SDK'
 
-with open(os.path.join(os.getcwd(), 'requirements.txt')) as f:
-    requirements = f.read().splitlines()
-
-setup(
-    name='xArm-Python-SDK',
-    version=version,
-    author='Vinman',
-    description='Python SDK for xArm',
-    packages=find_packages(),
-    author_email='vinman@ufactory.cc',
-    install_requires=requirements,
-    long_description=long_description,
-    license='MIT',
-    zip_safe=False
-)
+if __name__ == "__main__":
+    main()

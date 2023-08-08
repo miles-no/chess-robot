@@ -24,7 +24,7 @@ numpy==1.25.0
 opencv-python==4.7.0.72
 Pillow==10.0.0
 psycopg2==2.9.6
-pyserial==3.5
+pyserial==3.4
 python-chess==1.999
 python-engineio==4.4.1
 python-socketio==5.8.0
@@ -35,4 +35,5 @@ urllib3==1.24.3
 websockets==11.0.3
 Werkzeug==2.3.6
 wrapt==1.15.0
+xArm-Python-SDK==1.11.7
 zipp==3.15.0
