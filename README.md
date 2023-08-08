@@ -1,8 +1,10 @@
 # Set up
 
+Require `Certabo chessboard` and `Ufactory Lite6` connected.
+
 ## Frontend
 
-Require `npm`
+Require `npm >= 9.5.1`
 
 ```
 cd frontend
@@ -13,7 +15,7 @@ cd ..
 
 ## Backend
 
-Require `Python` and `pip`
+Require `Python >= 3.9.13` and `pip >= 23.2`
 
 Install pip:
 
@@ -45,7 +47,19 @@ venv\scripts\deactivate
 
 ```
 pip install virtualenv
+```
+
+```
 virtualenv venv
+```
+
+or
+
+```
+python -m virtualenv venv
+```
+
+```
 source venv/bin/activate
 ```
 
@@ -144,6 +158,12 @@ user = username
 password = password
 ```
 
+### Install xArm-Python-SDK
+
+```
+python setup.py install
+```
+
 ### Board setup
 
 Download Certabo board drivers from: https://www.certabo.com/download/
@@ -157,7 +177,7 @@ For **Windows**, download `Certabo software – PC 4.1 – 64 bit`.
 Within the `chess-robot` project folder in `/backend`, run the script and follow the instructions in the terminal
 
 ```
-python setup.py
+python initialize.py
 ```
 
 # Start application

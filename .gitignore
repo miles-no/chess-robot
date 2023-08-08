@@ -4,3 +4,6 @@
 config.py
 .[Ee]nv
 database.ini
+[Xx]Arm_Python_SDK.egg-info/
+[Dd]ist/
+[Bb]uild/
