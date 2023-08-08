@@ -63,6 +63,8 @@ python -m virtualenv --python C:\Path\To\Python\python.exe venv
 
 ### Install requirements
 
+Make sure the virtualenv is activated before installing the requirements.
+
 ```
 pip install -r requirements.txt
 ```
