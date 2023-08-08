@@ -2,7 +2,7 @@
 
 ## Frontend
 
-Require `npm`
+Require `npm >= 9.5.1`
 
 ```
 cd frontend
@@ -13,7 +13,7 @@ cd ..
 
 ## Backend
 
-Require `Python` and `pip`
+Require `Python >= 3.9.13` and `pip >= 23.2`
 
 Install pip:
 
@@ -45,7 +45,19 @@ venv\scripts\deactivate
 
 ```
 pip install virtualenv
+```
+
+```
 virtualenv venv
+```
+
+or
+
+```
+python -m virtualenv venv
+```
+
+```
 source venv/bin/activate
 ```
 
