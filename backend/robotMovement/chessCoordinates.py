@@ -14,7 +14,3 @@ class ChessCoordinates():
         letter, number = string[:len(string)//2], int(string[len(string)//2:])
         l2n = ord(letter)-97
         return l2n, number
-
-if __name__ == "__main__":
-    cc = ChessCoordinates()
-    cc.get_piece_position("h1")
