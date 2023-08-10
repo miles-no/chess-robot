@@ -6,12 +6,15 @@ The uFactory robot and Certabo board is not originally compatible. This means th
 
 This results in custom made props including pieces and a 3D printed gripper extension. 
 
+## Limitation
+
+The board only allows for white to start at USB-side of the board. This means that white side need to be placed along side the robot base. 
+
 # Set up
 
 Require `Certabo chessboard` and `uFactory Lite 6`.
 
 ## System setup
-
 1. Make sure robot is connected to the emergency stop buttton, and the stop button is initiated.
 2. Make sure the robot is connected to the power supply, without power. 
 3. Attach the robot to a stable surface using the clamps. 
