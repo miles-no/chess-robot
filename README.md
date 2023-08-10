@@ -1,6 +1,33 @@
+# Application
+This is an application that integrates robotics and chess. It utilizes a uFactory Lite 6 robot arm and Certabo chessboard; a smart chessboard. The system uses Stockfish as chess engine to drive the robot's movement. The chessboard uses RFID chips and LEDs to indicate what the chess engine has converged to as best move. 
+
+## Notes
+The uFactory robot and Certabo board is not originally compatible. This means that the original gripper will result  malfunctioning movement, due to various sizes and shapes of chess pieces. 
+
+This results in custom made props including pieces and a 3D printed gripper extension. 
+
 # Set up
 
-Require `Certabo chessboard` and `Ufactory Lite6` connected.
+Require `Certabo chessboard` and `uFactory Lite 6`.
+
+## System setup
+
+1. Make sure robot is connected to the emergency stop buttton, and the stop button is initiated.
+2. Make sure the robot is connected to the power supply, without power. 
+3. Attach the robot to a stable surface using the clamps. 
+4. Allign the board infront of the robot using the marks notated on the board, ensuring centering of the base of the robot and board. 
+5. Connect the ethernet cable from robot and the USB from the board to the computer. 
+
+**IMPORTANT NOTE! Make sure to check for the voltage switch on the power supply. Norwegian standards require the switch to be set to 230V.**
+
+6. Connect the power supply to a power source. 
+7. Once plugged in and a beep sound is emitted, release the emergency stop button. 
+
+
+### CAUTION
+
+The uFactory robot arm is strong and is suited for more than chess play and only use collision sensors to detect collision. This means that users have to be cautious when interacting with the robot. This collision sensivity can be altered through arm.set_collision_sensitivity(). 1-5, where 5 is most sensitive. 
+
 
 ## Frontend
 
