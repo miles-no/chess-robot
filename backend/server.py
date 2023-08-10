@@ -8,12 +8,20 @@ from certaboHelper.initCertabo import InitializeCertabo
 from database.db_func import get_leaderboard, add_player
 from robotMovement.chessRobot import ChessRobot
 import time
+import platform
 from datetime import datetime
 
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
 
-chess_logic = ChessLogic(STOCKFISH_PATH)
+pStockfish = ""
+if platform.system() == 'Windows':
+    pStockfish ="/chessLogic/windowsStockfish/stockfish-64-windows.exe"
+elif platform.system() == 'Darwin': #Darwin for MacOS
+    print("Darwin!!")
+    pStockfish = STOCKFISH_PATH
+
+chess_logic = ChessLogic(pStockfish)
 
 InitializeCertabo()
 mycertabo = Certabo()
