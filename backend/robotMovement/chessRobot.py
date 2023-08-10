@@ -96,23 +96,6 @@ class ChessRobot:
         self.movePiece(x_from, y_from, x, y)
 
 
-if __name__ == "__main__":
-    cr = ChessRobot()
-    cr.doMove("a8a6")
-    # cr.doMove("b1a3", "n")
-    # cr.doMove("c1g5", "b")
-    # cr.doMove("b2b4", "p")
-    # cr.doMove("d1d6", "q")
-    # cr.doMove("c2c4", "p")
-    # cr.doMove("a1a2", "r")
-    # cr.doMove("f1f3", "p")
-    # cr.doMove("e1f1", "k")
-    # cr.doMove("g5f6", "b")
-    # cr.doMove("f1f2", "k")
-    # cr.doMove("a3b5", "n")
-    # cr.doMove("a2a6", "r")
-
-
 
 
 

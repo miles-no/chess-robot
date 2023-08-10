@@ -44,7 +44,3 @@ def create_table(table):
     finally:
         if conn is not None:
             conn.close()
-
-if __name__ == '__main__':
-    create_table("DROP TABLE players")
-    create_table(table_players)

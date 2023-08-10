@@ -31,8 +31,3 @@ def get_leaderboard():
     finally:
         if conn is not None:
             conn.close()
-
-if __name__ == "__main__":
-    add_player("First player", 1000, datetime.now().strftime("%d/%m/%Y %H:%M"), 1)
-    add_player("Second player", 2000, "27/12/2022 10:09", 20)
-    print(get_leaderboard())

@@ -42,18 +42,6 @@ export default function Game(props: gameProps) {
     };
   }, [props.socket]);
 
-  useEffect(() => {
-    console.log("useEffect", result);
-  }, [result]);
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
-
   const newGame = async () => {
     if (gameState) {
       const confirmNewGame = window.confirm(
@@ -187,7 +175,6 @@ export default function Game(props: gameProps) {
               variant="contained"
               onClick={() => startGame()}
               sx={{ backgroundColor: "black" }}
-              onKeyDown={handleKeyDown}
             >
               Start game
             </Button>
@@ -198,13 +185,6 @@ export default function Game(props: gameProps) {
 
   const handleValidMoves = (validMoves: string[]) => {
     setValidMoves(validMoves);
-  };
-
-  const handleKeyDown = (event: any) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      startGame();
-    }
   };
 
   return (
