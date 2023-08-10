@@ -75,7 +75,7 @@ class ChessRobot:
         x = x + x_diff
         y = y + y_diff
         z = z + z_diff
-        self.arm.set_position(x, y, z, roll=-180, pitch=0, yaw=0, speed=40, wait=True)
+        self.arm.set_position(x, y, z, roll=-180, pitch=0, yaw=0, speed=speed, wait=True)
     
     def disconnect(self):
         self.arm.disconnect()
