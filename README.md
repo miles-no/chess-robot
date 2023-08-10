@@ -132,14 +132,20 @@ net start postgresql-x64-14
 
 **To setup database for MAC and Windows**
 
+Activate postgresql environment with user "postgres":
+
 ```
-createuser username --createdb
+psql -U postgres
+```
 
-psql postgres -c "CREATE ROLE username WITH LOGIN PASSWORD 'password'; ALTER ROLE username CREATEDB;"
+Run within psql environment:
 
-psql postgres -c "CREATE DATABASE databasename;"
+```
+CREATE ROLE username WITH LOGIN PASSWORD 'password'; ALTER ROLE username CREATEDB;
 
-psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE databasename TO username;"
+CREATE DATABASE databasename;
+
+GRANT ALL PRIVILEGES ON DATABASE databasename TO username;
 ```
 
 Create `database.ini` in `/backend/database` with the following content:
