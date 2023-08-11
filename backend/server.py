@@ -16,7 +16,7 @@ socket_io = SocketIO(app, cors_allowed_origins="*")
 
 pStockfish = ""
 if platform.system() == 'Windows':
-    pStockfish ="/chessLogic/windowsStockfish/stockfish-64-windows.exe"
+    pStockfish ="/chessLogic/windowsStockfish/stockfish-windows.exe"
 elif platform.system() == 'Darwin': #Darwin for MacOS
     pStockfish = STOCKFISH_PATH
 
