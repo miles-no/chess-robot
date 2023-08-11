@@ -61,10 +61,10 @@ class ChessRobot:
         self.moving(x, y, 110)
         self.moving(100, 0, 110)
 
-    def doMove(self, move):
+    def doMove(self, move, color):
         move_from, move_to = move[:len(move)//2], move[len(move)//2:]
-        x_from, y_from = self.cc.chess_to_robot(move_from)
-        x_to, y_to = self.cc.chess_to_robot(move_to)
+        x_from, y_from = self.cc.chess_to_robot(move_from, color)
+        x_to, y_to = self.cc.chess_to_robot(move_to, color)
         self.movePiece(x_from, y_from, x_to, y_to)
 
     def moving(self, x, y, z, speed=110):
@@ -84,8 +84,8 @@ class ChessRobot:
         self.arm.reset(wait=True)
 
     # Move the piece that have been taken outside 
-    def move_taken(self, move_from, piece):
-        x_from, y_from = self.cc.chess_to_robot(move_from)
+    def move_taken(self, move_from, piece, color):
+        x_from, y_from = self.cc.chess_to_robot(move_from, color)
         self.taken.append(piece)
         if len(self.taken) < 8:
             x = 130 + (len(self.taken)-1)*40

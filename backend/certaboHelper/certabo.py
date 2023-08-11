@@ -104,7 +104,6 @@ class Certabo():
                                         self.move_event.set()
                                     elif self.pending_move[1] == "Invalid move":
                                         logging.debug('Invalid, firing event')
-                                        print(self.pending_move)
                                         self.move_event.set()
                                 except NoMove:
                                     self.pending_move = None

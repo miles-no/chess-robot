@@ -1,13 +1,18 @@
 class ChessCoordinates():
     def __init__(self):
         self.tile = 35
-        self.a_position = {"x": 150, "y": 120}
+        self.a_position_white = {"x": 150, "y": 120}
+        self.a_position_black = {"x": 395, "y": -125}
 
-    def chess_to_robot(self, position):
+    def chess_to_robot(self, position, color):
         y, number = self.split_strings(position)
         x = number-1
-        x = self.a_position["x"] + x*self.tile
-        y = self.a_position["y"] - y*self.tile
+        if color:
+            x = self.a_position_white["x"] + x*self.tile
+            y = self.a_position_white["y"] - y*self.tile
+        else:
+            x = self.a_position_black["x"] - x*self.tile
+            y = self.a_position_black["y"] + y*self.tile
         return x, y
     
     def split_strings(self, string):
