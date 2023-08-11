@@ -8,7 +8,7 @@ This results in custom made props including pieces and a 3D printed gripper exte
 
 ## Limitation
 
-The board only allows for white to start at USB-side of the board. This means that white side need to be placed along side the robot base. 
+The board only allows for white to start at USB-side of the board. This means that the chosen color must be oriented towards the user by physically rotating the board. It's essential to ensure precise centering of the board for the robot to effectively handle the chess pieces. 
 
 # Set up
 
@@ -29,8 +29,7 @@ Require `Certabo chessboard` and `uFactory Lite 6`.
 
 ### CAUTION
 
-The uFactory robot arm is strong and is suited for more than chess play and only use collision sensors to detect collision. This means that users have to be cautious when interacting with the robot. This collision sensivity can be altered through arm.set_collision_sensitivity(). 1-5, where 5 is most sensitive. 
-
+The uFactory robot arm is strong and is suited for more than chess play and use various sensors to detect collision. However, as these collisions are occasionally identified with major delays, users have to be cautious when interacting with the robot. This collision sensivity can be altered through arm.set_collision_sensitivity(). 1-5, where 5 is most sensitive. 
 
 ## Frontend
 
