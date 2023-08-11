@@ -9,14 +9,14 @@ import os
 import sys
 import threading
 import serial
-import fcntl
 import logging
 import serial.tools.list_ports
 
-if os.name == 'nt':  # sys.platform == 'win32':
-    from serial.tools.list_ports_windows import comports
-elif os.name == 'posix':
+if os.name == 'posix':
+    import fcntl
     from serial.tools.list_ports_posix import comports
+else:
+    from serial.tools.list_ports_windows import comports
 
 def find_port():
     for port in comports():
