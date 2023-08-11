@@ -18,7 +18,6 @@ pStockfish = ""
 if platform.system() == 'Windows':
     pStockfish ="/chessLogic/windowsStockfish/stockfish-64-windows.exe"
 elif platform.system() == 'Darwin': #Darwin for MacOS
-    print("Darwin!!")
     pStockfish = STOCKFISH_PATH
 
 chess_logic = ChessLogic(pStockfish)
@@ -105,10 +104,10 @@ def handleStockfishMove():
     # Check passant
     if chess_logic.checkPassant(best_move, mycertabo.chessboard):
         piece_to_remove = best_move.uci()[2]+best_move.uci()[1]
-        cr.move_taken(piece_to_remove, "p")
+        cr.move_taken(piece_to_remove, "p",  mycertabo.stockfish_color)
     # Check if piece is taken
     elif mycertabo.chessboard.is_capture(best_move):
-        cr.move_taken(best_move.uci()[2:], str(mycertabo.chessboard.piece_at(best_move.to_square)).lower())
+        cr.move_taken(best_move.uci()[2:], str(mycertabo.chessboard.piece_at(best_move.to_square)).lower(),  mycertabo.stockfish_color)
 
     mycertabo.stockfish_move(best_move)
     best_move = best_move.uci()
@@ -118,14 +117,14 @@ def handleStockfishMove():
         promotion = chess_logic.pieces[best_move[-1]]
         best_move = best_move[:-1]
         prom_move = best_move[:len(best_move)//2]
-        cr.move_taken(prom_move, "p")
+        cr.move_taken(prom_move, "p",  mycertabo.stockfish_color)
         socket_io.emit("promotion", promotion)
     else:
         # Check castling
         castling = chess_logic.checkCastling()
         if castling:
-            cr.doMove(castling)    
-        cr.doMove(best_move)
+            cr.doMove(castling, mycertabo.stockfish_color)    
+        cr.doMove(best_move,  mycertabo.stockfish_color)
     cr.reset()
     mycertabo.setColor()
     return best_move
