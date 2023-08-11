@@ -86,7 +86,7 @@ source venv/bin/activate
 
 ```
 pip install virtualenv
-python -m virtualenv --python C:\Path\To\Python\python.exe venv
+python -m virtualenv --python venv
 .\venv\Scripts\activate
 ```
 
