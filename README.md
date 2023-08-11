@@ -10,6 +10,12 @@ This results in custom made props including pieces and a 3D printed gripper exte
 
 The board only allows for white to start at USB-side of the board. This means that the chosen color must be oriented towards the user by physically rotating the board. It's essential to ensure precise centering of the board for the robot to effectively handle the chess pieces. 
 
+### Piece placement
+
+While playing, aim to position the pieces as close to the center as managable.
+
+**Ensure that the side panels of the board remain free of pieces during the game. These areas are designated for the robot's captured pieces.**
+
 # Set up
 
 Require `Certabo chessboard` and `uFactory Lite 6`.
