@@ -10,13 +10,17 @@ from robotMovement.chessRobot import ChessRobot
 import time
 import platform
 from datetime import datetime
+import os
+
 
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
 
 pStockfish = ""
 if platform.system() == 'Windows':
-    pStockfish ="/chessLogic/windowsStockfish/stockfish-windows.exe"
+     #pStockfish = "..\stockfish-windows-x86-64"
+     pStockfish = os.getcwd() + STOCKFISH_PATH
+     #pStockfish = STOCKFISH_PATH
 elif platform.system() == 'Darwin': #Darwin for MacOS
     pStockfish = STOCKFISH_PATH
 
