@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+import pathlib
 from flask import Flask
 from flask_socketio import SocketIO
 from config import STOCKFISH_PATH
@@ -11,6 +12,7 @@ import time
 import platform
 from datetime import datetime
 import os
+from pathlib import Path
 
 
 app = Flask(__name__)
@@ -18,9 +20,10 @@ socket_io = SocketIO(app, cors_allowed_origins="*")
 
 pStockfish = ""
 if platform.system() == 'Windows':
-     #pStockfish = "..\stockfish-windows-x86-64"
-     pStockfish = os.getcwd() + STOCKFISH_PATH
-     #pStockfish = STOCKFISH_PATH
+    # Stockfish executable expected in chess-robot folder 
+     loc = pathlib.Path(__file__).parent.parent
+     conf = ''.join([str(loc),STOCKFISH_PATH])
+     pStockfish = conf
 elif platform.system() == 'Darwin': #Darwin for MacOS
     pStockfish = STOCKFISH_PATH
 
