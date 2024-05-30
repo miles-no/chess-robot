@@ -16,14 +16,22 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     postgresql \
     wget \
+    unzip \
     tar \
     git \
     g++ \
     make \
     && rm -rf /var/lib/apt/lists/*
 
-# Check the architecture
-RUN uname -m
+# Download the Certabo software
+RUN wget https://www.certabo.com/wp-content/uploads/SOFTWARE/Release/Ubuntu/Certabo_Tabutronic_Ubuntu_4.5.zip
+
+# Extract the Certabo software
+RUN unzip /app/Certabo_Tabutronic_Ubuntu_4.5.zip -d /app
+
+# Install the Certabo software
+RUN dpkg -i /app/Certabo_Tabutronic_Ubuntu_4.5/Certabo_Tabutronic_Ubuntu_4.5.deb || true
+RUN apt-get install -f
 
 # Clone Stockfish and compile it
 RUN git clone https://github.com/official-stockfish/Stockfish.git && \
