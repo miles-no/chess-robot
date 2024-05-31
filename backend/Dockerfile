@@ -40,13 +40,12 @@ RUN dpkg -i /app/Certabo_Tabutronic_Ubuntu_4.5/Certabo_Tabutronic_Ubuntu_4.5.deb
 RUN apt-get install -f
 
 # Clone Stockfish and compile it
-RUN git clone https://github.com/official-stockfish/Stockfish.git && \
-    cd Stockfish/src && \
-    make build ARCH=armv8 && \
-    cp stockfish /usr/local/bin/ && \
+# Download and extract the precompiled Stockfish binary
+RUN wget https://github.com/official-stockfish/Stockfish/releases/download/stockfish-dev-20240530-54e74919/stockfish-android-armv8.tar -O stockfish.tar && \
+    tar -xf stockfish.tar && \
+    mv stockfish /usr/local/bin/ && \
     chmod +x /usr/local/bin/stockfish && \
-    cd ../.. && \
-    rm -rf Stockfish
+    rm stockfish.tar
 
 # Start PostgreSQL service and setup database
 USER postgres
