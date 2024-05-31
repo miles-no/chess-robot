@@ -1,11 +1,5 @@
-# Select the base image according to the architecture
-# Uncomment the line that corresponds to the architecture you are using
-
-# For x86 architecture, use the following base image:
-# FROM python:3.9.13-slim
-
-# For arm architecture (like Raspberry Pi or macOS M1 chip), use the following base image:
-FROM python:3.9.13-slim-buster
+# Use the official Python base image for arm64 architecture
+FROM arm64v8/python:3.9.13-slim-buster
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -23,57 +17,61 @@ RUN apt-get update && apt-get install -y \
     postgresql \
     wget \
     unzip \
-    tar \
     git \
     g++ \
     make \
     cmake \
     && rm -rf /var/lib/apt/lists/*
 
-# Download the Certabo software
-RUN wget https://www.certabo.com/wp-content/uploads/SOFTWARE/Release/Ubuntu/Certabo_Tabutronic_Ubuntu_4.5.zip
+# Update CMake to the latest version
+RUN apt-get update && apt-get install -y cmake
 
-# Extract the Certabo software
-RUN unzip /app/Certabo_Tabutronic_Ubuntu_4.5.zip -d /app
+# Upgrade pip to the latest version
+RUN /usr/local/bin/python -m pip install --upgrade pip
 
-# Install the Certabo software
-RUN dpkg -i /app/Certabo_Tabutronic_Ubuntu_4.5/Certabo_Tabutronic_Ubuntu_4.5.deb || true
-RUN apt-get install -f
+# Download and install the Certabo software
+RUN wget -O /tmp/Certabo_Tabutronic_Ubuntu_4.5.zip https://www.certabo.com/wp-content/uploads/SOFTWARE/Release/Ubuntu/Certabo_Tabutronic_Ubuntu_4.5.zip && \
+    unzip /tmp/Certabo_Tabutronic_Ubuntu_4.5.zip -d /app && \
+    dpkg -i /app/Certabo_Tabutronic_Ubuntu_4.5/Certabo_Tabutronic_Ubuntu_4.5.deb || true && \
+    apt-get install -f
 
 # Clone Stockfish and compile it
-# Download and extract the precompiled Stockfish binary
-RUN wget https://github.com/official-stockfish/Stockfish/releases/download/stockfish-dev-20240530-54e74919/stockfish-android-armv8.tar -O stockfish.tar && \
-    tar -xf stockfish.tar && \
-    mv stockfish /usr/local/bin/ && \
+RUN git clone https://github.com/official-stockfish/Stockfish.git /app/Stockfish && \
+    cd /app/Stockfish/src && \
+    make build ARCH=armv8 && \
+    cp stockfish /usr/local/bin/ && \
     chmod +x /usr/local/bin/stockfish && \
-    rm stockfish.tar
+    cd /app && \
+    rm -rf /app/Stockfish
 
 # Start PostgreSQL service and setup database
 USER postgres
 RUN service postgresql start && \
-    psql -c "CREATE ROLE $POSTGRES_USER WITH LOGIN PASSWORD '$POSTGRES_PASSWORD'; ALTER ROLE $POSTGRES_USER CREATEDB;"
+    psql -c "CREATE ROLE $POSTGRES_USER WITH LOGIN PASSWORD '$POSTGRES_PASSWORD'; ALTER ROLE $POSTGRES_USER CREATEDB;" && \
+    service postgresql stop
 
 RUN service postgresql start && \
     psql -c "CREATE DATABASE $POSTGRES_DB;" && \
-    psql -c "GRANT ALL PRIVILEGES ON DATABASE $POSTGRES_DB TO $POSTGRES_USER;"
+    psql -c "GRANT ALL PRIVILEGES ON DATABASE $POSTGRES_DB TO $POSTGRES_USER;" && \
+    service postgresql stop
 
 USER root
 
 # Copy only the requirements file
-COPY requirements.txt .
+COPY requirements.txt /app/
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
 # Copy the start script and the rest of the application code
-COPY start.sh .
-COPY . .
+COPY start.sh /app/
+COPY . /app/
 
 # Give execute permissions to the start script
-RUN chmod +x start.sh
+RUN chmod +x /app/start.sh
 
 # Expose the port the app runs on
 EXPOSE 5000
 
 # Command to run the start script
-CMD ["./start.sh"]
+CMD ["/app/start.sh"]
