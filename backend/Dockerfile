@@ -1,5 +1,11 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.9.13-slim
+# Select the base image according to the architecture
+# Uncomment the line that corresponds to the architecture you are using
+
+# For x86 architecture, use the following base image:
+# FROM python:3.9.13-slim
+
+# For arm architecture (like Raspberry Pi or macOS M1 chip), use the following base image:
+FROM python:3.9.13-slim-buster
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
