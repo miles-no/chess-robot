@@ -11,8 +11,9 @@ ENV POSTGRES_DB=databasename
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update
+
+RUN apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     postgresql \
