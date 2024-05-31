@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
     git \
     g++ \
     make \
+    cmake \
     && rm -rf /var/lib/apt/lists/*
 
 # Download the Certabo software
@@ -60,9 +61,6 @@ USER root
 
 # Copy only the requirements file
 COPY requirements.txt .
-
-# Install cmake separately
-RUN pip install cmake
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
