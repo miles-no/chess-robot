@@ -3,13 +3,17 @@ from configparser import ConfigParser
 
 from robotMovement.chessCoordinates import ChessCoordinates
 from xarm.wrapper import XArmAPI
-
+import os
 
 class ChessRobot:
     def __init__(self):
         self.piece_height = 45
         self.parser = ConfigParser()
-        self.parser.read('robotMovement/robot.conf')
+        loc = os.path.dirname(os.path.abspath(__file__))
+        print(loc)
+#        self.parser.read('robotMovement/robot.conf')
+        conf = '/'.join([loc,'robot.conf'])        
+        self.parser.read(conf)        
         self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
         self.taken = []
         self.cc = ChessCoordinates()
