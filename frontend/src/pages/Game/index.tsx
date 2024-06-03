@@ -26,6 +26,7 @@ export default function Game(props: gameProps) {
   const [score, setScore] = useState<number>(0);
   const [promotion, setPromotion] = useState<string>("");
   const [player, setPlayer] = useState<string>();
+  const [not_valid, setNotValid] = useState<boolean>(false);
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
@@ -72,7 +73,7 @@ export default function Game(props: gameProps) {
     }
   };
 
-  function startGame() {
+    function startGame() {
     if (props.socket.connected) {
       const preferences = {
         skill_level: stockfishlevel,
@@ -101,7 +102,8 @@ export default function Game(props: gameProps) {
   }
 
   const handleInvalidMove = () => {
-    alert("Invalid move!");
+      //alert("Invalid move!");
+      setNotValid(true);
   };
 
   const handleOK = () => {
@@ -183,8 +185,9 @@ export default function Game(props: gameProps) {
     }
   };
 
-  const handleValidMoves = (validMoves: string[]) => {
-    setValidMoves(validMoves);
+  const handleValidMoves = (validMoves: string[]) => { 
+      setValidMoves(validMoves);
+      setNotValid(false);
   };
 
   return (
@@ -250,7 +253,17 @@ export default function Game(props: gameProps) {
                 player={undefined}
               />
             </Box>
-          )}
+                      )}
+                      {(not_valid ) ? (
+                          <Box className="not-valid-move">
+                              <GameStatus
+                                  title="Invalid move!"
+                                  moves={valid_moves}
+                                  player={undefined}
+                              />
+                          </Box> 
+                      ) : <>  </>
+                      }
         </Box>
       )}
     </Box>
