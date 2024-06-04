@@ -13,16 +13,18 @@ table_players = (
     """
 )
 
-def config(filename='database/database.ini', section='postgresql'):
-    parser = ConfigParser()
-    parser.read(filename)
-    db = {}
-    if parser.has_section(section):
-        parms = parser.items(section)
-        for parm in parms:
-            db[parm[0]] = parm[1]
-    else:
-        raise Exception ('Section {0} not found in the {1} file'.format(section, filename))
+import os
+
+def config():
+    db = {
+        'host': os.getenv('DB_HOST', 'localhost'),
+        'database': os.getenv('DB_NAME','databasename'),
+        'user': os.getenv('DB_USER','username'),
+        'password': os.getenv('DB_PASSWORD','password')
+    }
+    for key in db:
+        if db[key] is None:
+            raise ValueError(f"Environment variable {key} not set")
     return db
 
 def create_connection():
