@@ -1,41 +1,57 @@
-# Application
-This is an application that integrates robotics and chess. It utilizes a uFactory Lite 6 robot arm and Certabo chessboard; a smart chessboard. The system uses Stockfish as chess engine to drive the robot's movement. The chessboard uses RFID chips and LEDs to indicate what the chess engine has converged to as best move. 
+# Miles Chess Robot
 
-## Notes
-The uFactory robot and Certabo board is not originally compatible. This means that the original gripper will result  malfunctioning movement, due to various sizes and shapes of chess pieces. 
+- [Miles Chess Robot](#miles-chess-robot)
+  - [Overview](#overview)
+  - [Limitation](#limitation)
+  - [Prerequisites](#prerequisites)
+  - [System installation](#system-installation)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+    - [Create a Virtual Python Environment](#create-a-virtual-python-environment)
+    - [Install requirements](#install-requirements)
+    - [Stockfish setup](#stockfish-setup)
+    - [Database setup](#database-setup)
+    - [Board setup](#board-setup)
+- [Start application](#start-application)
+- [Other information](#other-information)
+    - [Deactivate virtualenv](#deactivate-virtualenv)
+    - [Stop postgres server](#stop-postgres-server)
 
-This results in custom made props including pieces and a 3D printed gripper extension. 
+
+## Overview
+This is an application that integrates robotics and chess. It utilizes a [uFactory Lite 6](https://www.ufactory.cc/lite-6-collaborative-robot/) robot arm and [Certabo chessboard](https://www.certabo.com/); a smart chessboard that uses RFID chips and LEDs to indicate what the chess engine has converged to as best move. The system uses [Stockfish](https://stockfishchess.org/) as chess engine to drive the robot's movement.  
+
+>**Note** <br/> The uFactory robot and Certabo board is not originally compatible. This means that the original gripper may result in malfunctioning movement, due to various sizes and shapes of chess pieces.
+> To remedy this custom made props including pieces and a 3D printed gripper extension are provided. 
 
 ## Limitation
 
-The board only allows for white to start at USB-side of the board. This means that the chosen color must be oriented towards the user by physically rotating the board. It's essential to ensure precise centering of the board for the robot to effectively handle the chess pieces. 
+As of now the board only allows for white to start at USB-side of the board. This means that the chosen color must be oriented towards the user by physically rotating the board. It's essential to ensure precise centering of the board for the robot to effectively handle the chess pieces. 
 
-### Piece placement
+> **Piece placement** <br/> While playing, aim to position the pieces squarely in the middle of each chessboard square, maintaining an equal distance to all sides in the square.
 
-While playing, aim to position the pieces as close to the center as managable.
+>**Note** <br/> While playing make sure the side panels of the board remain free from pieces. This area is is used by the robot to store captured  pieces.
 
-**Ensure that the side panels of the board remain free of pieces during the game. These areas are designated for the robot's captured pieces.**
+## Prerequisites
+- Certabo chessboard.
+- uFactory Lite 6 (with power supply).
+- Emergency Stop button.
+- PC or Tablet for Chess robot user interface.
+- Ethernet cable (between robot and pc).
+- USB cable (between chess board and pc).
 
-# Set up
-
-Require `Certabo chessboard` and `uFactory Lite 6`.
-
-## System setup
-1. Make sure robot is connected to the emergency stop buttton, and the stop button is initiated.
-2. Make sure the robot is connected to the power supply, without power. 
-3. Attach the robot to a stable surface using the clamps. 
-4. Allign the board infront of the robot using the marks notated on the board, ensuring centering of the base of the robot and board. 
-5. Connect the ethernet cable from robot and the USB from the board to the computer. 
-
-**IMPORTANT NOTE! Make sure to check for the voltage switch on the power supply. Norwegian standards require the switch to be set to 230V.**
-
-6. Connect the power supply to a power source. 
+## System installation
+1. Press down the emergency stop button and connect this to the socket labeled **safety** on the backplane of the robot arm.
+2. Attach the robot to a stable surface using the provided clamps.
+3. Disconnect the AC lead in the power supply and connect the 24V connector to the socket labeled **ROBOT 24V** on the backplane of the robot arm.
+4. Allign the board infront of the robot using the marks notated on the board, ensuring centering of the base of the robot and board.
+5. Connect the ethernet cable from robot and the USB from the board to the computer.
+6. Connect the power supply to a power source.  
 7. Once plugged in and a beep sound is emitted, release the emergency stop button. 
 
 
-### CAUTION
-
-The uFactory robot arm is strong and is suited for more than chess play and use various sensors to detect collision. However, as these collisions are occasionally identified with major delays, users have to be cautious when interacting with the robot. This collision sensivity can be altered through arm.set_collision_sensitivity(). 1-5, where 5 is most sensitive. 
+> **CAUTION** <br/> The uFactory robot arm is strong and is suited for more than chess play and use various sensors to detect collision. <br/> <br/> However, as these collisions are occasionally identified with major delays, users have to be cautious when interacting with the robot. 
+> >This collision sensivity can be altered through arm.set_collision_sensitivity(). 1-5, where 5 is most sensitive. 
 
 ## Frontend
 
