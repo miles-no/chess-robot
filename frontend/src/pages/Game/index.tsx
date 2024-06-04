@@ -63,6 +63,7 @@ export default function Game(props: gameProps) {
       setValidMoves([]);
       setCurrentPlayer(message.color);
       setMoves(message.moves);
+      setNotValid(false);
     }
   };
 
@@ -102,7 +103,6 @@ export default function Game(props: gameProps) {
   }
 
   const handleInvalidMove = () => {
-      //alert("Invalid move!");
       setNotValid(true);
   };
 
@@ -187,7 +187,6 @@ export default function Game(props: gameProps) {
 
   const handleValidMoves = (validMoves: string[]) => { 
       setValidMoves(validMoves);
-      setNotValid(false);
   };
 
   return (
