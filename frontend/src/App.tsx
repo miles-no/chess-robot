@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Header socket={socket} />
+        <Header />
         <div style={{ paddingTop: "4em" }}>
           <Routes>
             <Route path="/" element={<Home />} />
