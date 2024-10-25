@@ -7,9 +7,23 @@ import os
 
 
 class ChessRobot:
+    # Magic values
+    PIECE_HEIGHT = 45
+    SAFE_HEIGHT = 100
+    SPEED_MULTIPLIER = 10
+    GRIPPER_WAIT_TIME = 0.75
+    ZERO_POSITION = [87, 0, 51.2]
+    SAFE_POSITION_X = 100
+    SAFE_POSITION_Y = 0
+    TAKEN_PIECES_START_X = 130
+    TAKEN_PIECES_Y_ROW1 = 160
+    TAKEN_PIECES_Y_ROW2 = -162
+    TAKEN_PIECES_X_SPACING = 40
+    TAKEN_PIECES_PER_ROW = 8
+
     def __init__(self):
         # Initialize chess robot properties
-        self.piece_height = 45
+        self.piece_height = self.PIECE_HEIGHT
         self.parser = ConfigParser()
         loc = os.path.dirname(os.path.abspath(__file__))
         print(loc)
@@ -26,7 +40,7 @@ class ChessRobot:
                 callback=self.callback_error_warn_changed
             )
             # Set zero position and initialize start position
-            self.zero_position = [87, 0, 51.2]
+            self.zero_position = self.ZERO_POSITION
             self.start_position = None
             self.initialize()
         except Exception as e:
@@ -65,37 +79,33 @@ class ChessRobot:
             self.arm = None
 
     def movePiece(self, start_x, start_y, x, y):
-        SPEED_MULTIPLIER = 4  # Magic number for speed adjustment
-
         # Move to a safe starting position
-        self.moving(100, 0, 110, speed=130 * SPEED_MULTIPLIER)
+        self.moving(self.SAFE_POSITION_X, self.SAFE_POSITION_Y, self.SAFE_HEIGHT, speed=130 * self.SPEED_MULTIPLIER)
 
         # Move above the starting position of the piece
-        self.moving(start_x, start_y, 110, speed=130 * SPEED_MULTIPLIER)
-        # Lower the arm slightly
-        self.moving(start_x, start_y, 80, speed=90 * SPEED_MULTIPLIER)
+        self.moving(start_x, start_y, self.SAFE_HEIGHT, speed=130 * self.SPEED_MULTIPLIER)
         # Lower to the piece height to grab it
-        self.moving(start_x, start_y, self.piece_height, speed=30 * SPEED_MULTIPLIER)
+        self.moving(start_x, start_y, self.PIECE_HEIGHT, speed=90 * self.SPEED_MULTIPLIER)
 
         # Close the gripper to grab the piece
         self.arm.close_lite6_gripper()
-        time.sleep(0.75)  # Wait for gripper to close // Todo: use callback instead
+        time.sleep(self.GRIPPER_WAIT_TIME)  # Wait for gripper to close // Todo: use callback instead
         # Lift the piece up
-        self.moving(start_x, start_y, 110, speed=130 * SPEED_MULTIPLIER)
+        self.moving(start_x, start_y, self.SAFE_HEIGHT, speed=130 * self.SPEED_MULTIPLIER)
 
         # Move above the destination position
-        self.moving(x, y, 110, speed=130 * SPEED_MULTIPLIER)
+        self.moving(x, y, self.SAFE_HEIGHT, speed=130 * self.SPEED_MULTIPLIER)
         # Lower the piece to the board
-        self.moving(x, y, self.piece_height, speed=90 * SPEED_MULTIPLIER)
+        self.moving(x, y, self.PIECE_HEIGHT, speed=90 * self.SPEED_MULTIPLIER)
 
         # Open the gripper to release the piece
         self.arm.open_lite6_gripper()
-        time.sleep(0.75)  # Wait for gripper to open // Todo: use callback instead
+        time.sleep(self.GRIPPER_WAIT_TIME)  # Wait for gripper to open // Todo: use callback instead
         self.arm.stop_lite6_gripper()
         # Lift the arm up
-        self.moving(x, y, 110, speed=130 * SPEED_MULTIPLIER)
+        self.moving(x, y, self.SAFE_HEIGHT, speed=130 * self.SPEED_MULTIPLIER)
         # Move back to a safe position
-        self.moving(100, 0, 110, speed=130 * SPEED_MULTIPLIER)
+        self.moving(self.SAFE_POSITION_X, self.SAFE_POSITION_Y, self.SAFE_HEIGHT, speed=130 * self.SPEED_MULTIPLIER)
 
     def doMove(self, move, color):
         # Parse move and convert to robot coordinates
@@ -129,12 +139,12 @@ class ChessRobot:
         x_from, y_from = self.cc.chess_to_robot(move_from, color)
         self.taken.append(piece)
         # Determine the position to place the taken piece
-        if len(self.taken) < 8:
+        if len(self.taken) <= self.TAKEN_PIECES_PER_ROW:
             # First row of taken pieces (0-7 pieces)
-            x = 130 + (len(self.taken) - 1) * 40  # Start at x=130, increment by 40 for each piece
-            y = 160  # Fixed y-coordinate for the first row
+            x = self.TAKEN_PIECES_START_X + (len(self.taken) - 1) * self.TAKEN_PIECES_X_SPACING
+            y = self.TAKEN_PIECES_Y_ROW1
         else:
             # Second row of taken pieces (8-15 pieces)
-            x = 130 + (len(self.taken) - 8) * 40  # Reset x-coordinate calculation for second row
-            y = -162  # Different y-coordinate for the second row
+            x = self.TAKEN_PIECES_START_X + (len(self.taken) - self.TAKEN_PIECES_PER_ROW - 1) * self.TAKEN_PIECES_X_SPACING
+            y = self.TAKEN_PIECES_Y_ROW2
         self.movePiece(x_from, y_from, x, y)
