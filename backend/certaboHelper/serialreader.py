@@ -98,7 +98,7 @@ class serialreader(threading.Thread):
                             time.sleep(retry_delay)
                             continue
                         logging.info(f'Opening serial port {serialport}')
-                        self.uart = serial.Serial(serialport, 38400*2)  # 0-COM1, 1-COM2 / speed /
+                        self.uart = serial.Serial(serialport, 38400)  # 0-COM1, 1-COM2 / speed /
                         if os.name == 'posix':
                             logging.debug(f'Attempting to lock {serialport}')
                             fcntl.flock(self.uart.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
