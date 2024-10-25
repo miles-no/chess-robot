@@ -9,34 +9,27 @@ set -e
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Function to display help message
 display_help() {
-    echo -e "${BLUE}🤖 Miles Chess Robot Setup and Start Script${NC}"
-    echo
-    echo -e "${CYAN}Usage: $0 [OPTIONS]${NC}"
+    echo "Usage: $0 [OPTIONS]"
     echo
     echo "This script sets up and starts the Miles Chess Robot application."
     echo
-    echo -e "${YELLOW}Options:${NC}"
-    echo -e "  ${GREEN}-h, --help     📚 Display this help message and exit${NC}"
-    echo -e "  ${GREEN}--run-setup    🛠️  Run the setup.py script (default: false)${NC}"
-    echo -e "  ${GREEN}--start        🚀 Start the application${NC}"
+    echo "Options:"
+    echo "  -h, --help     Display this help message and exit"
+    echo "  --run-setup    Run the setup.py script (default: false)"
     echo
-    echo -e "${YELLOW}Examples:${NC}"
-    echo -e "  ${CYAN}$0 --start             🚀 Start the application without running setup.py${NC}"
-    echo -e "  ${CYAN}$0 --start --run-setup 🚀🛠️  Start the application and run setup.py${NC}"
+    echo "Examples:"
+    echo "  $0                   # Start the application without running setup.py"
+    echo "  $0 --run-setup       # Start the application and run setup.py"
     echo
-    echo -e "${MAGENTA}⚠️  Note: Make sure Docker is running before executing this script.${NC}"
+    echo "Note: Make sure Docker is running before executing this script."
 }
 
-# Default values
+# Default value for running setup.py
 RUN_SETUP=false
-START_APP=false
 
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
@@ -48,31 +41,49 @@ while [[ "$#" -gt 0 ]]; do
         --run-setup)
             RUN_SETUP=true
             ;;
-        --start)
-            START_APP=true
-            ;;
         *)
-            echo -e "${RED}❌ Unknown parameter passed: $1${NC}"
-            echo -e "Use '${CYAN}$0 --help${NC}' for usage information."
+            echo -e "${RED}Unknown parameter passed: $1${NC}"
+            echo "Use '$0 --help' for usage information."
             exit 1
             ;;
     esac
     shift
 done
 
-# If no arguments provided or only --run-setup provided without --start, show help
-if [ "$START_APP" = false ]; then
-    display_help
-    exit 0
-fi
-
-echo -e "${GREEN}🤖 Setting up Miles Chess Robot...${NC}"
+echo -e "${GREEN}Setting up Miles Chess Robot...${NC}"
 
 # Function to handle errors
 handle_error() {
-    echo -e "${RED}❌ Error: $1${NC}"
+    echo -e "${RED}Error: $1${NC}"
     exit 1
 }
+
+prompt_certabo_software_installation() {
+    echo -e "${YELLOW}Certabo software installation${NC}"
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        SOFTWARE_URL="https://www.certabo.com/wp-content/uploads/SOFTWARE/Release/Mac/Certabo%20Chess%204.52_Nov_2023.zip"
+    elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
+        # Windows
+        SOFTWARE_URL="https://www.certabo.com/download-new/"  # Update this with the correct Windows URL when available
+    else
+        echo -e "${RED}Unsupported operating system${NC}"
+        return 1
+    fi
+
+    echo -e "${YELLOW}Please follow these steps to install the Certabo software:${NC}"
+    echo -e "1. Download the Certabo software from: ${GREEN}$SOFTWARE_URL${NC}"
+    echo -e "2. Once downloaded, open the file and follow the installation instructions."
+    echo -e "3. After installation is complete, return to this terminal and press Enter to continue."
+
+    read -p "Press Enter when you have completed the Certabo software installation..."
+
+    echo -e "${GREEN}Thank you for installing the Certabo software. Continuing with the setup...${NC}"
+}
+
+# Install Certabo software
+prompt_certabo_software_installation
 
 # Check for Homebrew and install if missing
 if ! command -v brew &> /dev/null; then
@@ -140,42 +151,82 @@ else
     echo -e "${GREEN}User 'chessuser' already exists.${NC}"
 fi
 
-# Function to setup and start backend
-setup_backend() {
-    echo -e "${YELLOW}🔧 Setting up backend...${NC}"
-    cd backend || handle_error "Failed to change directory to backend"
-    python3 -m venv venv || handle_error "Failed to create virtual environment"
-    source venv/bin/activate || handle_error "Failed to activate virtual environment"
-    pip install --upgrade pip setuptools wheel || handle_error "Failed to install setuptools and wheel"
-    pip install -r requirements.txt || handle_error "Failed to install requirements"
-    
-    if [ "$RUN_SETUP" = true ]; then
-        echo -e "${CYAN}🛠️  Running setup.py...${NC}"
-        DB_HOST=localhost DB_NAME=chessdb DB_USER=postgres DB_PASSWORD=mysecretpassword python setup.py || handle_error "Failed to run setup.py"
-    else
-        echo -e "${MAGENTA}⏩ Skipping setup.py (use --run-setup flag to run it)${NC}"
-    fi
-    
-    echo -e "${GREEN}🚀 Starting backend server...${NC}"
-    python server.py &
-    cd ..
-}
+# Setup backend
+echo -e "${YELLOW}Setting up backend...${NC}"
+cd backend || handle_error "Failed to change directory to backend"
 
-# Function to setup and start frontend
-setup_frontend() {
-    echo -e "${YELLOW}🔧 Setting up frontend...${NC}"
-    cd frontend || handle_error "Failed to change directory to frontend"
-    npm install || handle_error "Failed to install frontend dependencies"
-    echo -e "${GREEN}🚀 Starting frontend...${NC}"
-    npm run dev &
-    cd ..
-}
+# Create virtual environment
+echo -e "${YELLOW}Creating virtual environment...${NC}"
+python3 -m venv venv || handle_error "Failed to create virtual environment"
 
-# Run backend and frontend setup in parallel
-setup_backend &
-setup_frontend &
+# Activate virtual environment
+echo -e "${YELLOW}Activating virtual environment...${NC}"
+source venv/bin/activate || handle_error "Failed to activate virtual environment"
 
-# Wait for both processes to finish
-wait
+# Install setuptools and wheel first
+echo -e "${YELLOW}Installing setuptools and wheel...${NC}"
+pip install --upgrade pip setuptools wheel || handle_error "Failed to install setuptools and wheel"
 
-echo -e "${GREEN}✅ Setup complete and application started!${NC}"
+# Install requirements
+echo -e "${YELLOW}Installing requirements...${NC}"
+pip install -r requirements.txt || handle_error "Failed to install requirements"
+
+# If NumPy installation fails, try to install it separately
+if ! pip show numpy > /dev/null 2>&1; then
+    echo -e "${YELLOW}NumPy installation failed. Trying to install latest version...${NC}"
+    pip install numpy || handle_error "Failed to install NumPy"
+fi
+
+# Create database.ini
+echo -e "${YELLOW}Creating database.ini...${NC}"
+cat << EOF > database/database.ini || handle_error "Failed to create database.ini"
+[postgresql]
+host = localhost
+database = chessdb
+user = chessuser
+password = chesspass
+EOF
+
+# Setup Stockfish
+echo -e "${YELLOW}Setting up Stockfish...${NC}"
+if ! command -v stockfish &> /dev/null; then
+    echo -e "${YELLOW}Stockfish not found. Installing Stockfish...${NC}"
+    brew install stockfish || handle_error "Failed to install Stockfish"
+else
+    echo -e "${GREEN}Stockfish is already installed.${NC}"
+fi
+
+# Get Stockfish path
+STOCKFISH_PATH=$(which stockfish)
+if [ -z "$STOCKFISH_PATH" ]; then
+    handle_error "Stockfish path not found"
+fi
+
+# Create config.py with Stockfish path
+echo -e "${YELLOW}Creating config.py with Stockfish path...${NC}"
+cat << EOF > config.py || handle_error "Failed to create config.py"
+STOCKFISH_PATH = "$STOCKFISH_PATH"
+EOF
+
+# Run setup.py only if the flag is set
+if [ "$RUN_SETUP" = true ]; then
+    echo -e "${YELLOW}Running setup.py...${NC}"
+    DB_HOST=localhost DB_NAME=chessdb DB_USER=postgres DB_PASSWORD=mysecretpassword python setup.py || handle_error "Failed to run setup.py"
+else
+    echo -e "${YELLOW}Skipping setup.py (use --run-setup flag to run it)${NC}"
+fi
+
+# Start backend server in a new terminal window
+echo -e "${YELLOW}Starting backend server in a new terminal...${NC}"
+osascript -e 'tell app "Terminal" to do script "cd '"$(pwd)"' && source venv/bin/activate && python server.py"' || handle_error "Failed to start backend server"
+
+# Setup frontend
+echo -e "${YELLOW}Setting up frontend...${NC}"
+cd ../frontend || handle_error "Failed to change directory to frontend"
+npm install || handle_error "Failed to install frontend dependencies"
+
+# Start frontend in a new terminal window
+echo -e "${YELLOW}Starting frontend in a new terminal...${NC}"
+osascript -e 'tell app "Terminal" to do script "cd '"$(pwd)"' && npm run dev"' || handle_error "Failed to start frontend"
+
+echo -e "${GREEN}Setup complete and application started in separate terminals!${NC}"

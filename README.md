@@ -225,6 +225,29 @@ Within the `chess-robot` project folder in `/backend`, run the script and follow
 python setup.py
 ```
 
+## System Setup and Start
+
+To set up the system and start the application, run:
+
+```
+./setup_and_start.sh
+```
+
+This script will:
+1. Install the Certabo board drivers
+2. Install necessary dependencies
+3. Set up the database
+4. Set up the backend and frontend
+5. Start the application
+
+To run the setup.py script as well, use:
+
+```
+./setup_and_start.sh --run-setup
+```
+
+Note: You may need to provide administrator privileges for driver installation.
+
 # Start application
 
 Open two terminals, one for backend and one for frontend.

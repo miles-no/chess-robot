@@ -6,3 +6,4 @@ config.py
 database.ini
 .venv
 .idea
+certabo_*

@@ -19,6 +19,17 @@ else:
     from serial.tools.list_ports_windows import comports
 
 def find_port():
+    specific_port = '/dev/tty.usbserial-11230'
+    if os.path.exists(specific_port):
+        try:
+            s = serial.Serial(specific_port)
+            s.close()
+            logging.debug(f'Port is found! - {specific_port}')
+            return specific_port
+        except serial.SerialException:
+            logging.debug('Specific port is busy or unavailable')
+    
+    # Fall back to the original method if the specific port is not available
     for port in comports():
         device = port[0]
         if 'bluetooth' in device.lower():
@@ -41,7 +52,7 @@ def find_port():
             return device
     else:
         logging.debug('Port not found')
-        return
+        return None
 
 class serialreader(threading.Thread):
     def __init__ (self, handler):
@@ -74,32 +85,41 @@ class serialreader(threading.Thread):
                 self.buf.extend(data)
 
     def run(self):
+        max_retries = 5
+        retry_delay = 2
         while True:
             if not self.connected:
-                try:
-                    logging.info(f'Auto-detecting serial port')
-                    serialport = find_port()
-                    if serialport is None:
-                        logging.info(f'No port found, retrying')
+                for attempt in range(max_retries):
+                    try:
+                        logging.info(f'Auto-detecting serial port (Attempt {attempt + 1}/{max_retries})')
+                        serialport = find_port()
+                        if serialport is None:
+                            logging.info(f'No port found, retrying in {retry_delay} seconds')
+                            time.sleep(retry_delay)
+                            continue
+                        logging.info(f'Opening serial port {serialport}')
+                        self.uart = serial.Serial(serialport, 38400*2)  # 0-COM1, 1-COM2 / speed /
+                        if os.name == 'posix':
+                            logging.debug(f'Attempting to lock {serialport}')
+                            fcntl.flock(self.uart.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                        logging.debug(f'Flushing input on {serialport}')
+                        self.uart.flushInput()
+                        self.uart.write(b'U\xaaU\xaaU\xaaU\xaa')
                         time.sleep(1)
-                        continue
-                    logging.info(f'Opening serial port {serialport}')
-                    self.uart = serial.Serial(serialport, 38400)  # 0-COM1, 1-COM2 / speed /
-                    if os.name == 'posix':
-                        logging.debug(f'Attempting to lock {serialport}')
-                        fcntl.flock(self.uart.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-                    logging.debug(f'Flushing input on {serialport}')
-                    self.uart.flushInput()
-                    self.uart.write(b'U\xaaU\xaaU\xaaU\xaa')
-                    time.sleep(1)
-                    self.uart.write(b'\xaaU\xaaU\xaaU\xaaU')
-                    time.sleep(1)
-                    self.uart.write(b'\x00\x00\x00\x00\x00\x00\x00\x00')
-                    self.connected = True
-                except Exception as e:
-                    logging.info(f'ERROR: Cannot open serial port {serialport}: {str(e)}')
-                    self.connected = False
-                    time.sleep(0.1)
+                        self.uart.write(b'\xaaU\xaaU\xaaU\xaaU')
+                        time.sleep(1)
+                        self.uart.write(b'\x00\x00\x00\x00\x00\x00\x00\x00')
+                        self.connected = True
+                        break
+                    except Exception as e:
+                        logging.info(f'ERROR: Cannot open serial port {serialport}: {str(e)}')
+                        self.connected = False
+                        if attempt < max_retries - 1:
+                            logging.info(f'Retrying in {retry_delay} seconds')
+                            time.sleep(retry_delay)
+                        else:
+                            logging.error(f'Failed to connect after {max_retries} attempts')
+                            time.sleep(10)  # Wait longer before starting over
             else:
                 try:
                     while True:
@@ -114,4 +134,3 @@ class serialreader(threading.Thread):
                 except Exception as e:
                     logging.info(f'Exception during serial communication: {str(e)}')
                     self.connected = False
-

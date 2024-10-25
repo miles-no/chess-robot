@@ -14,16 +14,19 @@ class ChessRobot:
 #        self.parser.read('robotMovement/robot.conf')
         conf = '/'.join([loc,'robot.conf'])        
         self.parser.read(conf)        
-        self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
-        self.taken = []
-        self.cc = ChessCoordinates()
-        self.arm.register_error_warn_changed_callback(callback=self.callback_error_warn_changed)
-        # Due to a bug in the xArm SDK, not resetting to the correct zero position upon reset(), 
-        # we have to compensate for this by adding the difference between the real zero position and the start position
-        self.zero_position = [87, 0, 51.2]
-        self.start_position = None
-        self.initialize()
-        
+        try:
+            self.arm = XArmAPI(self.parser.get('xArm', 'ip'))
+            self.taken = []
+            self.cc = ChessCoordinates()
+            self.arm.register_error_warn_changed_callback(callback=self.callback_error_warn_changed)
+            # Due to a bug in the xArm SDK, not resetting to the correct zero position upon reset(), 
+            # we have to compensate for this by adding the difference between the real zero position and the start position
+            self.zero_position = [87, 0, 51.2]
+            self.start_position = None
+            self.initialize()
+        except Exception as e:
+            print(f"Error initializing xArm: {e}")
+            self.arm = None
     
     def callback_error_warn_changed(self, data):
         if data['error_code'] == 22: # 22 = self collision
@@ -36,14 +39,21 @@ class ChessRobot:
             self.moving(100, self.arm.position[1], 200)
 
     def initialize(self):
-        self.arm.connect()
-        self.arm.motion_enable(enable=True)
-        self.arm.set_mode(0)
-        self.arm.set_state(state=0)
-        self.arm.set_collision_sensitivity(3)
-        time.sleep(1)
-        self.arm.reset(wait=True)
-        self.start_position = self.arm.position
+        if self.arm is None:
+            print("xArm not initialized. Skipping initialization.")
+            return
+        try:
+            self.arm.connect()
+            self.arm.motion_enable(enable=True)
+            self.arm.set_mode(0)
+            self.arm.set_state(state=0)
+            self.arm.set_collision_sensitivity(3)
+            time.sleep(1)
+            self.arm.reset(wait=True)
+            self.start_position = self.arm.position
+        except Exception as e:
+            print(f"Error during xArm initialization: {e}")
+            self.arm = None
 
     def movePiece(self, start_x, start_y, x, y):
         self.moving(100, 0, 110)
