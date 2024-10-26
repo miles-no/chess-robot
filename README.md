@@ -24,6 +24,58 @@ This is an application that integrates robotics and chess. It utilizes a [uFacto
 >**Note** <br/> The uFactory robot and Certabo board is not originally compatible. This means that the original gripper may result in malfunctioning movement, due to various sizes and shapes of chess pieces.
 > To remedy this custom made props including pieces and a 3D printed gripper extension are provided. 
 
+## Architecture
+
+```mermaid
+graph TD
+    User[User] --> |Interacts with| UI[Frontend UI]
+    UI --> |HTTP Requests| Server[Backend Server]
+    Server --> |Queries| DB[(PostgreSQL Database)]
+    Server --> |Controls| Robot[uFactory Lite 6 Robot]
+    Server --> |Reads| Board[Certabo Chessboard]
+    Server --> |Uses| Stockfish[Stockfish Chess Engine]
+    
+    subgraph Frontend
+        UI
+    end
+    
+    subgraph Backend
+        Server
+        Stockfish
+    end
+    
+    subgraph Hardware
+        Robot
+        Board
+    end
+    
+    subgraph Database
+        DB
+    end
+
+    classDef frontend fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef backend fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef hardware fill:#bfb,stroke:#333,stroke-width:2px;
+    classDef database fill:#fbb,stroke:#333,stroke-width:2px;
+    
+    class UI frontend;
+    class Server,Stockfish backend;
+    class Robot,Board hardware;
+    class DB database;
+```
+
+This diagram illustrates the main components of the Miles Chess Robot system:
+
+1. User: Represents the person interacting with the system.
+2. Frontend UI: The user interface, built with React and Vite.
+3. Backend Server: The Python-based server handling game logic and communication between components.
+4. PostgreSQL Database: Stores game data and other relevant information.
+5. uFactory Lite 6 Robot: The robotic arm that physically moves chess pieces.
+6. Certabo Chessboard: The smart chessboard with RFID chips and LEDs.
+7. Stockfish Chess Engine: Used to calculate the best moves for the AI opponent.
+
+The diagram shows how these components interact to create an integrated robotics and chess experience.
+
 ## Limitation
 
 As of now the board only allows for white to start at USB-side of the board. This means that the chosen color must be oriented towards the user by physically rotating the board. It's essential to ensure precise centering of the board for the robot to effectively handle the chess pieces. 
@@ -224,6 +276,29 @@ Within the `chess-robot` project folder in `/backend`, run the script and follow
 ```
 python setup.py
 ```
+
+## System Setup and Start
+
+To set up the system and start the application, run:
+
+```
+./setup_and_start.sh
+```
+
+This script will:
+1. Install the Certabo board drivers
+2. Install necessary dependencies
+3. Set up the database
+4. Set up the backend and frontend
+5. Start the application
+
+To run the setup.py script as well, use:
+
+```
+./setup_and_start.sh --run-setup
+```
+
+Note: You may need to provide administrator privileges for driver installation.
 
 # Start application
 

@@ -32,7 +32,13 @@ chess_logic = ChessLogic(pStockfish)
 InitializeCertabo()
 mycertabo = Certabo()
 
-cr = ChessRobot()
+try:
+    cr = ChessRobot()
+    if cr.arm is None:
+        print("Warning: xArm not initialized. Robot movements will be simulated.")
+except Exception as e:
+    print(f"Error initializing ChessRobot: {e}")
+    cr = None
 
 # SocketIO to handle new connections
 # Prints for every new connection
