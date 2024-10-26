@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
@@ -7,8 +7,13 @@ import GameStatus from "../../Components/GameStatus/GameStatus";
 import { default as PreGame } from "../../Components/PreGame/PreGame";
 import { useGameContext, GameState } from "./GameContext";
 import "./index.css";
+import { EvalGauge } from "../../Components/EvalGauge/EvalGauge.tsx";
 interface gameProps {
   socket: Socket;
+}
+
+interface Analysis {
+  relativeScore: number;
 }
 
 export default function Game(props: gameProps) {
@@ -27,6 +32,7 @@ export default function Game(props: gameProps) {
   const [promotion, setPromotion] = useState<string>("");
   const [player, setPlayer] = useState<string>();
   const [not_valid, setNotValid] = useState<boolean>(false);
+  const [relativeScore, setRelativeScore] = useState<number>(0);
 
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
@@ -34,6 +40,7 @@ export default function Game(props: gameProps) {
     props.socket.on("get-fen", handleFEN);
     props.socket.on("game-over", handleResultMessage);
     props.socket.on("promotion", handlePromotion);
+    props.socket.on("analysis", handleAnalysis);
     return () => {
       // Cleanup the props.socket listener when the component unmounts
       props.socket.off("invalid-move", handleInvalidMove);
@@ -74,7 +81,11 @@ export default function Game(props: gameProps) {
     }
   };
 
-    function startGame() {
+  function handleAnalysis({ relativeScore }: Analysis): void {
+    setRelativeScore(relativeScore);
+  }
+
+  function startGame() {
     if (props.socket.connected) {
       const preferences = {
         skill_level: stockfishlevel,
@@ -103,7 +114,7 @@ export default function Game(props: gameProps) {
   }
 
   const handleInvalidMove = () => {
-      setNotValid(true);
+    setNotValid(true);
   };
 
   const handleOK = () => {
@@ -185,8 +196,8 @@ export default function Game(props: gameProps) {
     }
   };
 
-  const handleValidMoves = (validMoves: string[]) => { 
-      setValidMoves(validMoves);
+  const handleValidMoves = (validMoves: string[]) => {
+    setValidMoves(validMoves);
   };
 
   return (
@@ -225,9 +236,10 @@ export default function Game(props: gameProps) {
               )}
             </Box>
             <Box className="chessboard-box">
-              <Box className="unclickable-area">
+              <Stack className="unclickable-area" direction="column">
+                <EvalGauge score={relativeScore} />
                 <MyChessboard socket={props.socket} FEN={FEN} />
-              </Box>
+              </Stack>
             </Box>
             {result === undefined && !gameState && (
               <AlertComponent
@@ -252,17 +264,17 @@ export default function Game(props: gameProps) {
                 player={undefined}
               />
             </Box>
-                      )}
-                      {(not_valid ) ? (
-                          <Box className="not-valid-move">
-                              <GameStatus
-                                  title="Invalid move!"
-                                  moves={valid_moves}
-                                  player={undefined}
-                              />
-                          </Box> 
-                      ) : <>  </>
-                      }
+          )}
+          {(not_valid) ? (
+            <Box className="not-valid-move">
+              <GameStatus
+                title="Invalid move!"
+                moves={valid_moves}
+                player={undefined}
+              />
+            </Box>
+          ) : <>  </>
+          }
         </Box>
       )}
     </Box>
