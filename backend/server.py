@@ -53,6 +53,7 @@ def newGame(arg):
     cr.reset_taken()
     emitFen()
     startGame(arg)
+    emitAnalysis()
 
 @socket_io.on('stop-game')
 def stopGame():
@@ -146,11 +147,16 @@ def handleStockfishMove():
 def doMove(move):
     mycertabo.moves.append(move)
     emitFen()
+    emitAnalysis()
 
 def emitFen():
     fen = mycertabo.chessboard.board_fen()
     message = {"fen": fen, "color": mycertabo.color, 'moves': mycertabo.moves}
     socket_io.emit("get-fen", message)
+
+def emitAnalysis():
+    analysis = chess_logic.getBoardAnalysis(mycertabo.chessboard)
+    socket_io.emit("analysis", { "relativeScore": analysis })
 
 if __name__ == '__main__':
     socket_io.run(app, port=5000)
