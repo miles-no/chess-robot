@@ -39,6 +39,11 @@ class ChessLogic:
         self.last_move = best_move
         return best_move
     
+    def getBoardAnalysis(self, board):
+        analysisDict = self.engine.analyse(board, chess.engine.Limit(time=0.3))
+        povScore = analysisDict["score"]
+        return povScore.relative
+    
     def getOutcome(self, board):
     #.winner returns true for white win, false for black, None for draw
         if board.outcome():
