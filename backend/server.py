@@ -50,6 +50,7 @@ def handle_connect():
 def newGame(arg):
     mycertabo.moves = []
     mycertabo.new_game()
+    cr.reset_taken()
     emitFen()
     startGame(arg)
 

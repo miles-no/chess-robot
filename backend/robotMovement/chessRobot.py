@@ -47,6 +47,9 @@ class ChessRobot:
             print(f"Error initializing xArm: {e}")
             self.arm = None
 
+    def reset_taken(self):
+        self.taken = []
+
     def callback_error_warn_changed(self, data):
         # Handle self-collision error
         if data["error_code"] == 22:  # 22 = self collision
