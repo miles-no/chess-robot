@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import {Box, Button, Stack} from "@mui/material";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import AlertComponent from "../../Components/Alert/Notification";
@@ -7,6 +7,7 @@ import GameStatus from "../../Components/GameStatus/GameStatus";
 import { default as PreGame } from "../../Components/PreGame/PreGame";
 import { useGameContext, GameState } from "./GameContext";
 import "./index.css";
+import {EvalGauge} from "../../Components/EvalGauge/EvalGauge.tsx";
 interface gameProps {
   socket: Socket;
 }
@@ -185,7 +186,7 @@ export default function Game(props: gameProps) {
     }
   };
 
-  const handleValidMoves = (validMoves: string[]) => { 
+  const handleValidMoves = (validMoves: string[]) => {
       setValidMoves(validMoves);
   };
 
@@ -225,9 +226,10 @@ export default function Game(props: gameProps) {
               )}
             </Box>
             <Box className="chessboard-box">
-              <Box className="unclickable-area">
+              <Stack className="unclickable-area" direction="column">
+                <EvalGauge score={140} />
                 <MyChessboard socket={props.socket} FEN={FEN} />
-              </Box>
+              </Stack>
             </Box>
             {result === undefined && !gameState && (
               <AlertComponent
@@ -260,7 +262,7 @@ export default function Game(props: gameProps) {
                                   moves={valid_moves}
                                   player={undefined}
                               />
-                          </Box> 
+                          </Box>
                       ) : <>  </>
                       }
         </Box>

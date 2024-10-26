@@ -53,7 +53,7 @@ export default function PreGame(props: alertProps) {
   ) => (
     <Card
       sx={{
-        width: 200,
+        width: "100%",
         textAlign: "center",
         border: "3px",
         borderRadius: "16px",
@@ -139,17 +139,14 @@ export default function PreGame(props: alertProps) {
             }
           />
         </Box>
-        <Grid item sx={{ padding: "1em" }}>
-          {renderCard("assets/images/king_w.png", "White piece", "White", true)}
-        </Grid>
-        <Grid item sx={{ padding: "1em" }}>
+        <Box sx={{ width: "100%", textAlign: "center", padding: "1em" }}>
           {renderCard(
             "assets/images/king_b.png",
             "Black piece",
             "Black",
             false
           )}
-        </Grid>
+        </Box>
         <Box sx={{ paddingTop: "1em" }}>
           <Typography sx={{ textAlign: "center" }}>
             Set stockfish level (1-20)
