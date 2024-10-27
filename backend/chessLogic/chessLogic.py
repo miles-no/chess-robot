@@ -42,7 +42,7 @@ class ChessLogic:
     def getBoardAnalysis(self, board):
         analysisDict = self.engine.analyse(board, chess.engine.Limit(time=0.3))
         povScore = analysisDict["score"]
-        return povScore.white().score(mate_score=10000)
+        return povScore.black().score(mate_score=10000)
     
     def getOutcome(self, board):
     #.winner returns true for white win, false for black, None for draw
