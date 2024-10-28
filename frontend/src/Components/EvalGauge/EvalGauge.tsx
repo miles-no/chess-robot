@@ -13,31 +13,30 @@ function mapValueToPercentage(score: number) {
   const x = toCentipawn(score);
   if (x <= -6) {
     return -49.8;                  // For values smaller than -6
-  } else if (x > -6 && x <= -5) {
+  } if (x > -6 && x <= -5) {
     return -49.8 + 2.3 * (x + 6);  // For values between -5 and -6
-  } else if (x > -5 && x <= -4) {
+  } if (x > -5 && x <= -4) {
     return -47.5 + 4.8 * (x + 5);  // For values between -4 and -5
-  } else if (x > -4 && x <= -3) {
+  } if (x > -4 && x <= -3) {
     return -42.7 + 7.2 * (x + 4);  // For values between -3 and -4
-  } else if (x > -3 && x <= -2) {
+  } if (x > -3 && x <= -2) {
     return -35.5 + 9.5 * (x + 3);  // For values between -2 and -3
-  } else if (x > -2 && x <= -1) {
+  } if (x > -2 && x <= -1) {
     return -26 + 11.8 * (x + 2);   // For values between -1 and -2
-  } else if (x > -1 && x < 1) {
+  } if (x > -1 && x < 1) {
     return 14.2 * x;               // For values between -1 and 1
-  } else if (x >= 1 && x < 2) {
+  } if (x >= 1 && x < 2) {
     return 14.2 + 11.8 * (x - 1);  // For values between 1 and 2
-  } else if (x >= 2 && x < 3) {
+  } if (x >= 2 && x < 3) {
     return 26 + 9.5 * (x - 2);     // For values between 2 and 3
-  } else if (x >= 3 && x < 4) {
+  } if (x >= 3 && x < 4) {
     return 35.5 + 7.2 * (x - 3);   // For values between 3 and 4
-  } else if (x >= 4 && x < 5) {
+  } if (x >= 4 && x < 5) {
     return 42.7 + 4.8 * (x - 4);   // For values between 4 and 5
-  } else if (x >= 5 && x < 6) {
+  } if (x >= 5 && x < 6) {
     return 47.5 + 2.3 * (x - 5);   // For values between 5 and 6
-  } else {
-    return 49.8;                   // For values greater than 6
   }
+  return 49.8;                   // For values greater than 6
 }
 
 interface EvalGaugeProps {

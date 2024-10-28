@@ -11,7 +11,7 @@
     width: 1.5em;
     height: 1.5em;
     line-height: 1.5em;
-    background: red;
+    background: #ff303b;
     border-radius: 50%;
     color: #fff;
     padding: 2px;
@@ -30,5 +30,5 @@
     margin: -4px auto 0;
     border-left: var(--arrow-size) solid transparent;
     border-right: var(--arrow-size) solid transparent;
-    border-top: var(--arrow-size) solid red;
+    border-top: var(--arrow-size) solid #ff303b;
 }
