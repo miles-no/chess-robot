@@ -1,0 +1,165 @@
+.hal-container {
+    width: 100px;
+    height: 250px;
+    border: 4px solid #949494;
+    background-color: black;
+    display: grid;
+    align-content: space-between;
+}
+
+.hal-name-container {
+    height: 20px;
+    margin: 10px;
+    border: 3px solid #949494;
+    display: grid;
+    grid-template-columns: 45px 1fr;
+}
+
+.hal-name-left {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    background-color: #0171D5;
+    height: 100%;
+    color: white;
+    font-size: 8px;
+    font-weight: 700;
+    padding-right: 2px;
+}
+
+.hal-name-right {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: white;
+    font-size: 8px;
+    font-weight: 700;
+    padding-left: 2px;
+}
+
+.hal-footer-box {
+    background-color: gray;
+    height: 60px;
+    width: 100px;
+}
+
+.hal-eye-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.hal-eye-container * {
+  border-radius: 100%;
+  box-sizing: border-box;
+  position: relative;
+
+  &::before,
+  &::after {
+    border-radius: inherit;
+    box-sizing: inherit;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+
+.base {
+	background-image: linear-gradient(45deg, #fefefe 10%, #5d6d94, #050718, #5d6d94, #fefefe 90%);
+	height: 260px;
+	width: 260px;
+	padding: 10px;
+	position: absolute;
+    top: 105px;
+	z-index: 10;
+    transform: scale(0.3);
+}
+.base::before {
+	background-image: linear-gradient(#d9dee5, #151531), linear-gradient(90deg, #434c77, #0b0a1f, #434c77);
+	background-blend-mode: hard-light, normal;
+	box-shadow: inset 0 0 14px 9px rgba(5, 7, 24, 0.4);
+	width: 240px;
+	height: 240px;
+}
+.base::after {
+	background-image: radial-gradient(#b10000 10%, rgba(177, 0, 0, 0) 71%);
+	mix-blend-mode: lighten;
+	top: -8px;
+	left: -10px;
+	width: 280px;
+	height: 280px;
+}
+.lens {
+	background-image: radial-gradient(#b10000 12%, #120619 67%, #200517);
+	border: 8px solid #050718;
+	box-shadow: inset 0 0 0 10px #380014;
+	top: 12px;
+	left: 12px;
+	width: 213px;
+	height: 213px;
+	z-index: 10;
+}
+.lens::before {
+	background-image: radial-gradient(#f00 20%, #470010 50%, #1a193e 80%);
+	mix-blend-mode: soft-light;
+	opacity: 0.8;
+	z-index: 100;
+}
+.lens::after {
+	background-image: radial-gradient(#fff 2px, #fff300 8px, rgba(255, 0, 0, 0.9) 14px, rgba(255, 0, 0, 0.08) 35px, transparent 35px);
+	z-index: 100;
+}
+.reflections, .reflections::before, .reflections::after {
+	background-image: radial-gradient(transparent 19%, #ec32aa 23%, #d4f6fc 28%, #ec32aa 33%, transparent 36%, transparent 38%, #e558d0 40%, #d0fcfe 45%, #ce73df 50%, transparent 52%, transparent 56%, #b883e7 60%, #b7ffff 65%, #3564c7 72%, transparent);
+	background-size: 182px 182px;
+	background-position: top center;
+	border-radius: 15px 15px 5px 5px / 5px 5px 15px 15px;
+	filter: blur(4px);
+	position: absolute;
+	top: 26px;
+	width: 58px;
+	height: 75px;
+	z-index: 10;
+}
+.reflections {
+	left: 69px;
+	transform: perspective(30px) rotate3d(1, 0, 0, -15deg);
+	transform-origin: top;
+}
+.reflections::before, .reflections::after {
+	height: 45px;
+	top: 28px;
+}
+.reflections::before {
+	left: -65px;
+	transform: rotate(-43deg);
+}
+.reflections::after {
+	right: -65px;
+	transform: rotate(43deg);
+}
+.animation {
+	animation: flicker 3s infinite;
+	background: radial-gradient(#79b4ba, #47696d, #890000);
+	mix-blend-mode: color-dodge;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1000;
+}
+@keyframes flicker {
+	0% {
+		opacity: 0;
+	}
+	15% {
+		opacity: 1;
+	}
+	75% {
+		opacity: 0;
+	}
+}

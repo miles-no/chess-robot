@@ -7,6 +7,7 @@ import GameStatus from "../../Components/GameStatus/GameStatus";
 import { default as PreGame } from "../../Components/PreGame/PreGame";
 import { useGameContext, GameState } from "./GameContext";
 import "./index.css";
+import Hal9000 from "../../Components/Hal9000/Hal9000";
 interface gameProps {
   socket: Socket;
 }
@@ -74,7 +75,7 @@ export default function Game(props: gameProps) {
     }
   };
 
-    function startGame() {
+  function startGame() {
     if (props.socket.connected) {
       const preferences = {
         skill_level: stockfishlevel,
@@ -103,7 +104,7 @@ export default function Game(props: gameProps) {
   }
 
   const handleInvalidMove = () => {
-      setNotValid(true);
+    setNotValid(true);
   };
 
   const handleOK = () => {
@@ -185,8 +186,8 @@ export default function Game(props: gameProps) {
     }
   };
 
-  const handleValidMoves = (validMoves: string[]) => { 
-      setValidMoves(validMoves);
+  const handleValidMoves = (validMoves: string[]) => {
+    setValidMoves(validMoves);
   };
 
   return (
@@ -228,6 +229,7 @@ export default function Game(props: gameProps) {
               <Box className="unclickable-area">
                 <MyChessboard socket={props.socket} FEN={FEN} />
               </Box>
+              <Hal9000 />
             </Box>
             {result === undefined && !gameState && (
               <AlertComponent
@@ -252,17 +254,18 @@ export default function Game(props: gameProps) {
                 player={undefined}
               />
             </Box>
-                      )}
-                      {(not_valid ) ? (
-                          <Box className="not-valid-move">
-                              <GameStatus
-                                  title="Invalid move!"
-                                  moves={valid_moves}
-                                  player={undefined}
-                              />
-                          </Box> 
-                      ) : <>  </>
-                      }
+          )}
+          {not_valid ? (
+            <Box className="not-valid-move">
+              <GameStatus
+                title="Invalid move!"
+                moves={valid_moves}
+                player={undefined}
+              />
+            </Box>
+          ) : (
+            <> </>
+          )}
         </Box>
       )}
     </Box>
