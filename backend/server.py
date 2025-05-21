@@ -55,6 +55,15 @@ def newGame(arg):
     startGame(arg)
     emitAnalysis()
 
+@socket_io.on('continue-game')
+def newGame(arg):
+    mycertabo.moves = []
+    # mycertabo.new_game()
+    cr.reset_taken()
+    emitFen()
+    startGame(arg)
+    emitAnalysis()
+
 @socket_io.on('stop-game')
 def stopGame():
     chess_logic.game_status = False

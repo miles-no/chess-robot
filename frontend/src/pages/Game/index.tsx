@@ -101,6 +101,20 @@ export default function Game(props: gameProps) {
     }
   }
 
+  function continueGame() {
+    if (props.socket.connected) {
+      const preferences = {
+        skill_level: stockfishlevel,
+        color: color,
+        name: player,
+      };
+      props.socket.emit("continue-game", preferences);
+      setGameState(GameState.inProgress);
+    } else {
+      setOpen(true);
+    }
+  }
+
   function handleResultMessage(messageDictionary: any) {
     if (messageDictionary.result) {
       setResult(messageDictionary.result);
@@ -200,7 +214,15 @@ export default function Game(props: gameProps) {
             >
               Start game
             </Button>
+            <Button
+              variant="outlined"
+              onClick={() => continueGame()}
+              className="new-button"
+            >
+              Continue game
+            </Button>
           </div>
+
         );
     }
   };
