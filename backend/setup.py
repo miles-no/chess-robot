@@ -10,7 +10,7 @@ def calibration():
     calibrate = True
     new_setup = True    
     Certabo(calibrate, new_setup)
-    time.sleep(7)
+    time.sleep(7) # why wait? No await?
     print("Certabo calibration finished")
 
 def main():

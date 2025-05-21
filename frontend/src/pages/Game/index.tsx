@@ -34,6 +34,8 @@ export default function Game(props: gameProps) {
   const [not_valid, setNotValid] = useState<boolean>(false);
   const [relativeScore, setRelativeScore] = useState<number>(0);
 
+  const [rotation, setRotation] = useState<"white" | "black">("white");
+
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
     props.socket.on("valid-moves", handleValidMoves);
@@ -179,6 +181,13 @@ export default function Game(props: gameProps) {
             >
               Get move
             </Button>
+            <Button
+              variant="outlined"
+              onClick={() => setRotation(rotation == "white" ? "black" : "white")}
+              className="moves-button"
+            >
+              Rotate board
+            </Button>
           </div>
         );
       case GameState.notStarted:
@@ -238,7 +247,7 @@ export default function Game(props: gameProps) {
             <Box className="chessboard-box">
               <Stack className="unclickable-area" direction="column">
                 <EvalGauge score={relativeScore} />
-                <MyChessboard socket={props.socket} FEN={FEN} />
+                <MyChessboard socket={props.socket} FEN={FEN} rotation={rotation} />
               </Stack>
             </Box>
             {result === undefined && !gameState && (
