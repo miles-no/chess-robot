@@ -66,7 +66,8 @@
   }
   /* Added CSS class for moved-piece */
 .moved-piece {
-  background-color: yellow;
+ 
+  opacity: 0.5%;
 }
   .chessboard-box {
     width: 100%;
