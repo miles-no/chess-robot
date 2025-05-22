@@ -8,6 +8,7 @@
 
 .eval-gauge__needle {
     position: absolute;
+    font-size: x-large;
     width: 1.5em;
     height: 1.5em;
     line-height: 1.5em;

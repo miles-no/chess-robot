@@ -34,12 +34,6 @@ export default function PreGame(props: alertProps) {
   const handleLevelChange = (e: ChangeEvent<HTMLInputElement>) => {
     let value = Number(e.target.value);
 
-    if (value < 1) {
-      value = 1;
-    } else if (value > 20) {
-      value = 20;
-    }
-
     setLevel(value);
   };
   const handleCardClick = (value: boolean) => {
@@ -149,7 +143,7 @@ export default function PreGame(props: alertProps) {
         </Box>
         <Box sx={{ paddingTop: "1em" }}>
           <Typography sx={{ textAlign: "center" }}>
-            Set stockfish level (1-20)
+            Set stockfish level (1-20) or ELO rating (1320-3000)
           </Typography>
           <TextField
             sx={{ width: "100%" }}

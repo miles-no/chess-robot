@@ -18,6 +18,7 @@ from pathlib import Path
 app = Flask(__name__)
 socket_io = SocketIO(app, cors_allowed_origins="*")
 
+
 pStockfish = ""
 if platform.system() == 'Windows':
     # Stockfish executable expected in chess-robot folder 
@@ -55,6 +56,15 @@ def newGame(arg):
     startGame(arg)
     emitAnalysis()
 
+@socket_io.on('continue-game')
+def newGame(arg):
+    # mycertabo.moves = []
+    # mycertabo.new_game()
+    cr.reset_taken()
+    emitFen()
+    startGame(arg)
+    emitAnalysis()
+
 @socket_io.on('stop-game')
 def stopGame():
     chess_logic.game_status = False
@@ -77,21 +87,34 @@ def getValidMoves():
 def startGame(arg):
     setPreferences(arg)
     chess_logic.game_status = True
+    is_in_check = False
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
         if not chess_logic.game_status:
             break
         if mycertabo.color == mycertabo.stockfish_color:
             move = handleStockfishMove()
+                         # Check if the player is in check
+            
+            if not is_in_check:  # Emit only if the state has changed
+                if chess_logic.isPlayerInCheck(mycertabo.chessboard, mycertabo.stockfish_color):
+                    socket_io.emit("is-check")
+                    is_in_check = True  # Set the flag to prevent repeated emissions
+                    continue  # Prevent further moves until the check is resolved
+       
         else:
+
             move = mycertabo.get_user_move()
             if move[1] == "Invalid move":
                 if chess_logic.game_status:
                     socket_io.emit("invalid-move")
                     continue
+                
                 else:
                     break
             mycertabo.setColor()
             move = move[0]
+                
+            is_in_check = False  # Reset the flag when no longer in check
         doMove(move)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
     if outcome != None:

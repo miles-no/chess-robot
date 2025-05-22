@@ -4,6 +4,7 @@ interface gameStatusProps {
   player: boolean | undefined;
   moves: string[] | undefined;
   title: string;
+  styles?: React.CSSProperties;
 }
 export default function GameStatus(props: gameStatusProps) {
   return (
@@ -27,6 +28,7 @@ export default function GameStatus(props: gameStatusProps) {
           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
           padding: "1em",
         }}
+        style={props.styles}
       >
         <Typography variant="h4" gutterBottom>
           {props.title}

@@ -32,7 +32,9 @@ export default function Game(props: gameProps) {
   const [promotion, setPromotion] = useState<string>("");
   const [player, setPlayer] = useState<string>();
   const [not_valid, setNotValid] = useState<boolean>(false);
+  const [is_check, setIsCheck] = useState<boolean>(false);
   const [relativeScore, setRelativeScore] = useState<number>(0);
+  const lastMove = moves && moves.length > 0 ? moves[moves.length - 1] : null;
 
   const [rotation, setRotation] = useState<"white" | "black">("white");
 
@@ -43,12 +45,15 @@ export default function Game(props: gameProps) {
     props.socket.on("game-over", handleResultMessage);
     props.socket.on("promotion", handlePromotion);
     props.socket.on("analysis", handleAnalysis);
+    props.socket.on("is-check", handleIsCheck); // Add listener for "is-check"
+
     return () => {
       // Cleanup the props.socket listener when the component unmounts
       props.socket.off("invalid-move", handleInvalidMove);
       props.socket.off("valid-moves", handleValidMoves);
       props.socket.off("get-fen", handleFEN);
       props.socket.off("game-over", handleResultMessage);
+      props.socket.off("is-check", handleIsCheck); // Cleanup "is-check" listener
     };
   }, [props.socket]);
 
@@ -73,6 +78,7 @@ export default function Game(props: gameProps) {
       setCurrentPlayer(message.color);
       setMoves(message.moves);
       setNotValid(false);
+      setIsCheck(false);
     }
   };
 
@@ -87,6 +93,8 @@ export default function Game(props: gameProps) {
     setRelativeScore(relativeScore);
   }
 
+
+
   function startGame() {
     if (props.socket.connected) {
       const preferences = {
@@ -95,6 +103,20 @@ export default function Game(props: gameProps) {
         name: player,
       };
       props.socket.emit("start-game", preferences);
+      setGameState(GameState.inProgress);
+    } else {
+      setOpen(true);
+    }
+  }
+
+  function continueGame() {
+    if (props.socket.connected) {
+      const preferences = {
+        skill_level: stockfishlevel,
+        color: color,
+        name: player,
+      };
+      props.socket.emit("continue-game", preferences);
       setGameState(GameState.inProgress);
     } else {
       setOpen(true);
@@ -118,6 +140,10 @@ export default function Game(props: gameProps) {
   const handleInvalidMove = () => {
     setNotValid(true);
   };
+  const handleIsCheck = () => {
+    setIsCheck(true);
+  };
+
 
   const handleOK = () => {
     setResult(undefined);
@@ -188,6 +214,13 @@ export default function Game(props: gameProps) {
             >
               Rotate board
             </Button>
+            {/* <Button
+              variant="outlined"
+              onClick={() => continueGame()}
+              className="new-button"
+            >
+              Continue game
+            </Button> */}
           </div>
         );
       case GameState.notStarted:
@@ -200,7 +233,9 @@ export default function Game(props: gameProps) {
             >
               Start game
             </Button>
+          
           </div>
+
         );
     }
   };
@@ -246,9 +281,9 @@ export default function Game(props: gameProps) {
             </Box>
             <Box className="chessboard-box">
               <Stack className="unclickable-area" direction="column">
+                Stockfish Difficulty: {stockfishlevel}
                 <EvalGauge score={relativeScore} />
-                <MyChessboard socket={props.socket} FEN={FEN} rotation={rotation} />
-              </Stack>
+              <MyChessboard socket={props.socket} FEN={FEN} rotation={rotation} lastMove={lastMove ?? undefined} />              </Stack>
             </Box>
             {result === undefined && !gameState && (
               <AlertComponent
@@ -280,8 +315,24 @@ export default function Game(props: gameProps) {
                 title="Invalid move!"
                 moves={valid_moves}
                 player={undefined}
+                styles={{
+                backgroundColor: "orange",
+                }}
               />
             </Box>
+          ) : <>  </>
+          }
+          {(is_check) ? (
+      <Box  >
+       <GameStatus 
+                title="CHECK"
+                moves={undefined}
+                player={undefined}
+                styles={{
+                  backgroundColor: "red",
+                }}
+              />
+    </Box>
           ) : <>  </>
           }
         </Box>
