@@ -19,7 +19,7 @@ class ChessRobot:
     TAKEN_PIECES_Y_ROW1 = 160
     TAKEN_PIECES_Y_ROW2 = -162
     TAKEN_PIECES_X_SPACING = 40
-    TAKEN_PIECES_PER_ROW = 8
+    TAKEN_PIECES_PER_ROW = 7
 
     def __init__(self):
         # Initialize chess robot properties

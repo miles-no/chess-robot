@@ -29,18 +29,23 @@ class ChessLogic:
         self.engine.quit()
     
     def setSkillLevel(self, skill_level):
-        self.engine.configure({"Skill Level": skill_level})
+        # IF skill_level is 500 or more, it is using ELO, not stockfish skill level
+        if skill_level >= 500:
+            self.engine.configure({ "UCI_Elo": skill_level, "UCI_LimitStrength": True })
+        else:
+            self.engine.configure({"Skill Level": skill_level})
+            
         self.skill_level = skill_level
 
     # Returns move in 'chess.Move' format
     def getBestMove(self, board):
-        result = self.engine.play(board, chess.engine.Limit(time=0.3))
+        result = self.engine.play(board, chess.engine.Limit(time=1.3))
         best_move = result.move
         self.last_move = best_move
         return best_move
     
     def getBoardAnalysis(self, board):
-        analysisDict = self.engine.analyse(board, chess.engine.Limit(time=0.3))
+        analysisDict = self.engine.analyse(board, chess.engine.Limit(time=1.3))
         povScore = analysisDict["score"]
         return povScore.black().score(mate_score=10000)
     
@@ -99,3 +104,21 @@ class ChessLogic:
 
     def setPlayer(self, name):
         self.player = name
+
+    def isPlayerInCheck(self, board, color):
+        """
+        Determines if the current player or the opponent is in check.
+        :param board: The chess.Board object representing the current game state.
+        :return: A string indicating which player is in check ("white", "black", or None).
+        """
+        if board.is_check():
+            # Check whose turn it is to determine who is in check
+            if board.turn:  # True means it's white's turn
+                print("Debug: White is in check")  # Console log for debugging
+                return "white"
+            else:  # False means
+                print("Debug: Black is in check")  # Console log for debugging
+                return "black"
+        print("Debug: No player is in check")  # Console log for debugging
+        return None
+
