@@ -2,7 +2,6 @@ from argparse import ArgumentParser
 import pathlib
 from flask import Flask
 from flask_socketio import SocketIO
-from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 from certaboHelper.certabo import Certabo
 from certaboHelper.initCertabo import InitializeCertabo
@@ -25,7 +24,9 @@ if platform.system() == 'Windows':
      conf = ''.join([str(loc),STOCKFISH_PATH])
      pStockfish = conf
 elif platform.system() == 'Darwin': #Darwin for MacOS
-    pStockfish = STOCKFISH_PATH
+    pStockfish = "/opt/homebrew/bin/stockfish"
+else: #Default to Linux
+    pStockfish ="/usr/local/bin/stockfish"
 
 chess_logic = ChessLogic(pStockfish)
 
