@@ -315,6 +315,9 @@ export default function Game(props: gameProps) {
                 title="Invalid move!"
                 moves={valid_moves}
                 player={undefined}
+                styles={{
+                backgroundColor: "orange",
+                }}
               />
             </Box>
           ) : <>  </>
