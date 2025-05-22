@@ -30,10 +30,10 @@ class ChessLogic:
     
     def setSkillLevel(self, skill_level):
         # IF skill_level is 500 or more, it is using ELO, not stockfish skill level
-        if skill_level >= 500:
-            self.engine.configure({ "UCI_Elo": skill_level, "UCI_LimitStrength": True })
+        if skill_level >= 1320:
+            self.engine.configure({ "UCI_Elo": int(skill_level), "UCI_LimitStrength": True })
         else:
-            self.engine.configure({"Skill Level": skill_level})
+            self.engine.configure({"Skill Level": int(skill_level)})
             
         self.skill_level = skill_level
 

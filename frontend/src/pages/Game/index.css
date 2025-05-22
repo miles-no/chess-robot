@@ -64,6 +64,10 @@
   .game {
     max-width: 90%;
   }
+  /* Added CSS class for moved-piece */
+.moved-piece {
+  background-color: yellow;
+}
   .chessboard-box {
     width: 100%;
   }

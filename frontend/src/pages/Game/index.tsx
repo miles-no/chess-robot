@@ -34,6 +34,7 @@ export default function Game(props: gameProps) {
   const [not_valid, setNotValid] = useState<boolean>(false);
   const [is_check, setIsCheck] = useState<boolean>(false);
   const [relativeScore, setRelativeScore] = useState<number>(0);
+  const lastMove = moves && moves.length > 0 ? moves[moves.length - 1] : null;
 
   const [rotation, setRotation] = useState<"white" | "black">("white");
 
@@ -282,8 +283,7 @@ export default function Game(props: gameProps) {
               <Stack className="unclickable-area" direction="column">
                 Stockfish Difficulty: {stockfishlevel}
                 <EvalGauge score={relativeScore} />
-                <MyChessboard socket={props.socket} FEN={FEN} rotation={rotation} />
-              </Stack>
+              <MyChessboard socket={props.socket} FEN={FEN} rotation={rotation} lastMove={lastMove ?? undefined} />              </Stack>
             </Box>
             {result === undefined && !gameState && (
               <AlertComponent

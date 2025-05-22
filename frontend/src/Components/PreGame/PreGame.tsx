@@ -143,7 +143,7 @@ export default function PreGame(props: alertProps) {
         </Box>
         <Box sx={{ paddingTop: "1em" }}>
           <Typography sx={{ textAlign: "center" }}>
-            Set stockfish level (1-20) or ELO rating (500-3000)
+            Set stockfish level (1-20) or ELO rating (1320-3000)
           </Typography>
           <TextField
             sx={{ width: "100%" }}

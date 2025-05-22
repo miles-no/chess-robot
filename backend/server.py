@@ -99,7 +99,7 @@ def startGame(arg):
                 if chess_logic.isPlayerInCheck(mycertabo.chessboard, mycertabo.stockfish_color):
                     socket_io.emit("is-check")
                     is_in_check = True  # Set the flag to prevent repeated emissions
-                continue  # Prevent further moves until the check is resolved
+                    continue  # Prevent further moves until the check is resolved
        
         else:
 
@@ -115,7 +115,6 @@ def startGame(arg):
             move = move[0]
                 
             is_in_check = False  # Reset the flag when no longer in check
-
         doMove(move)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)
     if outcome != None:
