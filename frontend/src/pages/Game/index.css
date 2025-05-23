@@ -43,7 +43,7 @@
   border-color: black;
   color: black;
   width: 150px;
-  margin: 0 1em 0 0;
+  margin: 1em 1em 0 0;
 }
 
 .game-button Button:hover {
@@ -54,7 +54,7 @@
   font-weight: bold;
 }
 .game-button {
-  width: 400px;
+  width: 600px;
 }
 
 @media only screen and (max-width: 650px) {
@@ -83,10 +83,7 @@
     max-width: 100%;
   }
 
-  .game-button Button {
-    width: 50%;
-    margin: 0 0 1em 0;
-  }
+
 
   .start-button Button {
     width: 100%;
