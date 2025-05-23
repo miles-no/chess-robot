@@ -35,6 +35,7 @@ export default function Game(props: gameProps) {
   const [is_check, setIsCheck] = useState<boolean>(false);
   const [relativeScore, setRelativeScore] = useState<number>(0);
   const lastMove = moves && moves.length > 0 ? moves[moves.length - 1] : null;
+  const [bestMove, setBestMove] = useState<string | null>(null);
 
   const [rotation, setRotation] = useState<"white" | "black">("white");
 
@@ -47,6 +48,7 @@ export default function Game(props: gameProps) {
     props.socket.on("promotion", handlePromotion);
     props.socket.on("analysis", handleAnalysis);
     props.socket.on("is-check", handleIsCheck); // Add listener for "is-check"
+    props.socket.on("best-move", setBestMove);
 
     return () => {
       // Cleanup the props.socket listener when the component unmounts
@@ -55,6 +57,7 @@ export default function Game(props: gameProps) {
       props.socket.off("get-fen", handleFEN);
       props.socket.off("game-over", handleResultMessage);
       props.socket.off("is-check", handleIsCheck); // Cleanup "is-check" listener
+      props.socket.off("best-move", setBestMove);
     };
   }, [props.socket]);
 
@@ -233,6 +236,24 @@ export default function Game(props: gameProps) {
             >
               Get valid moves
             </Button>
+            <Button
+  variant="contained"
+  color="info"
+  onClick={() => props.socket.emit("get-best-move")}
+  sx={{ marginLeft: 2, marginBottom: 2 }}
+>
+  Show Best Move
+</Button>
+            <Button
+              variant="contained"
+              color="warning"
+              onClick={() => {
+                props.socket.emit("reset-board-to-start");
+              }}
+              sx={{ marginLeft: 2, marginBottom: 2 }}
+            >
+             BETA Reset Board to Start
+            </Button>
           </div>
         );
       case GameState.notStarted:
@@ -336,7 +357,13 @@ export default function Game(props: gameProps) {
                 player={undefined}
               />
             </Box>
+            
           )}
+          {bestMove && (
+  <Box sx={{ margin: 2, fontWeight: "bold", color: "#1976d2" }}>
+    Best Move: {bestMove}
+  </Box>
+)}
           {(not_valid) ? (
             <Box className="not-valid-move">
               <GameStatus

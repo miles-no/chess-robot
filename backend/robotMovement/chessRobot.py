@@ -151,3 +151,61 @@ class ChessRobot:
             x = self.TAKEN_PIECES_START_X + (len(self.taken) - self.TAKEN_PIECES_PER_ROW - 1) * self.TAKEN_PIECES_X_SPACING
             y = self.TAKEN_PIECES_Y_ROW2
         self.movePiece(x_from, y_from, x, y)
+
+    def reset_board_to_start(self, moves=None):
+        """
+        Move only misplaced pieces back to their starting positions.
+        If a move list is provided, reconstruct the board and move pieces back.
+        """
+        import chess
+        # Start from the initial board
+        board = chess.Board()
+        # Apply all moves if provided
+        if moves:
+            for move in moves:
+                try:
+                    board.push_uci(move)
+                except Exception as e:
+                    print(f"Invalid move in move list: {move}, error: {e}")
+
+        # Get current and starting piece maps
+        current_map = board.piece_map()
+        starting_board = chess.Board()
+        starting_map = starting_board.piece_map()
+
+        # Build reverse lookup for starting squares by piece type and color
+        starting_squares = {}
+        for sq, piece in starting_map.items():
+            key = (piece.symbol(), piece.color)
+            starting_squares.setdefault(key, []).append(sq)
+
+        # Track which starting squares are already correct
+        used_starts = {k: [] for k in starting_squares}
+
+        # For each piece on the current board
+        for sq, piece in current_map.items():
+            key = (piece.symbol(), piece.color)
+            # If this square should have this piece in the starting position, skip
+            if sq in starting_squares.get(key, []) and sq not in used_starts[key]:
+                used_starts[key].append(sq)
+                continue  # Already correct, do not move
+
+            # Otherwise, find an unused correct starting square for this piece
+            possible_starts = starting_squares.get(key, [])
+            for start_sq in possible_starts:
+                if start_sq not in used_starts[key]:
+                    from_sq = chess.square_name(sq)
+                    to_sq = chess.square_name(start_sq)
+                    print(f"Moving {piece.symbol()} from {from_sq} to {to_sq}")
+                    self.doMove(from_sq + to_sq, piece.color)
+                    used_starts[key].append(start_sq)
+                    break
+
+        print("Board reset to starting position (only misplaced pieces moved).")
+
+    def movePieceToSquare(self, from_square, to_square, color=True):
+        """
+        Move a piece from one square to another using the robot.
+        """
+        print(f"Moving piece from {from_square} to {to_square}")
+        self.doMove(from_square + to_square, color)

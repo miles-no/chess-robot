@@ -67,6 +67,11 @@ def newGame(arg):
 
 @socket_io.on('stop-game')
 def stopGame():
+    mycertabo.moves = []
+    mycertabo.new_game()
+    cr.reset_taken()
+    emitFen()
+    emitAnalysis()
     chess_logic.game_status = False
    
 @socket_io.on('get-valid-moves')
@@ -88,6 +93,7 @@ def startGame(arg):
     setPreferences(arg)
     chess_logic.game_status = True
     is_in_check = False
+    best_move = chess_logic.getBestMove(mycertabo.chessboard)
     while chess_logic.getOutcome(mycertabo.chessboard) is None:
         if not chess_logic.game_status:
             break
@@ -102,7 +108,7 @@ def startGame(arg):
                     continue  # Prevent further moves until the check is resolved
        
         else:
-
+ 
             move = mycertabo.get_user_move()
             if move[1] == "Invalid move":
                 if chess_logic.game_status:
@@ -138,7 +144,7 @@ def setPreferences(arg):
 
 def handleStockfishMove():
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
-    time.sleep(2)
+    time.sleep(3)
     # Check passant
     if chess_logic.checkPassant(best_move, mycertabo.chessboard):
         piece_to_remove = best_move.uci()[2]+best_move.uci()[1]
@@ -216,6 +222,78 @@ def stopSelfPlay():
     global self_play_active
     self_play_active = False
     chess_logic.game_status = False
+
+@socket_io.on('reset-board-to-start')
+def reset_board_to_start():
+    if cr is not None:
+        # Let the robot move misplaced pieces first
+        cr.reset_board_to_start(mycertabo.moves)
+        # Now reset the software board state
+
+        emitFen()
+        emitAnalysis()
+        socket_io.emit("board-reset-complete")
+    else:
+        socket_io.emit("error", {"message": "Robot not available"})    
+
+def reset_board_to_start(self, moves=None):
+    """
+    Move only misplaced pieces back to their starting positions.
+    If a move list is provided, reconstruct the board and move pieces back.
+    """
+    import chess
+    # Start from the initial board
+    board = chess.Board()
+    # Apply all moves if provided
+    if moves:
+        for move in moves:
+            try:
+                board.push_uci(move)
+            except Exception as e:
+                print(f"Invalid move in move list: {move}, error: {e}")
+
+    # Get current and starting piece maps
+    current_map = board.piece_map()
+    starting_board = chess.Board()
+    starting_map = starting_board.piece_map()
+
+    # Build reverse lookup for starting squares by piece type and color
+    starting_squares = {}
+    for sq, piece in starting_map.items():
+        key = (piece.symbol(), piece.color)
+        starting_squares.setdefault(key, []).append(sq)
+
+    # Track which starting squares are already correct
+    used_starts = {k: [] for k in starting_squares}
+
+    # For each piece on the current board
+    for sq, piece in current_map.items():
+        key = (piece.symbol(), piece.color)
+        # If this square should have this piece in the starting position, skip
+        if sq in starting_squares.get(key, []) and sq not in used_starts[key]:
+            used_starts[key].append(sq)
+            continue  # Already correct, do not move
+
+        # Otherwise, find an unused correct starting square for this piece
+        possible_starts = starting_squares.get(key, [])
+        for start_sq in possible_starts:
+            if start_sq not in used_starts[key]:
+                from_sq = chess.square_name(sq)
+                to_sq = chess.square_name(start_sq)
+                print(f"Moving {piece.symbol()} from {from_sq} to {to_sq}")
+                self.doMove(from_sq + to_sq, piece.color)
+                used_starts[key].append(start_sq)
+                break
+
+    print("Board reset to starting position (only misplaced pieces moved).")
+
+@socket_io.on('get-best-move')
+def getBestMove():
+    best_move = chess_logic.getBestMove(mycertabo.chessboard)
+    if best_move:
+        socket_io.emit('best-move', best_move.uci())
+    else:
+        socket_io.emit('best-move', None)
 
 if __name__ == '__main__':
     socket_io.run(app, port=5000)
