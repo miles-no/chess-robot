@@ -185,16 +185,33 @@ class ChessRobot:
         # For each piece on the current board
         for sq, piece in current_map.items():
             key = (piece.symbol(), piece.color)
-            # If this square should have this piece in the starting position, skip
+            # If this piece is already on a correct starting square, skip
             if sq in starting_squares.get(key, []) and sq not in used_starts[key]:
                 used_starts[key].append(sq)
                 continue  # Already correct, do not move
 
-            # Otherwise, find an unused correct starting square for this piece
             possible_starts = starting_squares.get(key, [])
+            from_sq = chess.square_name(sq)
+
+            # Special handling for pawns: match file (column)
+            if piece.symbol().lower() == 'p':
+                from_file = chess.square_file(sq)
+                # Find the starting square for this pawn's file
+                start_sq = None
+                for s in possible_starts:
+                    if chess.square_file(s) == from_file and s not in used_starts[key]:
+                        start_sq = s
+                        break
+                if start_sq is not None:
+                    to_sq = chess.square_name(start_sq)
+                    print(f"Moving {piece.symbol()} from {from_sq} to {to_sq}")
+                    self.doMove(from_sq + to_sq, piece.color)
+                    used_starts[key].append(start_sq)
+                continue
+
+            # For other pieces, use the first available starting square
             for start_sq in possible_starts:
                 if start_sq not in used_starts[key]:
-                    from_sq = chess.square_name(sq)
                     to_sq = chess.square_name(start_sq)
                     print(f"Moving {piece.symbol()} from {from_sq} to {to_sq}")
                     self.doMove(from_sq + to_sq, piece.color)

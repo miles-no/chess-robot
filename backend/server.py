@@ -70,6 +70,8 @@ def stopGame():
     mycertabo.moves = []
     mycertabo.new_game()
     cr.reset_taken()
+    if hasattr(cr, "stop_reset"):
+        cr.stop_reset()
     emitFen()
     emitAnalysis()
     chess_logic.game_status = False
@@ -238,13 +240,13 @@ def reset_board_to_start():
 
 def reset_board_to_start(self, moves=None):
     """
-    Move only misplaced pieces back to their starting positions.
-    If a move list is provided, reconstruct the board and move pieces back.
+    Move only misplaced pieces (that are present on the board) back to their starting positions.
+    Ignore missing/captured pieces and do not try to "fix" them.
     """
     import chess
-    # Start from the initial board
+
+    # Reconstruct the current board from the move list
     board = chess.Board()
-    # Apply all moves if provided
     if moves:
         for move in moves:
             try:
@@ -252,7 +254,6 @@ def reset_board_to_start(self, moves=None):
             except Exception as e:
                 print(f"Invalid move in move list: {move}, error: {e}")
 
-    # Get current and starting piece maps
     current_map = board.piece_map()
     starting_board = chess.Board()
     starting_map = starting_board.piece_map()
@@ -266,10 +267,10 @@ def reset_board_to_start(self, moves=None):
     # Track which starting squares are already correct
     used_starts = {k: [] for k in starting_squares}
 
-    # For each piece on the current board
+    # Only consider pieces that are currently on the board
     for sq, piece in current_map.items():
         key = (piece.symbol(), piece.color)
-        # If this square should have this piece in the starting position, skip
+        # If this piece is already on a correct starting square, skip
         if sq in starting_squares.get(key, []) and sq not in used_starts[key]:
             used_starts[key].append(sq)
             continue  # Already correct, do not move
@@ -285,8 +286,7 @@ def reset_board_to_start(self, moves=None):
                 used_starts[key].append(start_sq)
                 break
 
-    print("Board reset to starting position (only misplaced pieces moved).")
-
+    print("Board reset to starting position (only misplaced pieces moved, only for pieces present on the board).")
 @socket_io.on('get-best-move')
 def getBestMove():
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
