@@ -97,7 +97,13 @@ class Certabo():
                             if self.wait_for_move:
                                 logging.debug('trying to find user move in usb data')
                                 try:
-                                    self.pending_move = get_moves(self.chessboard, self.board_state_usb, self.color) # only search one move deep
+                                    self.pending_move = get_moves(self.chessboard, self.board_state_usb, self.color)
+                                    move_str = self.pending_move[0]
+                                    # --- ADD THIS VALIDATION ---
+                                    if not move_str or len(move_str) not in [4, 5]:
+                                        logging.debug(f"Ignoring incomplete move string: {move_str}")
+                                        return  # Ignore and wait for a valid move
+                                    # --- END VALIDATION ---
                                     if self.pending_move[1] != None and self.pending_move[1] != "Invalid move":
                                         logging.debug('firing event')
                                         self.chessboard.push_uci(self.pending_move[0])
