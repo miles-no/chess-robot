@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 import pathlib
 from flask import Flask
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 from config import STOCKFISH_PATH
 from chessLogic.chessLogic import ChessLogic
 from certaboHelper.certabo import Certabo
@@ -180,6 +180,42 @@ def emitFen():
 def emitAnalysis():
     analysis = chess_logic.getBoardAnalysis(mycertabo.chessboard)
     socket_io.emit("analysis", { "relativeScore": analysis })
+
+self_play_active = False
+
+@socket_io.on('start-self-play')
+def startSelfPlay(arg):
+    global self_play_active
+    self_play_active = True
+    mycertabo.new_game()
+    cr.reset_taken()
+    emitFen()
+    chess_logic.setSkillLevel(arg.get('skill_level', 1))
+    chess_logic.setPlayer("Self-Play")
+    mycertabo.setStockfishColor(True)  # White starts
+    chess_logic.game_status = True
+
+    while self_play_active and chess_logic.getOutcome(mycertabo.chessboard) is None:
+        mycertabo.color = True  
+        move = chess_logic.getBestMove(mycertabo.chessboard)
+        mycertabo.stockfish_move(move)
+        cr.doMove(move.uci(), mycertabo.color)
+        mycertabo.setColor()
+        doMove(move.uci())
+        time.sleep(1.5)  # Adjust speed as needed
+
+    outcome = chess_logic.getOutcome(mycertabo.chessboard)
+    if outcome is not None:
+        score = chess_logic.getScore(mycertabo.chessboard, mycertabo.stockfish_color)
+        result = {"result": outcome[0], "winner": outcome[1], "score": score}
+        socket_io.emit("game-over", result)
+        chess_logic.game_status = False
+
+@socket_io.on('stop-self-play')
+def stopSelfPlay():
+    global self_play_active
+    self_play_active = False
+    chess_logic.game_status = False
 
 if __name__ == '__main__':
     socket_io.run(app, port=5000)

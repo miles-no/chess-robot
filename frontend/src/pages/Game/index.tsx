@@ -38,6 +38,7 @@ export default function Game(props: gameProps) {
 
   const [rotation, setRotation] = useState<"white" | "black">("white");
 
+
   useEffect(() => {
     props.socket.on("invalid-move", handleInvalidMove);
     props.socket.on("valid-moves", handleValidMoves);
@@ -93,8 +94,6 @@ export default function Game(props: gameProps) {
     setRelativeScore(relativeScore);
   }
 
-
-
   function startGame() {
     if (props.socket.connected) {
       const preferences = {
@@ -144,7 +143,6 @@ export default function Game(props: gameProps) {
     setIsCheck(true);
   };
 
-
   const handleOK = () => {
     setResult(undefined);
     setOpen(false);
@@ -176,13 +174,20 @@ export default function Game(props: gameProps) {
     props.socket.emit("get-valid-moves");
   };
 
+  const startSelfPlay = () => {
+    props.socket.emit('start-self-play', { skill_level: 10 }); // Adjust skill level as needed
+  }
+  const stopSelfPlay = () => {
+    props.socket.emit('stop-self-play');
+  }
+
   const getButton = () => {
     switch (gameState) {
       case GameState.hasEnded:
         return (
           <div className="game-button">
             <Button
-              variant="outlined"
+              variant="contained"
               onClick={() => newGame()}
               className="new-button"
             >
@@ -192,35 +197,42 @@ export default function Game(props: gameProps) {
         );
       case GameState.inProgress:
         return (
-          <div className="game-button">
+          <div className="game-button" style={{ display: 'flex', alignItems: 'center' }}>
             <Button
-              variant="outlined"
+              variant="contained"
+              color="success"
               onClick={() => newGame()}
               className="new-button"
             >
               New game
             </Button>
             <Button
-              variant="outlined"
-              onClick={() => getValidMoves()}
-              className="moves-button"
+              variant="contained"
+              color="error"
+              onClick={() => {
+                props.socket.emit("stop-game");
+                setGameState(GameState.notStarted);
+              }}
+              sx={{ marginLeft: 2, marginBottom: 2 }}
             >
-              Get move
+              Stop Game
             </Button>
             <Button
               variant="outlined"
               onClick={() => setRotation(rotation == "white" ? "black" : "white")}
               className="moves-button"
+              sx={{ marginLeft: 2, marginBottom: 2 }}
             >
               Rotate board
             </Button>
-            {/* <Button
-              variant="outlined"
-              onClick={() => continueGame()}
-              className="new-button"
+            <Button
+              variant="contained"
+              onClick={() => getValidMoves()}
+              className="moves-button"
+              sx={{ marginLeft: 2, marginBottom: 2 }}
             >
-              Continue game
-            </Button> */}
+              Get valid moves
+            </Button>
           </div>
         );
       case GameState.notStarted:
@@ -228,12 +240,28 @@ export default function Game(props: gameProps) {
           <div className="start-button">
             <Button
               variant="contained"
+              color="success"
               onClick={() => startGame()}
-              sx={{ backgroundColor: "black" }}
+
             >
               Start game
             </Button>
-          
+            <Button
+              variant="contained"
+              color="warning"
+              onClick={startSelfPlay}
+              sx={{ marginLeft: 2 }}
+            >
+              Start Self-Play
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={stopSelfPlay}
+              sx={{ marginLeft: 2 }}
+            >
+              Stop Self-Play
+            </Button>
           </div>
 
         );
@@ -283,7 +311,7 @@ export default function Game(props: gameProps) {
               <Stack className="unclickable-area" direction="column">
                 Stockfish Difficulty: {stockfishlevel}
                 <EvalGauge score={relativeScore} />
-              <MyChessboard socket={props.socket} FEN={FEN} rotation={rotation} lastMove={lastMove ?? undefined} />              </Stack>
+                <MyChessboard socket={props.socket} FEN={FEN} rotation={rotation} lastMove={lastMove ?? undefined} />              </Stack>
             </Box>
             {result === undefined && !gameState && (
               <AlertComponent
@@ -316,15 +344,15 @@ export default function Game(props: gameProps) {
                 moves={valid_moves}
                 player={undefined}
                 styles={{
-                backgroundColor: "orange",
+                  backgroundColor: "orange",
                 }}
               />
             </Box>
           ) : <>  </>
           }
           {(is_check) ? (
-      <Box  >
-       <GameStatus 
+            <Box  >
+              <GameStatus
                 title="CHECK"
                 moves={undefined}
                 player={undefined}
@@ -332,7 +360,7 @@ export default function Game(props: gameProps) {
                   backgroundColor: "red",
                 }}
               />
-    </Box>
+            </Box>
           ) : <>  </>
           }
         </Box>
