@@ -15,8 +15,8 @@ export default function MyChessboard(props: mychessboardProps) {
 
   // Build custom styles for those squares
   const customSquareStyles: Record<string, React.CSSProperties> = {};
-  if (from) customSquareStyles[from] = { background: "yellow" };
-  if (to) customSquareStyles[to] = { background: "yellow" };
+if (from) customSquareStyles[from] = { background: "rgba(255, 255, 0, 0.4)" };
+if (to) customSquareStyles[to] = { background: "rgba(255, 255, 0, 0.4)" };
 
   return (
     <Chessboard

@@ -83,6 +83,7 @@ export default function Game(props: gameProps) {
       setMoves(message.moves);
       setNotValid(false);
       setIsCheck(false);
+      setBestMove(null);
     }
   };
 
@@ -237,13 +238,13 @@ export default function Game(props: gameProps) {
               Get valid moves
             </Button>
             <Button
-  variant="contained"
-  color="info"
-  onClick={() => props.socket.emit("get-best-move")}
-  sx={{ marginLeft: 2, marginBottom: 2 }}
->
-  Show Best Move
-</Button>
+              variant="contained"
+              color="info"
+              onClick={() => props.socket.emit("get-best-move")}
+              sx={{ marginLeft: 2, marginBottom: 2 }}
+            >
+              Show Best Move
+            </Button>
             <Button
               variant="contained"
               color="warning"
@@ -252,7 +253,7 @@ export default function Game(props: gameProps) {
               }}
               sx={{ marginLeft: 2, marginBottom: 2 }}
             >
-             BETA Reset Board to Start
+              BETA Reset Board to Start
             </Button>
           </div>
         );
@@ -357,13 +358,23 @@ export default function Game(props: gameProps) {
                 player={undefined}
               />
             </Box>
-            
+
           )}
           {bestMove && (
-  <Box sx={{ margin: 2, fontWeight: "bold", color: "#1976d2" }}>
-    Best Move: {bestMove}
-  </Box>
-)}
+            <Box>
+              <GameStatus
+                title={`Best Move: ${bestMove}`}
+                moves={undefined}
+                player={undefined}
+                styles={{
+                  backgroundColor: currentPlayer ? "#fff" : "#222", // white or black
+                  color: currentPlayer ? "#222" : "#fff",           // black text on white, white text on black
+                  border: "2px solid #1976d2",
+                }}
+              />
+            </Box>
+          )}
+
           {(not_valid) ? (
             <Box className="not-valid-move">
               <GameStatus
