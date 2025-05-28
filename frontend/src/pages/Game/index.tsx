@@ -119,7 +119,7 @@ export default function Game(props: gameProps) {
         color: color,
         name: player,
       };
-      props.socket.emit("continue-game", preferences);
+      // props.socket.emit("continue-game", preferences);
       setGameState(GameState.inProgress);
     } else {
       setOpen(true);
@@ -268,6 +268,15 @@ export default function Game(props: gameProps) {
             >
               Start game
             </Button>
+                  <Button
+              variant="contained"
+              color="success"
+              onClick={() => continueGame()}
+
+            >
+              Continue Game (a game is already in progress)
+            </Button>
+           
             <Button
               variant="contained"
               color="warning"
