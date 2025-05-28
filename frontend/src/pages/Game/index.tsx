@@ -116,7 +116,12 @@ export default function Game(props: gameProps) {
 
   function continueGame() {
     if (props.socket.connected) {
-
+      const preferences = {
+        skill_level: stockfishlevel,
+        color: color,
+        name: player,
+      };
+      // props.socket.emit("continue-game", preferences);
       setGameState(GameState.inProgress);
     } else {
       setOpen(true);
@@ -266,6 +271,31 @@ export default function Game(props: gameProps) {
               sx={{ marginLeft: 2 }}
             >
               Start game
+            </Button>
+                  <Button
+              variant="contained"
+              color="success"
+              onClick={() => continueGame()}
+
+            >
+              Continue Game (a game is already in progress)
+            </Button>
+           
+            <Button
+              variant="contained"
+              color="warning"
+              onClick={startSelfPlay}
+              sx={{ marginLeft: 2 }}
+            >
+              Start Self-Play
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={stopSelfPlay}
+              sx={{ marginLeft: 2 }}
+            >
+              Stop Self-Play
             </Button>
             <Button
               variant="contained"
