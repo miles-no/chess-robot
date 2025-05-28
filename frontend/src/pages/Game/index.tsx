@@ -264,7 +264,7 @@ export default function Game(props: gameProps) {
               variant="contained"
               color="success"
               onClick={() => startGame()}
-
+ sx={{ marginLeft: 2 }}
             >
               Start game
             </Button>
@@ -272,9 +272,9 @@ export default function Game(props: gameProps) {
               variant="contained"
               color="success"
               onClick={() => continueGame()}
-
+ sx={{ marginLeft: 2 , width: '200px', fontSize: '0.6rem'}}
             >
-              Continue Game (a game is already in progress)
+              Continue Game (IF is already in progress)
             </Button>
            
             <Button

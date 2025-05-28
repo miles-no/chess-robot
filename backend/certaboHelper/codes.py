@@ -317,6 +317,10 @@ def get_moves(board, fen, color):
         copy_board.pop()
     else:
         move = FEN2Move(board, chess.Board(fen), color)
+        # Check if move is too short (single square selection)
+        if len(move) < 4:
+            logging.debug('Single square selection detected: %s - ignoring', move)
+            return None, None
         if move != "" and chess.Move.from_uci(move) not in board.legal_moves:
             return move, "Invalid move"
     logging.debug('Unable to detect moves')
