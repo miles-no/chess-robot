@@ -33,6 +33,8 @@ export default function Game(props: gameProps) {
   const [player, setPlayer] = useState<string>();
   const [not_valid, setNotValid] = useState<boolean>(false);
   const [is_check, setIsCheck] = useState<boolean>(false);
+  const [is_selfPlay, setSelfPlay] = useState<boolean>(false);
+
   const [relativeScore, setRelativeScore] = useState<number>(0);
   const lastMove = moves && moves.length > 0 ? moves[moves.length - 1] : null;
   const [bestMove, setBestMove] = useState<string | null>(null);
@@ -114,12 +116,7 @@ export default function Game(props: gameProps) {
 
   function continueGame() {
     if (props.socket.connected) {
-      const preferences = {
-        skill_level: stockfishlevel,
-        color: color,
-        name: player,
-      };
-      // props.socket.emit("continue-game", preferences);
+
       setGameState(GameState.inProgress);
     } else {
       setOpen(true);
@@ -180,9 +177,11 @@ export default function Game(props: gameProps) {
 
   const startSelfPlay = () => {
     props.socket.emit('start-self-play', { skill_level: 10 }); // Adjust skill level as needed
+    setSelfPlay(true);
   }
   const stopSelfPlay = () => {
     props.socket.emit('stop-self-play');
+    setSelfPlay(false);
   }
 
   const getButton = () => {
@@ -245,7 +244,7 @@ export default function Game(props: gameProps) {
             >
               Show Best Move
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               color="warning"
               onClick={() => {
@@ -253,8 +252,8 @@ export default function Game(props: gameProps) {
               }}
               sx={{ marginLeft: 2, marginBottom: 2 }}
             >
-              BETA Reset Board to Start
-            </Button>
+              BETA Reset Board to Start 
+            </Button> */}
           </div>
         );
       case GameState.notStarted:
@@ -264,35 +263,38 @@ export default function Game(props: gameProps) {
               variant="contained"
               color="success"
               onClick={() => startGame()}
- sx={{ marginLeft: 2 }}
+              sx={{ marginLeft: 2 }}
             >
               Start game
             </Button>
-                  <Button
+            <Button
               variant="contained"
               color="success"
               onClick={() => continueGame()}
- sx={{ marginLeft: 2 , width: '200px', fontSize: '0.6rem'}}
+              sx={{ marginLeft: 2, width: '200px', fontSize: '0.6rem' }}
             >
               Continue Game (IF is already in progress)
             </Button>
-           
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={startSelfPlay}
-              sx={{ marginLeft: 2 }}
-            >
-              Start Self-Play
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={stopSelfPlay}
-              sx={{ marginLeft: 2 }}
-            >
-              Stop Self-Play
-            </Button>
+
+                {!is_selfPlay ? (
+        <Button
+          variant="contained"
+          color="warning"
+          onClick={startSelfPlay}
+          sx={{ marginLeft: 2 }}
+        >
+          Start Self-Play
+        </Button>
+      ) : (
+        <Button
+          variant="contained"
+          color="error"
+          onClick={stopSelfPlay}
+          sx={{ marginLeft: 2 }}
+        >
+          Stop Self-Play
+        </Button>
+      )}
           </div>
 
         );
