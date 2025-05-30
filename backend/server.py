@@ -60,13 +60,14 @@ def newGame(arg):
 
 
 @socket_io.on("continue-game")
-def newGame(arg):
+def continueGame(arg):
     # mycertabo.moves = []
     # mycertabo.new_game()
     cr.reset_taken()
-    emitFen()
+   
     startGame(arg)
     emitAnalysis()
+    emitFen()
 
 
 @socket_io.on("stop-game")
@@ -87,11 +88,22 @@ def getValidMoves():
     if len(legal_moves) == 0:
         socket_io.emit("valid-moves", [])
         return
+    
     best_move = chess_logic.getBestMove(mycertabo.chessboard)
-    legal_moves_ucis = [best_move.uci()]
-    for move in legal_moves:
-        if best_move != move:
-            legal_moves_ucis.append(move.uci())
+    legal_moves_ucis = []
+    
+    # Handle case where best_move is None
+    if best_move is not None:
+        # Put best move first in the list
+        legal_moves_ucis.append(best_move.uci())
+        # Add other legal moves
+        for move in legal_moves:
+            if best_move != move:
+                legal_moves_ucis.append(move.uci())
+    else:
+        # If no best move available, just return all legal moves
+        legal_moves_ucis = [move.uci() for move in legal_moves]
+    
     chess_logic.reduction += 100
     socket_io.emit("valid-moves", legal_moves_ucis)
 
@@ -114,6 +126,7 @@ def startGame(arg):
                     mycertabo.chessboard, mycertabo.stockfish_color
                 ):
                     socket_io.emit("is-check")
+                    emitFen()
                     is_in_check = True  # Set the flag to prevent repeated emissions
                     continue  # Prevent further moves until the check is resolved
 
@@ -124,12 +137,21 @@ def startGame(arg):
                 if chess_logic.game_status:
                     socket_io.emit("invalid-move")
                     continue
-
                 else:
                     break
+            
             mycertabo.setColor()
-            move = move[0]
-
+            move_str = move[0]
+            
+            # Apply the same promotion logic for user moves (black pieces)
+            if chess_logic.checkPromotion():
+                promotion = chess_logic.pieces[move_str[-1]]
+                move_str = move_str[:-1]
+                prom_move = move_str[: len(move_str) // 2]
+                cr.move_taken(prom_move, "p", mycertabo.color)
+                socket_io.emit("promotion", promotion)
+            
+            move = move_str
             is_in_check = False  # Reset the flag when no longer in check
         doMove(move)
     outcome = chess_logic.getOutcome(mycertabo.chessboard)

@@ -272,31 +272,9 @@ export default function Game(props: gameProps) {
             >
               Start game
             </Button>
-                  <Button
-              variant="contained"
-              color="success"
-              onClick={() => continueGame()}
 
-            >
-              Continue Game (a game is already in progress)
-            </Button>
-           
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={startSelfPlay}
-              sx={{ marginLeft: 2 }}
-            >
-              Start Self-Play
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={stopSelfPlay}
-              sx={{ marginLeft: 2 }}
-            >
-              Stop Self-Play
-            </Button>
+
+
             <Button
               variant="contained"
               color="success"
@@ -306,25 +284,25 @@ export default function Game(props: gameProps) {
               Continue Game (IF is already in progress)
             </Button>
 
-                {!is_selfPlay ? (
-        <Button
-          variant="contained"
-          color="warning"
-          onClick={startSelfPlay}
-          sx={{ marginLeft: 2 }}
-        >
-          Start Self-Play
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          color="error"
-          onClick={stopSelfPlay}
-          sx={{ marginLeft: 2 }}
-        >
-          Stop Self-Play
-        </Button>
-      )}
+            {!is_selfPlay ? (
+              <Button
+                variant="contained"
+                color="warning"
+                onClick={startSelfPlay}
+                sx={{ marginLeft: 2 }}
+              >
+                Start Self-Play
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={stopSelfPlay}
+                sx={{ marginLeft: 2 }}
+              >
+                Stop Self-Play
+              </Button>
+            )}
           </div>
 
         );
@@ -386,6 +364,21 @@ export default function Game(props: gameProps) {
             )}
             <Box className="buttons">{getButton()}</Box>
           </Box>
+
+          {/* <Button
+  variant="contained"
+  color="warning"
+  onClick={() => {
+    // Set up black promotion test
+    props.socket.emit('set-test-position', {
+      fen: '8/8/8/8/8/8/1p6/8 b - - 0 1',
+      message: 'Place black pawn on b2, move to b1'
+    });
+  }}
+  sx={{ marginLeft: 2 }}
+>
+  Test Black Promotion
+</Button> */}
           <Box className="game-status">
             {[GameState.inProgress, GameState.hasEnded].includes(gameState) && (
               <GameStatus title="GAME" moves={moves} player={currentPlayer} />

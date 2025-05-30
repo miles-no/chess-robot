@@ -39,6 +39,10 @@ class ChessLogic:
 
     # Returns move in 'chess.Move' format
     def getBestMove(self, board):
+            # Validate board state first
+        if not board.is_valid():
+            print("Error: Invalid board state")
+            return None
         result = self.engine.play(board, chess.engine.Limit(time=1.3))
         best_move = result.move
         self.last_move = best_move
